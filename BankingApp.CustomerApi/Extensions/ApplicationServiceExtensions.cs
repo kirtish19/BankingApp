@@ -6,6 +6,10 @@
         {
             public IServiceCollection AddApplicationServices(IConfiguration configuration)
             {
+                services.AddScoped<IUserService, UserService>();
+                services.AddScoped<IUserRepository, UserRepository>();
+                services.AddScoped<ICustomerRepository, CustomerRepository>();
+
                 return services;
             }
         }

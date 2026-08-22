@@ -11,6 +11,6 @@ namespace BankingApp.Data.Tables
         public decimal Balance { get; set; }
         public DateTime OpenDate { get; set; }
         public Customer Customer { get; set; } = null!;
-        public Loan? Loan { get; set; }
+        public ICollection<Loan>? Loans { get; set; }
     }
 }
