@@ -10,7 +10,6 @@
         public decimal AnnualIncome { get; set; }
         public int CreditScore { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public IFormFile PanCard { get; set; } = default!;
-        public IFormFile AadharCard { get; set; } = default!;
+        public IFormFileCollection KycDocuments { get; set; } = default!;
     }
 }

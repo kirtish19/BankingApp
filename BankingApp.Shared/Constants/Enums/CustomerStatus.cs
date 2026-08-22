@@ -4,6 +4,7 @@
     {
         New,
         Active,
+        Rejected,
         Closed
     }
 }

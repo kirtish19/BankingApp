@@ -8,6 +8,8 @@
         public Task RegisterUserAsync(PostUserRegisterationRequest request)
         {
             //TODO - call customer repo only when user type is customer but user repo is always called.
+            // upload the documents to blog storage
+            // push a message to ASB topic.
             throw new NotImplementedException();
         }
     }
