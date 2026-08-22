@@ -12,6 +12,6 @@ namespace BankingApp.Data.Tables
         public bool IsActive { get; set; }
         public DateTime CreateDate { get; set; }
         public UserType UserType { get; set; }
-        public Customer? Customer { get; set; } = null!;
+        public Customer? Customer { get; set; }
     }
 }

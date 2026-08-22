@@ -4,11 +4,11 @@
     {
         extension(IServiceCollection services)
         {
-            public IServiceCollection AddInMemoryDatabase()
+            public IServiceCollection AddSqlite()
             {
                 services.AddDbContext<BankingDbContext>(options =>
                 {
-                    options.UseInMemoryDatabase(SharedConstants.InMemoryDatabaseName);
+                    options.UseSqlite($"Data Source={SharedConstants.DatabaseName}");
                 });
                 return services;
             }
