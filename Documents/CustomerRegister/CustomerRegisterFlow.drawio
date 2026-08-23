@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net">
   <diagram name="KYC_End_To_End_Event_Driven" id="0">
-    <mxGraphModel dx="1397" dy="605" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1455" dy="534" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -13,13 +13,13 @@
         <mxCell id="c" parent="1" style="shape=cylinder;fillColor=#f8cecc;" value="Blob Storage" vertex="1">
           <mxGeometry height="60" width="150" x="390" y="220" as="geometry" />
         </mxCell>
-        <mxCell id="d" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Customer Service &#xa;Publish CustomerKYCUploaded" vertex="1">
+        <mxCell id="d" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Customer Service &#xa;Publish ASB Event &#xa;CustomerKYCUploaded" vertex="1">
           <mxGeometry height="80" width="220" x="580" y="210" as="geometry" />
         </mxCell>
         <mxCell id="e" parent="1" style="rounded=1;fillColor=#e1d5e7;" value="Azure Service Bus Topic" vertex="1">
           <mxGeometry height="60" width="180" x="20" y="553" as="geometry" />
         </mxCell>
-        <mxCell id="f" parent="1" style="rounded=1;fillColor=#fff2cc;" value="MetadataProcessorAzureFunction &#xa;Read ASB Message" vertex="1">
+        <mxCell id="f" parent="1" style="rounded=1;fillColor=#fff2cc;" value="MetadataProcessor Azure Function &#xa;Read ASB Message" vertex="1">
           <mxGeometry height="80" width="220" x="250" y="543" as="geometry" />
         </mxCell>
         <mxCell id="g" parent="1" style="shape=cylinder;fillColor=#d5e8d4;" value="Cosmos DB Metadata" vertex="1">
@@ -28,13 +28,13 @@
         <mxCell id="h" parent="1" style="shape=cylinder;fillColor=#ffe6cc;" value="SQL Status KYCVerificationInProgress" vertex="1">
           <mxGeometry height="60" width="220" x="530" y="603" as="geometry" />
         </mxCell>
-        <mxCell id="i" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Publish KYCVerificationRequired" vertex="1">
+        <mxCell id="i" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Publish ASB Event &#xa;KYCVerificationRequired" vertex="1">
           <mxGeometry height="80" width="200" x="820" y="543" as="geometry" />
         </mxCell>
         <mxCell id="j" parent="1" style="rounded=1;fillColor=#e1d5e7;" value="Azure Service Bus Topic" vertex="1">
           <mxGeometry height="60" width="180" x="20" y="880" as="geometry" />
         </mxCell>
-        <mxCell id="k" parent="1" style="rounded=1;fillColor=#fff2cc;" value="KYCVerificationFunction &#xa;Read ASB Message" vertex="1">
+        <mxCell id="k" parent="1" style="rounded=1;fillColor=#fff2cc;" value="KYCVerification Azure Function &#xa;Read ASB Message" vertex="1">
           <mxGeometry height="80" width="220" x="260" y="870" as="geometry" />
         </mxCell>
         <mxCell id="l" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Read Cosmos Metadata &#xa;Validate PAN for name=PAN&#xa;Validate Aadhaar for name=AADHAR" vertex="1">
@@ -43,13 +43,13 @@
         <mxCell id="m" parent="1" style="shape=cylinder;fillColor=#ffe6cc;" value="SQL Status KYCVerified / KYCRejected" vertex="1">
           <mxGeometry height="60" width="220" x="800" y="880" as="geometry" />
         </mxCell>
-        <mxCell id="n" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Publish KYCVerificationCompleted message &#xa;(with status Verified/Rejected)" vertex="1">
+        <mxCell id="n" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Publish ASB Event &#xa;KYCVerificationCompleted message &#xa;(with status Verified/Rejected)" vertex="1">
           <mxGeometry height="80" width="250" x="1070" y="870" as="geometry" />
         </mxCell>
         <mxCell id="o" parent="1" style="rounded=1;fillColor=#e1d5e7;" value="Azure Service Bus Topic" vertex="1">
           <mxGeometry height="60" width="180" x="20" y="1190" as="geometry" />
         </mxCell>
-        <mxCell id="p" parent="1" style="rounded=1;fillColor=#dae8fc;" value="Notification Function &#xa;Read ASB Message" vertex="1">
+        <mxCell id="p" parent="1" style="rounded=1;fillColor=#dae8fc;" value="Notification Logic App&#xa;Read ASB Message" vertex="1">
           <mxGeometry height="80" width="220" x="260" y="1180" as="geometry" />
         </mxCell>
         <mxCell id="q" parent="1" style="rounded=1;fillColor=#dae8fc;" value="Send Email KYCVerified / KYCRejected" vertex="1">
