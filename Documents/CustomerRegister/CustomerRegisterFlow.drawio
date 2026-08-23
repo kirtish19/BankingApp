@@ -1,0 +1,136 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="KYC_End_To_End_Event_Driven" id="0">
+    <mxGraphModel dx="1397" dy="605" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="a" parent="1" style="rounded=1;fillColor=#dae8fc;" value="Customer" vertex="1">
+          <mxGeometry height="60" width="120" x="20" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="b" parent="1" style="rounded=1;" value="Upload PAN &amp; Aadhaar" vertex="1">
+          <mxGeometry height="60" width="170" x="180" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="c" parent="1" style="shape=cylinder;fillColor=#f8cecc;" value="Blob Storage" vertex="1">
+          <mxGeometry height="60" width="150" x="390" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="d" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Customer Service &#xa;Publish CustomerKYCUploaded" vertex="1">
+          <mxGeometry height="80" width="220" x="580" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="e" parent="1" style="rounded=1;fillColor=#e1d5e7;" value="Azure Service Bus Topic" vertex="1">
+          <mxGeometry height="60" width="180" x="20" y="553" as="geometry" />
+        </mxCell>
+        <mxCell id="f" parent="1" style="rounded=1;fillColor=#fff2cc;" value="MetadataProcessorAzureFunction &#xa;Read ASB Message" vertex="1">
+          <mxGeometry height="80" width="220" x="250" y="543" as="geometry" />
+        </mxCell>
+        <mxCell id="g" parent="1" style="shape=cylinder;fillColor=#d5e8d4;" value="Cosmos DB Metadata" vertex="1">
+          <mxGeometry height="60" width="180" x="530" y="483" as="geometry" />
+        </mxCell>
+        <mxCell id="h" parent="1" style="shape=cylinder;fillColor=#ffe6cc;" value="SQL Status KYCVerificationInProgress" vertex="1">
+          <mxGeometry height="60" width="220" x="530" y="603" as="geometry" />
+        </mxCell>
+        <mxCell id="i" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Publish KYCVerificationRequired" vertex="1">
+          <mxGeometry height="80" width="200" x="820" y="543" as="geometry" />
+        </mxCell>
+        <mxCell id="j" parent="1" style="rounded=1;fillColor=#e1d5e7;" value="Azure Service Bus Topic" vertex="1">
+          <mxGeometry height="60" width="180" x="20" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="k" parent="1" style="rounded=1;fillColor=#fff2cc;" value="KYCVerificationFunction &#xa;Read ASB Message" vertex="1">
+          <mxGeometry height="80" width="220" x="260" y="870" as="geometry" />
+        </mxCell>
+        <mxCell id="l" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Read Cosmos Metadata &#xa;Validate PAN for name=PAN&#xa;Validate Aadhaar for name=AADHAR" vertex="1">
+          <mxGeometry height="100" width="220" x="530" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="m" parent="1" style="shape=cylinder;fillColor=#ffe6cc;" value="SQL Status KYCVerified / KYCRejected" vertex="1">
+          <mxGeometry height="60" width="220" x="800" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="n" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Publish KYCVerificationCompleted message &#xa;(with status Verified/Rejected)" vertex="1">
+          <mxGeometry height="80" width="250" x="1070" y="870" as="geometry" />
+        </mxCell>
+        <mxCell id="o" parent="1" style="rounded=1;fillColor=#e1d5e7;" value="Azure Service Bus Topic" vertex="1">
+          <mxGeometry height="60" width="180" x="20" y="1190" as="geometry" />
+        </mxCell>
+        <mxCell id="p" parent="1" style="rounded=1;fillColor=#dae8fc;" value="Notification Function &#xa;Read ASB Message" vertex="1">
+          <mxGeometry height="80" width="220" x="260" y="1180" as="geometry" />
+        </mxCell>
+        <mxCell id="q" parent="1" style="rounded=1;fillColor=#dae8fc;" value="Send Email KYCVerified / KYCRejected" vertex="1">
+          <mxGeometry height="60" width="220" x="530" y="1190" as="geometry" />
+        </mxCell>
+        <mxCell id="r" parent="1" style="rounded=1;fillColor=#dae8fc;" value="Customer Notified" vertex="1">
+          <mxGeometry height="60" width="180" x="800" y="1190" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="a" target="b">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="b" target="c">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="c" target="d">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="d" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="e">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="180" y="640" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="e" target="f">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="f" target="g">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="f" target="h">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="f" target="i">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="i" style="edgeStyle=orthogonalEdgeStyle;" target="j">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="920" y="759.86" />
+              <mxPoint x="110" y="759.86" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="j" target="k">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="k" target="l">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="l" target="m">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="m" target="n">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="n" style="edgeStyle=orthogonalEdgeStyle;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" target="o">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1190.07" y="1090.2" />
+              <mxPoint x="110.07" y="1090.2" />
+            </Array>
+            <mxPoint x="20" y="1290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="o" target="p">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="p" target="q">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="q" target="r">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="iGLVQIZqxQyh32rmMuCK-1" parent="1" style="shape=cylinder;fillColor=#ffe6cc;" value="SQL Status New" vertex="1">
+          <mxGeometry height="60" width="120" x="20" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="iGLVQIZqxQyh32rmMuCK-2" edge="1" parent="1" source="a" style="exitX=0.5;exitY=0;exitDx=0;exitDy=0;" target="iGLVQIZqxQyh32rmMuCK-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="110" y="100" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
