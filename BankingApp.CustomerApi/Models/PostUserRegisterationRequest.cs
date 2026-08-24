@@ -7,6 +7,7 @@
         public string Email { get; set; } = null!;
         public string MobileNumber { get; set; } = null!;
         public EmploymentType EmploymentType { get; set; }
+        public UserType UserType { get; set; }
         public decimal AnnualIncome { get; set; }
         public int CreditScore { get; set; }
         public DateTime DateOfBirth { get; set; }

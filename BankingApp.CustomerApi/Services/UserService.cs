@@ -1,16 +1,31 @@
-﻿namespace BankingApp.CustomerApi.Services
-{
-    public class UserService(ICustomerRepository customerRepository, IUserRepository userRepository) : IUserService
-    {
-        private readonly ICustomerRepository _customerRepository = customerRepository;
-        private readonly IUserRepository userRepository = userRepository;
+﻿using BankingApp.CustomerApi.Extensions.Mappings;
 
-        public Task RegisterUserAsync(PostUserRegisterationRequest request)
+namespace BankingApp.CustomerApi.Services
+{
+    public class UserService(IUnitOfWork unitOfWork) : IUserService
+    {
+        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+
+        public async Task RegisterUserAsync(PostUserRegisterationRequest request)
         {
             //TODO - call customer repo only when user type is customer but user repo is always called.
             // upload the documents to blog storage
             // push a message to ASB topic.
-            throw new NotImplementedException();
+            // User is always created
+            var user = request.ToUser();
+
+            await _unitOfWork.Users.AddAsync(user);
+
+            // Customer is created only for Customer registration
+            if (request.UserType == UserType.Customer)
+            {
+                var customer = request.ToCustomer(user.Id);
+
+                await _unitOfWork.Customers.AddAsync(customer);
+            }
+
+            // Commit everything together
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }
