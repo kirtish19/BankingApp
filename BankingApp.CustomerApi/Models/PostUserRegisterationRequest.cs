@@ -2,6 +2,9 @@
 {
     public class PostUserRegisterationRequest
     {
+        public string UserName { get; set; } = null!;
+        public string LoginPassword { get; set; } = null!;
+        public string ProfilePassword { get; set; } = null!;
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public string Email { get; set; } = null!;
@@ -11,6 +14,6 @@
         public decimal AnnualIncome { get; set; }
         public int CreditScore { get; set; }
         public DateTime DateOfBirth { get; set; }
-        public IFormFileCollection KycDocuments { get; set; } = default!;
+        public IFormFileCollection? KycDocuments { get; set; }
     }
 }

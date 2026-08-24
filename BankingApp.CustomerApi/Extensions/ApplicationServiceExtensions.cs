@@ -8,7 +8,7 @@ namespace BankingApp.CustomerApi.Extensions
         {
             public IServiceCollection AddApplicationServices(IConfiguration configuration)
             {
-                services.AddSqlite();
+                services.AddSqlServerDatabase(configuration.GetConnectionString("Default")!);
                 services.AddScoped<IUserService, UserService>();
                 services.AddScoped<IUserRepository, UserRepository>();
                 services.AddScoped<ICustomerRepository, CustomerRepository>();

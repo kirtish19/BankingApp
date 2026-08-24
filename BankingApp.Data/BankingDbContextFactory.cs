@@ -8,7 +8,7 @@ public class BankingDbContextFactory : IDesignTimeDbContextFactory<BankingDbCont
     {
         var optionsBuilder = new DbContextOptionsBuilder<BankingDbContext>();
 
-        optionsBuilder.UseSqlite($"Data Source={SharedConstants.DatabaseName}");
+        optionsBuilder.UseSqlServer("Server=localhost,1433;Database=BankingDb;User Id=sa;Password=Temp@12345;MultipleActiveResultSets=true;Encrypt=True;TrustServerCertificate=True");
 
         return new BankingDbContext(optionsBuilder.Options);
     }

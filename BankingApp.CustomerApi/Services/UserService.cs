@@ -20,7 +20,6 @@ namespace BankingApp.CustomerApi.Services
             if (request.UserType == UserType.Customer)
             {
                 var customer = request.ToCustomer(user.Id);
-
                 await _unitOfWork.Customers.AddAsync(customer);
             }
 
