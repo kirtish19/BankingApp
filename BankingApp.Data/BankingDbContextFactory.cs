@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore.Design;
+﻿using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
+using Microsoft.EntityFrameworkCore.Design;
 
 namespace BankingApp.Data;
 
@@ -6,9 +8,24 @@ public class BankingDbContextFactory : IDesignTimeDbContextFactory<BankingDbCont
 {
     public BankingDbContext CreateDbContext(string[] args)
     {
+        var keyVaultUrl = "https://team1-customerapi-kv.vault.azure.net/";
+        var credential = new DefaultAzureCredential(
+        new DefaultAzureCredentialOptions
+        {
+            ExcludeEnvironmentCredential = true,
+            ExcludeWorkloadIdentityCredential = true,
+            ExcludeManagedIdentityCredential = true,
+            ExcludeVisualStudioCodeCredential = true,
+            ExcludeAzurePowerShellCredential = true,
+            ExcludeAzureDeveloperCliCredential = true
+        });
+
+        var secretClient = new SecretClient(new Uri(keyVaultUrl), credential);
+
+        var secret = secretClient.GetSecret("DbConnectionString");
         var optionsBuilder = new DbContextOptionsBuilder<BankingDbContext>();
 
-        optionsBuilder.UseSqlServer("Server=localhost,1433;Database=BankingDb;User Id=sa;Password=Temp@12345;MultipleActiveResultSets=true;Encrypt=True;TrustServerCertificate=True");
+        optionsBuilder.UseSqlServer(secret.Value.Value);
 
         return new BankingDbContext(optionsBuilder.Options);
     }

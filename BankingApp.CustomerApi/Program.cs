@@ -1,48 +1,74 @@
-using System.Text.Json.Serialization;
+using Azure.Identity;
 using Serilog;
+using System.Text.Json.Serialization;
 
-var builder = WebApplication.CreateBuilder(args);
+try
+{
 
-// Serilog
-Log.Logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .CreateLogger();
 
-builder.Host.UseSerilog();
+    var builder = WebApplication.CreateBuilder(args);
 
-Log.Information("Starting the BankingApp Customer API");
+    // Serilog
+    Log.Logger = new LoggerConfiguration()
+        .ReadFrom.Configuration(builder.Configuration)
+        .CreateLogger();
 
-// Add services to the container.
-builder.Services.AddApplicationServices(builder.Configuration);
+    // Keyvault Setup
 
-builder.Services
-    .AddControllers()
-    .AddJsonOptions(options =>
+    var credential = new DefaultAzureCredential(
+    new DefaultAzureCredentialOptions
     {
-        options.JsonSerializerOptions.Converters.Add(
-            new JsonStringEnumConverter());
+        ExcludeEnvironmentCredential = true,
+        ExcludeWorkloadIdentityCredential = true,
+        ExcludeManagedIdentityCredential = true,
+        ExcludeVisualStudioCodeCredential = true,
+        ExcludeAzurePowerShellCredential = true,
+        ExcludeAzureDeveloperCliCredential = true
+    });
+    var keyvaulturi = builder.Configuration.GetConnectionString("KeyVault")!;
+    builder.Configuration.AddAzureKeyVault(new Uri(keyvaulturi), credential);
+
+
+    builder.Host.UseSerilog();
+
+    Log.Information("Starting the BankingApp Customer API");
+
+    // Add services to the container.
+    builder.Services.AddApplicationServices(builder.Configuration);
+
+    builder.Services
+        .AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(
+                new JsonStringEnumConverter());
+        });
+
+    builder.Services.AddOpenApi();
+
+    var app = builder.Build();
+
+    app.MapOpenApi();
+
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint(
+            "/openapi/v1.json",
+            "Loan API v1");
     });
 
-builder.Services.AddOpenApi();
+    // Serilog request logging
+    app.UseSerilogRequestLoggingWithClientAddress();
 
-var app = builder.Build();
+    app.UseHttpsRedirection();
 
-app.MapOpenApi();
+    app.UseAuthorization();
 
-app.UseSwaggerUI(options =>
+    app.MapControllers();
+
+    app.Run();
+}
+catch (Exception ex)
 {
-    options.SwaggerEndpoint(
-        "/openapi/v1.json",
-        "Loan API v1");
-});
-
-// Serilog request logging
-app.UseSerilogRequestLoggingWithClientAddress();
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+    Console.WriteLine(ex.Message);
+}

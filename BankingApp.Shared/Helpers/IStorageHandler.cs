@@ -6,7 +6,7 @@ namespace BankingApp.Shared.Helpers
 {
     public interface IStorageHandler
     {
-        public Task UploadBlobAsync(string connectionString, string containerName, IFormFileCollection formFiles);
+        public Task UploadBlobAsync(string connectionString, string containerName, string directoryName, IFormFileCollection formFiles);
 
         public Task DownloadBlobAsync(string connectionString, string containerName, string blobName, string downloadPath);
 

@@ -1,5 +1,4 @@
 ﻿using BankingApp.Data;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace BankingApp.CustomerApi.Repository

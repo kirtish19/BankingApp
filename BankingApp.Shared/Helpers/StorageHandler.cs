@@ -24,7 +24,7 @@ namespace BankingApp.Shared.Helpers
             return Task.FromResult<AsyncPageable<BlobItem>?>(blobItems);
         }
 
-        public async Task UploadBlobAsync(string connectionString, string containerName, IFormFileCollection formFiles)
+        public async Task UploadBlobAsync(string connectionString, string containerName, string directoryName, IFormFileCollection formFiles)
         {
             BlobContainerClient container = new BlobContainerClient(connectionString, containerName);
 
@@ -39,8 +39,7 @@ namespace BankingApp.Shared.Helpers
                     continue;
 
                 string fileName = formFile.FileName;
-                BlobClient blobClient = container.GetBlobClient(fileName);
-
+                BlobClient blobClient = container.GetBlobClient($"{directoryName}/{fileName}");
                 using var stream = formFile.OpenReadStream();
                 await blobClient.UploadAsync(stream, overwrite: true);
             }

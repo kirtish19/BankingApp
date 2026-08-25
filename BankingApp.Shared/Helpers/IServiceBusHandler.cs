@@ -1,7 +1,7 @@
 ﻿namespace BankingApp.Shared.Helpers
 {
-    public interface IServiceBusHandler<T> where T : class
+    public interface IServiceBusHandler
     {
-        public Task SendMessageToQueueOrTopic(T messsage, string topicName, string connectionString);
+        public Task SendMessageToQueueOrTopic(object messsage, string topicName, string connectionString);
     }
 }

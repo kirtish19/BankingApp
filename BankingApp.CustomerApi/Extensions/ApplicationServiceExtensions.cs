@@ -9,14 +9,14 @@ namespace BankingApp.CustomerApi.Extensions
         {
             public IServiceCollection AddApplicationServices(IConfiguration configuration)
             {
-                services.AddSqlServerDatabase(configuration.GetConnectionString("Default")!);
+                services.AddSqlServerDatabase(configuration.GetValue<string>("DbConnectionString")!);
                 services.AddScoped<IUserService, UserService>();
                 services.AddScoped<IUserRepository, UserRepository>();
                 services.AddScoped<ICustomerRepository, CustomerRepository>();
                 services.AddScoped( typeof(IEntityRepository<>), typeof(EntityRepository<>));
                 services.AddScoped<ITransactionManager, TransactionManager>();
                 services.AddScoped<IStorageHandler, StorageHandler>();
-                services.AddScoped(typeof(IServiceBusHandler<>), typeof(ServiceBusHandler<>));
+                services.AddScoped<IServiceBusHandler, ServiceBusHandler>();
                 services.AddScoped<IUnitOfWork, UnitOfWork>();
                 return services;
             }
