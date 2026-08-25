@@ -1,9 +1,11 @@
-﻿namespace BankingApp.CustomerApi.Repository
+﻿using BankingApp.Data.Tables;
+
+namespace BankingApp.CustomerApi.Repository
 {
     public interface IUnitOfWork
     {
-        IUserRepository Users { get; }
-        ICustomerRepository Customers { get; }
-        Task<int> SaveChangesAsync();
+        IEntityRepository<User> Users { get; }
+        IEntityRepository<Customer> Customers { get; }
+        ITransactionManager TransactionManager { get; }
     }
 }

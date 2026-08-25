@@ -1,21 +1,16 @@
 ﻿using BankingApp.Data;
+using BankingApp.Data.Tables;
 
 namespace BankingApp.CustomerApi.Repository
 {
     public class UnitOfWork(
-        BankingDbContext dbContext,
-        IUserRepository userRepository,
-        ICustomerRepository customerRepository) : IUnitOfWork
+     IEntityRepository<User> userRepository,
+     IEntityRepository<Customer> customerRepository,
+     ITransactionManager transactionManager)
+     : IUnitOfWork
     {
-        private readonly BankingDbContext _dbContext = dbContext;
-
-        public IUserRepository Users { get; } = userRepository;
-
-        public ICustomerRepository Customers { get; } = customerRepository;
-
-        public async Task<int> SaveChangesAsync()
-        {
-            return await _dbContext.SaveChangesAsync();
-        }
+        public IEntityRepository<User> Users { get; } = userRepository;
+        public IEntityRepository<Customer> Customers { get; } = customerRepository;
+        public ITransactionManager TransactionManager { get; } = transactionManager;
     }
 }
