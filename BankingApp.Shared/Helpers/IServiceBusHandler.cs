@@ -1,7 +1,11 @@
-﻿namespace BankingApp.Shared.Helpers
+﻿using System.Collections.Generic;
+
+namespace BankingApp.Shared.Helpers
 {
     public interface IServiceBusHandler
     {
-        public Task SendMessageToQueueOrTopic(object messsage, string topicName, string connectionString);
+        // Generic method allowing callers to pass strongly-typed message payloads
+        // and optional application properties to be added to the Service Bus message.
+        Task SendMessageToQueueOrTopic<T>(T messsage, string topicName, string connectionString, IDictionary<string, object>? applicationProperties = null);
     }
 }

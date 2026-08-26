@@ -1,6 +1,6 @@
-namespace BankingApp.CustomerApi.Models
+namespace BankingApp.Shared.Models
 {
-	public class CustomerKYCEvent
+	public class CustomerKYCMessage
 	{
 		public Guid EventId { get; set; }
 		public string EventType { get; set; } = null!;

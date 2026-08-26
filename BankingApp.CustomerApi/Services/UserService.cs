@@ -2,6 +2,7 @@
 using BankingApp.CustomerApi.Extensions.Mappings;
 using BankingApp.Data.Tables;
 using BankingApp.Shared.Helpers;
+using BankingApp.Shared.Models;
 using Microsoft.Azure.Amqp.Framing;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -35,32 +36,16 @@ namespace BankingApp.CustomerApi.Services
                         await _storageHandler.UploadBlobAsync(storageConnectionString, containerName, user.Customer!.Id.ToString(), request.KycDocuments);
                     }
 
-                    CustomerKYCEvent customerKYCEvent = new CustomerKYCEvent();
-                    customerKYCEvent.EventId = Guid.NewGuid();
-                    customerKYCEvent.EventType = "CustomerKYCUploaded";
-                    customerKYCEvent.EventTime = DateTime.Now;
-                    customerKYCEvent.DocumentType = "KYC";
-                    customerKYCEvent.CustomerId = customer.Id;
-                    
-                    foreach(var doc in request.KycDocuments!)
-                    {
-                        customerKYCEvent.Documents.Add(
-                          new CustomerKYCDocument 
-                            { 
-                                DocumentId = Guid.NewGuid(), 
-                                DocumentName = doc.FileName, 
-                                BlobUrl =  $"https://team1bankingapp.blob.core.windows.net/kyc-documents/{customer.Id}/{doc.FileName}"
-                            }                            
-                        );
-                    }
+                    CustomerKYCMessage customerKYCMessage = CreateCustomerKYCMessage(request, customer);
 
-                    customerKYCEvent.UploadedBy = "Customer";
-                    customerKYCEvent.SourceSystem = "CustomerService";
-
-                    var message = customerKYCEvent;
+                    var message = customerKYCMessage;
                     var topicName = "DocumentTopic";
                     var serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusWriter")!;
-                    await _serviceBusHandler.SendMessageToQueueOrTopic(message, topicName, serviceBusConnectionString);
+                    var additionalProperties = new Dictionary<string, object>
+                    {
+                        { nameof(CustomerKYCMessage.DocumentType), customerKYCMessage.DocumentType },
+                    };
+                    await _serviceBusHandler.SendMessageToQueueOrTopic(message, topicName, serviceBusConnectionString, additionalProperties);
                 }
 
                 //TODO - Message will contain - 
@@ -97,6 +82,32 @@ namespace BankingApp.CustomerApi.Services
             {
                 throw;
             }
+        }
+
+        private static CustomerKYCMessage CreateCustomerKYCMessage(PostUserRegisterationRequest request, Customer customer)
+        {
+            CustomerKYCMessage customerKYCEvent = new CustomerKYCMessage();
+            customerKYCEvent.EventId = Guid.NewGuid();
+            customerKYCEvent.EventType = "CustomerKYCUploaded";
+            customerKYCEvent.EventTime = DateTime.Now;
+            customerKYCEvent.DocumentType = "KYC";
+            customerKYCEvent.CustomerId = customer.Id;
+
+            foreach (var doc in request.KycDocuments!)
+            {
+                customerKYCEvent.Documents.Add(
+                  new CustomerKYCDocument
+                  {
+                      DocumentId = Guid.NewGuid(),
+                      DocumentName = doc.FileName,
+                      BlobUrl = $"https://team1bankingapp.blob.core.windows.net/kyc-documents/{customer.Id}/{doc.FileName}" //TODO - This URL should be generated based on the actual blob storage URL after upload
+                  }
+                );
+            }
+
+            customerKYCEvent.UploadedBy = "Customer";
+            customerKYCEvent.SourceSystem = "CustomerService";
+            return customerKYCEvent;
         }
     }
 }

@@ -1,4 +1,4 @@
-namespace BankingApp.CustomerApi.Models
+namespace BankingApp.Shared.Models
 {
     public class CustomerKYCDocument
     {

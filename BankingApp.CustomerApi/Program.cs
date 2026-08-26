@@ -1,4 +1,4 @@
-using Azure.Identity;
+using BankingApp.Shared.Extensions;
 using Serilog;
 using System.Text.Json.Serialization;
 
@@ -13,20 +13,8 @@ try
         .ReadFrom.Configuration(builder.Configuration)
         .CreateLogger();
 
-    // Keyvault Setup
-
-    var credential = new DefaultAzureCredential(
-    new DefaultAzureCredentialOptions
-    {
-        ExcludeEnvironmentCredential = true,
-        ExcludeWorkloadIdentityCredential = true,
-        ExcludeManagedIdentityCredential = true,
-        ExcludeVisualStudioCodeCredential = true,
-        ExcludeAzurePowerShellCredential = true,
-        ExcludeAzureDeveloperCliCredential = true
-    });
     var keyvaulturi = builder.Configuration.GetConnectionString("KeyVault")!;
-    builder.Configuration.AddAzureKeyVault(new Uri(keyvaulturi), credential);
+    builder.Configuration.AddCustomKeyVault(keyvaulturi);
 
 
     builder.Host.UseSerilog();
