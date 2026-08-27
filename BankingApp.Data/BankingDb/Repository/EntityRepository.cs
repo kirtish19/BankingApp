@@ -1,10 +1,8 @@
-﻿using BankingApp.Data.BankingDb;
-using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
-namespace BankingApp.CustomerApi.Repository
+namespace BankingApp.Data.BankingDb.Repository
 {
-    public class EntityRepository<T>(BankingDbContext dbContext) : IEntityRepository<T>  where T : class
+    public class EntityRepository<T>(BankingDbContext dbContext) : IEntityRepository<T> where T : class
     {
         protected readonly BankingDbContext _dbContext = dbContext;
         protected readonly DbSet<T> _dbSet = dbContext.Set<T>();

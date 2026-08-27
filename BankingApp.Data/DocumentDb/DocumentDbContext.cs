@@ -1,5 +1,4 @@
-﻿using BankingApp.Shared.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using BankingApp.Data.DocumentDb.Container;
 
 namespace BankingApp.Data.DocumentDb
 {
@@ -11,16 +10,16 @@ namespace BankingApp.Data.DocumentDb
         {
         }
 
-        public DbSet<CustomerKYCMessage> CustomerKYCMessages =>
-            Set<CustomerKYCMessage>();
+        public DbSet<KycDocument> KycDocuments =>
+            Set<KycDocument>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<CustomerKYCMessage>(entity =>
+            modelBuilder.Entity<KycDocument>(entity =>
             {
-                entity.ToContainer("CustomerKYC");// Please Confirm Container Name
+                entity.ToContainer("KycDocuments");
 
-                entity.HasKey(x => x.EventId);
+                entity.HasKey(x => x.DocumentId);
 
                 entity.HasPartitionKey(x => x.CustomerId);
             });

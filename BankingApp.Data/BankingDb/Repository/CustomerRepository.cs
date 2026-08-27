@@ -1,7 +1,6 @@
-﻿using BankingApp.Data.BankingDb;
-using BankingApp.Data.BankingDb.Tables;
+﻿using BankingApp.Data.BankingDb.Tables;
 
-namespace BankingApp.CustomerApi.Repository
+namespace BankingApp.Data.BankingDb.Repository
 {
     public class CustomerRepository(BankingDbContext dbContext) : ICustomerRepository
     {
@@ -10,6 +9,6 @@ namespace BankingApp.CustomerApi.Repository
         public async Task AddAsync(Customer customer)
         {
             await _dbContext.Customers.AddAsync(customer);
-        }
+        }        
     }
 }

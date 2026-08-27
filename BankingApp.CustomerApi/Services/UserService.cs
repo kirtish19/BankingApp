@@ -1,10 +1,8 @@
-﻿using System.Reflection.Metadata;
-using BankingApp.CustomerApi.Extensions.Mappings;
+﻿using BankingApp.CustomerApi.Extensions.Mappings;
+using BankingApp.Data.BankingDb.Repository;
 using BankingApp.Data.BankingDb.Tables;
 using BankingApp.Shared.Helpers;
 using BankingApp.Shared.Models;
-using Microsoft.Azure.Amqp.Framing;
-using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace BankingApp.CustomerApi.Services
 {
@@ -47,33 +45,6 @@ namespace BankingApp.CustomerApi.Services
                     };
                     await _serviceBusHandler.SendMessageToQueueOrTopic(message, topicName, serviceBusConnectionString, additionalProperties);
                 }
-
-                //TODO - Message will contain - 
-                /*
-                 * {
-                      "eventId": "3b4d9eb1-8f5c-4f18-a35b-f99111a1c001",
-                      "eventType": "CustomerKYCUploaded",
-                      "eventTime": "2026-08-25T10:15:00Z",
-                      "documentType": "KYC",
-                      "customerId": 1001,
-
-                      "documents": [
-                        {
-                          "documentId": "DOC001",
-                          "documentName": "PAN.pdf",
-                          "blobUrl": "https://bankstorage.blob.core.windows.net/kyc-documents/1001/PAN.pdf"
-                        },
-                        {
-                          "documentId": "DOC002",
-                          "documentName": "AADHAAR.pdf",
-                          "blobUrl": "https://bankstorage.blob.core.windows.net/kyc-documents/1001/AADHAAR.pdf"
-                        }
-                      ],
-
-                      "uploadedBy": "Customer",
-                      "sourceSystem": "CustomerService"
-                    }
-                 */
 
                 // Commit everything together
                 await _unitOfWork.TransactionManager.SaveChangesAsync();

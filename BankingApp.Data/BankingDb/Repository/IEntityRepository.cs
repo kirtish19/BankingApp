@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace BankingApp.CustomerApi.Repository
+namespace BankingApp.Data.BankingDb.Repository
 {
     public interface IEntityRepository<T> where T : class
     {

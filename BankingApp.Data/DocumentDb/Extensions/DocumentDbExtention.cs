@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace BankingApp.Data.DocumentDb.Extensions
+﻿namespace BankingApp.Data.DocumentDb.Extensions
 {
     public static class DocumentDbExtension
     {

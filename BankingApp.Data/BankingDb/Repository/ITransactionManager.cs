@@ -1,4 +1,4 @@
-﻿namespace BankingApp.CustomerApi.Repository
+﻿namespace BankingApp.Data.BankingDb.Repository
 {
     public interface ITransactionManager
     {

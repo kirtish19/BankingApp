@@ -1,4 +1,5 @@
 ﻿using BankingApp.Data.BankingDb.Extensions;
+using BankingApp.Data.BankingDb.Repository;
 using BankingApp.Shared.Helpers;
 
 namespace BankingApp.CustomerApi.Extensions
@@ -13,7 +14,7 @@ namespace BankingApp.CustomerApi.Extensions
                 services.AddScoped<IUserService, UserService>();
                 services.AddScoped<IUserRepository, UserRepository>();
                 services.AddScoped<ICustomerRepository, CustomerRepository>();
-                services.AddScoped( typeof(IEntityRepository<>), typeof(EntityRepository<>));
+                services.AddScoped(typeof(IEntityRepository<>), typeof(EntityRepository<>));
                 services.AddScoped<ITransactionManager, TransactionManager>();
                 services.AddScoped<IStorageHandler, StorageHandler>();
                 services.AddScoped<IServiceBusHandler, ServiceBusHandler>();
