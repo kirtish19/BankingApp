@@ -5,6 +5,7 @@ using BankingApp.Data.BankingDb.Repository;
 using BankingApp.Data.DocumentDb.Extensions;
 using BankingApp.Data.DocumentDb.Repository;
 using BankingApp.Shared.Extensions;
+using BankingApp.Shared.Helpers;
 using Microsoft.Azure.Functions.Worker.Builder;
 using Microsoft.Azure.Functions.Worker.OpenTelemetry;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITransactionManager, TransactionManager>();
+builder.Services.AddScoped<IServiceBusHandler, ServiceBusHandler>();
 builder.Services.AddSqlServerDatabase(builder.Configuration.GetValue<string>("DbConnectionString")!);
 builder.Services.AddCosmosDatabase(builder.Configuration.GetValue<string>("CosmosDbConnectionString")!, builder.Configuration.GetValue<string>("CosmosDbName")!);
 
