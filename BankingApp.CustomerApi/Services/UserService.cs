@@ -1,6 +1,6 @@
 ﻿using System.Reflection.Metadata;
 using BankingApp.CustomerApi.Extensions.Mappings;
-using BankingApp.Data.Tables;
+using BankingApp.Data.BankingDb.Tables;
 using BankingApp.Shared.Helpers;
 using BankingApp.Shared.Models;
 using Microsoft.Azure.Amqp.Framing;

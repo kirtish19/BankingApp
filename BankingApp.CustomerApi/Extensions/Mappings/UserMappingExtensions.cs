@@ -1,4 +1,4 @@
-﻿using BankingApp.Data.Tables;
+﻿using BankingApp.Data.BankingDb.Tables;
 using System.Security.Cryptography;
 using System.Text;
 

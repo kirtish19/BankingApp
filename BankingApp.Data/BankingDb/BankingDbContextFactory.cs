@@ -2,7 +2,7 @@
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace BankingApp.Data;
+namespace BankingApp.Data.BankingDb;
 
 public class BankingDbContextFactory : IDesignTimeDbContextFactory<BankingDbContext>
 {

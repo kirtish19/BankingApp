@@ -1,9 +1,6 @@
-﻿using BankingApp.Shared.Constants.Enums;
-
-namespace BankingApp.Data.Tables
+﻿namespace BankingApp.CustomerApi.Models
 {
-    //TODO How will we store Docs
-    public class Customer
+    public class CustomerDTO
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; } = null!;
@@ -17,7 +14,5 @@ namespace BankingApp.Data.Tables
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime DateOfBirth { get; set; }
         public Guid UserId { get; set; }
-        public User User { get; set; } = null!;
-        public ICollection<Account> Accounts { get; set; } = [];
     }
 }

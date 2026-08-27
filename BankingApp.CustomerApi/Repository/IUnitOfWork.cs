@@ -1,4 +1,4 @@
-﻿using BankingApp.Data.Tables;
+﻿using BankingApp.Data.BankingDb.Tables;
 
 namespace BankingApp.CustomerApi.Repository
 {

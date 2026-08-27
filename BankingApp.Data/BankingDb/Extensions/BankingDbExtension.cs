@@ -1,4 +1,4 @@
-﻿namespace BankingApp.Data.Extensions
+﻿namespace BankingApp.Data.BankingDb.Extensions
 {
     public static class BankingDbExtension
     {

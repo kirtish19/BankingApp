@@ -1,6 +1,6 @@
 ﻿using BankingApp.Shared.Constants.Enums;
 
-namespace BankingApp.Data.Tables
+namespace BankingApp.Data.BankingDb.Tables
 {
     public class Account
     {

@@ -1,4 +1,4 @@
-﻿using BankingApp.Data.Extensions;
+﻿using BankingApp.Data.BankingDb.Extensions;
 using BankingApp.Shared.Helpers;
 
 namespace BankingApp.CustomerApi.Extensions
