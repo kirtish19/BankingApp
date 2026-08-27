@@ -1,0 +1,132 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Loan Assessment Workflow" id="0">
+    <mxGraphModel dx="2353" dy="649" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="320" width="580" x="-250" y="490" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-1" edge="1" parent="1" source="c1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c2" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;" value="Customer" vertex="1">
+          <mxGeometry height="60" width="120" x="-720" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-2" edge="1" parent="1" source="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c3" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c2" parent="1" style="rounded=1;" value="Select Loan Product&#xa;(Personal/Home/&#xa;Vehicle/Education)" vertex="1">
+          <mxGeometry height="80" width="160" x="-540" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-3" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c4" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c3" parent="1" style="rounded=1;" value="Enter Loan Details&#xa;(Amount, Tenure, &#xa;Income, Liabilities)" vertex="1">
+          <mxGeometry height="80" width="170" x="-320" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-4" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c5" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c4" parent="1" style="rounded=1;" value="Upload Loan Documents&#xa;(Salary Slip, &#xa;Bank Statement, etc.)" vertex="1">
+          <mxGeometry height="80" width="180" x="-90" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="c5" parent="1" style="shape=cylinder;fillColor=#f8cecc;" value="Blob Storage" vertex="1">
+          <mxGeometry height="60" width="130" x="160" y="60" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-6" edge="1" parent="1" source="c6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c7" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c6" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Loan Service" vertex="1">
+          <mxGeometry height="60" width="140" x="-540" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-9" edge="1" parent="1" source="c7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c8" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c7" parent="1" style="shape=cylinder;fillColor=#ffe6cc;" value="Create LoanApplication Record&#xa;(SQL Database)" vertex="1">
+          <mxGeometry height="80" width="180" x="-325" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-7" edge="1" parent="1" source="c8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c9" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="70" y="420" />
+              <mxPoint x="-680" y="420" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c8" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Publish LoanApplicationSubmitted &#xa;Event" vertex="1">
+          <mxGeometry height="60" width="220" x="-40" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-8" edge="1" parent="1" source="c9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c9" parent="1" style="rounded=1;fillColor=#e1d5e7;" value="Azure Service Bus Topic" vertex="1">
+          <mxGeometry height="60" width="180" x="-770" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-11" edge="1" parent="1" source="c10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="8yGKU04aGsixKv7Fq8Wi-10" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c10" parent="1" style="rounded=1;fillColor=#fff2cc;" value="LoanAssessmentFunction" vertex="1">
+          <mxGeometry height="80" width="200" x="-530" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="c11" parent="1" style="rounded=1;" value="Read ASB Message" vertex="1">
+          <mxGeometry height="50" width="180" x="-185" y="513" as="geometry" />
+        </mxCell>
+        <mxCell id="c12" parent="1" style="shape=cylinder;fillColor=#d5e8d4;" value="&#xa;Create Cosmos DB Metadata&#xa;(Loan Documents)" vertex="1">
+          <mxGeometry height="70" width="220" x="-210" y="607" as="geometry" />
+        </mxCell>
+        <mxCell id="c14" parent="1" style="rounded=1;" value="Read Loan Details&#xa;(SQL Database)" vertex="1">
+          <mxGeometry height="60" width="220" x="-210" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="c16" parent="1" style="rounded=1;" value="Check Eligibility Rules" vertex="1">
+          <mxGeometry height="60" width="200" x="90" y="513" as="geometry" />
+        </mxCell>
+        <mxCell id="c17" parent="1" style="rounded=1;" value="Calculate Risk Score" vertex="1">
+          <mxGeometry height="60" width="200" x="90" y="613" as="geometry" />
+        </mxCell>
+        <mxCell id="c18" parent="1" style="shape=cylinder;fillColor=#ffe6cc;" value="&#xa;Update SQL Status&#xa;Approved/ Rejected&#xa;PendingManagerReview" vertex="1">
+          <mxGeometry height="87" width="200" x="90" y="706.5" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-13" edge="1" parent="1" source="c19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c20" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c19" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Publish LoanDecisionCompleted" vertex="1">
+          <mxGeometry height="60" width="220" x="-770" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-14" edge="1" parent="1" source="c20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c21" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c20" parent="1" style="rounded=1;fillColor=#e1d5e7;" value="Azure Service Bus Topic" vertex="1">
+          <mxGeometry height="60" width="180" x="-500" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-15" edge="1" parent="1" source="c21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c22" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c21" parent="1" style="rounded=1;fillColor=#dae8fc;" value="Logic App" vertex="1">
+          <mxGeometry height="60" width="140" x="-270" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-16" edge="1" parent="1" source="c22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c23" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="c22" parent="1" style="rounded=1;fillColor=#dae8fc;" value="Send Approval Email&#xa;Send Rejection Email" vertex="1">
+          <mxGeometry height="80" width="220" x="-80" y="990" as="geometry" />
+        </mxCell>
+        <mxCell id="c23" parent="1" style="rounded=1;fillColor=#dae8fc;" value="Customer Notified" vertex="1">
+          <mxGeometry height="60" width="180" x="180" y="1000" as="geometry" />
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-5" edge="1" parent="1" source="c5" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" target="c6" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="-300" y="250" as="sourcePoint" />
+            <mxPoint x="-250" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-12" edge="1" parent="1" source="8yGKU04aGsixKv7Fq8Wi-10" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" target="c19" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="-580" y="920" as="sourcePoint" />
+            <mxPoint x="-530" y="870" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
