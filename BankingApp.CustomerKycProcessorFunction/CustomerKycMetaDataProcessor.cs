@@ -1,4 +1,5 @@
 namespace BankingApp.CustomerKycProcessorFunction;
+
 public class CustomerKycMetaDataProcessor
 {
     private readonly ILogger<CustomerKycMetaDataProcessor> _logger;

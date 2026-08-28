@@ -1,4 +1,6 @@
-﻿namespace BankingApp.Data.DocumentDb
+﻿using BankingApp.Data.DocumentDb.Containers;
+
+namespace BankingApp.Data.DocumentDb
 {
     public class DocumentDbContext : DbContext
     {
@@ -17,7 +19,7 @@
             {
                 entity.ToContainer("KycDocuments");
 
-                entity.HasKey(x => x.DocumentId);
+                entity.HasKey(x => x.Id);
 
                 entity.HasPartitionKey(x => x.CustomerId);
             });

@@ -1,4 +1,6 @@
-﻿namespace BankingApp.CustomerKycProcessorFunction.Services
+﻿using BankingApp.Data.DocumentDb.Containers;
+
+namespace BankingApp.CustomerKycProcessorFunction.Services
 {
     public class MetaDataProcessorService(IUnitOfWork unitOfWork, IKycDocumentsRepository kycDocumentsRepository, IServiceBusHandler serviceBusHandler, IConfiguration configuration) : IMetaDataProcessorService
     {
@@ -49,7 +51,7 @@
             {
                 KycDocument document = new()
                 {
-                    DocumentId = kycdocument.DocumentId,
+                    Id = kycdocument.DocumentId,
                     CustomerId = message.CustomerId,
                     DocumentName = kycdocument.DocumentName,
                     BlobUrl = kycdocument.BlobUrl
@@ -62,21 +64,21 @@
         private (bool, string) ValidateDocuments(List<CustomerKYCDocument> documents)
         {
             bool validated = false;
-            string validationRemarks = "KYC verification completed successfully";
+            string validationRemarks = string.Empty;
             if (documents is null || documents.Count != 2)
                 return (validated, "Documents were not uploaded.");
 
             foreach (var document in documents)
             {
-                if (document.DocumentName.Contains("PAN", StringComparison.OrdinalIgnoreCase))
-                    validated = true;
+                if (document.DocumentName.Contains("PAN", StringComparison.OrdinalIgnoreCase))                
+                    validated = true;                
                 else
                 {
                     validated = false;
                     validationRemarks = "PAN Verificaiton Failed.";
                 }
 
-                if (document.DocumentName.Contains("Aadhar", StringComparison.OrdinalIgnoreCase))
+                if (document.DocumentName.Contains("Aadhar", StringComparison.OrdinalIgnoreCase))                
                     validated = true;
                 else
                 {
@@ -84,6 +86,8 @@
                     validationRemarks = "Aadhar Verificaiton Failed.";
                 }
             }
+
+            validationRemarks = validated ? "KYC verification completed successfully" : validationRemarks;
             return (validated, validationRemarks);
         }
     }

@@ -51,23 +51,28 @@
 
         private static CustomerKYCMessage CreateCustomerKYCMessage(PostUserRegisterationRequest request, Customer customer)
         {
-            CustomerKYCMessage customerKYCEvent = new CustomerKYCMessage();
-            customerKYCEvent.EventId = Guid.NewGuid();
-            customerKYCEvent.EventType = "CustomerKYCUploaded";
-            customerKYCEvent.EventTime = DateTime.Now;
-            customerKYCEvent.DocumentType = "KYC";
-            customerKYCEvent.CustomerId = customer.Id;
-
-            foreach (var doc in request.KycDocuments!)
+            CustomerKYCMessage customerKYCEvent = new CustomerKYCMessage
             {
-                customerKYCEvent.Documents.Add(
-                  new CustomerKYCDocument
-                  {
-                      DocumentId = Guid.NewGuid(),
-                      DocumentName = doc.FileName,
-                      BlobUrl = $"https://team1bankingapp.blob.core.windows.net/kyc-documents/{customer.Id}/{doc.FileName}" //TODO - This URL should be generated based on the actual blob storage URL after upload
-                  }
-                );
+                EventId = Guid.NewGuid(),
+                EventType = "CustomerKYCUploaded",
+                EventTime = DateTime.Now,
+                DocumentType = "KYC",
+                CustomerId = customer.Id
+            };
+
+            if (request.KycDocuments is not null)
+            {
+                foreach (var doc in request.KycDocuments)
+                {
+                    customerKYCEvent.Documents.Add(
+                      new CustomerKYCDocument
+                      {
+                          DocumentId = Guid.NewGuid(),
+                          DocumentName = doc.FileName,
+                          BlobUrl = $"https://team1bankingapp.blob.core.windows.net/kyc-documents/{customer.Id}/{doc.FileName}" //TODO - This URL should be generated based on the actual blob storage URL after upload
+                      }
+                    );
+                }
             }
 
             customerKYCEvent.UploadedBy = "Customer";

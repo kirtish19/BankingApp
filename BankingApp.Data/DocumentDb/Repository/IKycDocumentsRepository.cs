@@ -1,4 +1,6 @@
-﻿namespace BankingApp.Data.DocumentDb.Repository
+﻿using BankingApp.Data.DocumentDb.Containers;
+
+namespace BankingApp.Data.DocumentDb.Repository
 {
     public interface IKycDocumentsRepository
     {

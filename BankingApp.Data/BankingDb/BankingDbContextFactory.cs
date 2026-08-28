@@ -1,4 +1,5 @@
 ﻿namespace BankingApp.Data.BankingDb;
+
 public class BankingDbContextFactory : IDesignTimeDbContextFactory<BankingDbContext>
 {
     public BankingDbContext CreateDbContext(string[] args)

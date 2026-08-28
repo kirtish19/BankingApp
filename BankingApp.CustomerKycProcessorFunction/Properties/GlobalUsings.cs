@@ -3,7 +3,6 @@ global using Azure.Monitor.OpenTelemetry.Exporter;
 global using BankingApp.CustomerKycProcessorFunction.Services;
 global using BankingApp.Data.BankingDb.Extensions;
 global using BankingApp.Data.BankingDb.Repository;
-global using BankingApp.Data.DocumentDb.Container;
 global using BankingApp.Data.DocumentDb.Extensions;
 global using BankingApp.Data.DocumentDb.Repository;
 global using BankingApp.Shared.Constants.Enums;
