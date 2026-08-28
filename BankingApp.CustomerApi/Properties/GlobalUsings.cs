@@ -1,5 +1,16 @@
 ﻿global using BankingApp.CustomerApi.Extensions;
+global using BankingApp.CustomerApi.Extensions.Mappings;
 global using BankingApp.CustomerApi.Models;
 global using BankingApp.CustomerApi.Services;
+global using BankingApp.Data.BankingDb.Extensions;
+global using BankingApp.Data.BankingDb.Repository;
+global using BankingApp.Data.BankingDb.Tables;
 global using BankingApp.Shared.Constants.Enums;
+global using BankingApp.Shared.Extensions;
+global using BankingApp.Shared.Helpers;
+global using BankingApp.Shared.Models;
 global using Microsoft.AspNetCore.Mvc;
+global using Serilog;
+global using System.Security.Cryptography;
+global using System.Text;
+global using System.Text.Json.Serialization;

@@ -2,10 +2,8 @@
 
 namespace BankingApp.Data.BankingDb.Repository
 {
-    public interface IUserRepository
+    public interface IUserRepository:IEntityRepository<User>
     {
-        Task AddAsync(User user);
-
         Task<User> GetUserByCustomerId(Guid id);
     }
 }

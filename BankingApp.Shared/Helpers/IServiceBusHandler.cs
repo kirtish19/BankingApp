@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace BankingApp.Shared.Helpers
+﻿namespace BankingApp.Shared.Helpers
 {
     public interface IServiceBusHandler
     {

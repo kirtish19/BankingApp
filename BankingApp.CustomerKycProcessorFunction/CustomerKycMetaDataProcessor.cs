@@ -1,13 +1,4 @@
-using Azure.Messaging.ServiceBus;
-using BankingApp.CustomerKycProcessorFunction.Services;
-using BankingApp.Shared.Models;
-using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Logging;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
 namespace BankingApp.CustomerKycProcessorFunction;
-
 public class CustomerKycMetaDataProcessor
 {
     private readonly ILogger<CustomerKycMetaDataProcessor> _logger;

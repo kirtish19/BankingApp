@@ -1,3 +1,11 @@
-﻿global using BankingApp.Shared.Constants;
+﻿global using Azure.Identity;
+global using Azure.Security.KeyVault.Secrets;
+global using BankingApp.Data.BankingDb.Tables;
+global using BankingApp.Data.DocumentDb.Container;
+global using BankingApp.Shared.Constants;
+global using BankingApp.Shared.Constants.Enums;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Design;
+global using Microsoft.EntityFrameworkCore.Storage;
 global using Microsoft.Extensions.DependencyInjection;
+global using System.Linq.Expressions;

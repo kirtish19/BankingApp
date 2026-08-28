@@ -1,14 +1,10 @@
-﻿using BankingApp.Data.BankingDb.Tables;
-
-namespace BankingApp.Data.BankingDb.Repository
+﻿namespace BankingApp.Data.BankingDb.Repository
 {
-    public class CustomerRepository(BankingDbContext dbContext) : ICustomerRepository
+    public class CustomerRepository : EntityRepository<Customer>, ICustomerRepository
     {
-        private readonly BankingDbContext _dbContext = dbContext;
-
-        public async Task AddAsync(Customer customer)
+        public CustomerRepository(BankingDbContext dbContext) : base(dbContext)
         {
-            await _dbContext.Customers.AddAsync(customer);
-        }        
+
+        }
     }
 }

@@ -1,8 +1,4 @@
-﻿using Azure;
-using Azure.Storage.Blobs.Models;
-using Microsoft.AspNetCore.Http;
-
-namespace BankingApp.Shared.Helpers
+﻿namespace BankingApp.Shared.Helpers
 {
     public interface IStorageHandler
     {

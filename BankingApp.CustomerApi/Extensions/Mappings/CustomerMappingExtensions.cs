@@ -1,6 +1,4 @@
-﻿using BankingApp.Data.BankingDb.Tables;
-
-namespace BankingApp.CustomerApi.Extensions.Mappings
+﻿namespace BankingApp.CustomerApi.Extensions.Mappings
 {
     public static class CustomerMappingExtensions
     {

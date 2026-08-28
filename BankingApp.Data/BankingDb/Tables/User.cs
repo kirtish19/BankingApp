@@ -1,6 +1,4 @@
-﻿using BankingApp.Shared.Constants.Enums;
-
-namespace BankingApp.Data.BankingDb.Tables
+﻿namespace BankingApp.Data.BankingDb.Tables
 {
     [Index(nameof(UserName), IsUnique = true)]
     public class User

@@ -1,8 +1,4 @@
-﻿using Azure.Messaging.ServiceBus;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-namespace BankingApp.Shared.Helpers
+﻿namespace BankingApp.Shared.Helpers
 {
     public class ServiceBusHandler : IServiceBusHandler
     {

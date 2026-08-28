@@ -1,0 +1,9 @@
+﻿global using Azure;
+global using Azure.Identity;
+global using Azure.Messaging.ServiceBus;
+global using Azure.Storage.Blobs;
+global using Azure.Storage.Blobs.Models;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.Extensions.Configuration;
+global using System.Text.Json;
+global using System.Text.Json.Serialization;

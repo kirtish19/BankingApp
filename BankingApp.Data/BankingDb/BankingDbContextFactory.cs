@@ -1,9 +1,4 @@
-﻿using Azure.Identity;
-using Azure.Security.KeyVault.Secrets;
-using Microsoft.EntityFrameworkCore.Design;
-
-namespace BankingApp.Data.BankingDb;
-
+﻿namespace BankingApp.Data.BankingDb;
 public class BankingDbContextFactory : IDesignTimeDbContextFactory<BankingDbContext>
 {
     public BankingDbContext CreateDbContext(string[] args)

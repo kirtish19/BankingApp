@@ -1,8 +1,4 @@
-﻿using BankingApp.Data.BankingDb.Tables;
-using System.Security.Cryptography;
-using System.Text;
-
-namespace BankingApp.CustomerApi.Extensions.Mappings
+﻿namespace BankingApp.CustomerApi.Extensions.Mappings
 {
     public static class UserMappingExtensions
     {

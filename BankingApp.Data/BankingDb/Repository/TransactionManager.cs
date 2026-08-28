@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-
-namespace BankingApp.Data.BankingDb.Repository
+﻿namespace BankingApp.Data.BankingDb.Repository
 {
     public class TransactionManager(BankingDbContext dbContext) : ITransactionManager
     {

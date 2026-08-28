@@ -1,8 +1,4 @@
-﻿using BankingApp.Data.BankingDb.Extensions;
-using BankingApp.Data.BankingDb.Repository;
-using BankingApp.Shared.Helpers;
-
-namespace BankingApp.CustomerApi.Extensions
+﻿namespace BankingApp.CustomerApi.Extensions
 {
     public static class ApplicationServiceExtensions
     {

@@ -1,7 +1,4 @@
-﻿using Azure.Identity;
-using Microsoft.Extensions.Configuration;
-
-namespace BankingApp.Shared.Extensions
+﻿namespace BankingApp.Shared.Extensions
 {
     public static class CustomKeyVaultExtensions
     {

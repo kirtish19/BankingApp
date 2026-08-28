@@ -1,18 +1,3 @@
-using Azure.Monitor.OpenTelemetry.Exporter;
-using BankingApp.CustomerKycProcessorFunction.Services;
-using BankingApp.Data.BankingDb.Extensions;
-using BankingApp.Data.BankingDb.Repository;
-using BankingApp.Data.DocumentDb.Extensions;
-using BankingApp.Data.DocumentDb.Repository;
-using BankingApp.Shared.Extensions;
-using BankingApp.Shared.Helpers;
-using Microsoft.Azure.Functions.Worker.Builder;
-using Microsoft.Azure.Functions.Worker.OpenTelemetry;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
-
 var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();

@@ -1,6 +1,4 @@
-﻿using BankingApp.Data.DocumentDb.Container;
-
-namespace BankingApp.Data.DocumentDb
+﻿namespace BankingApp.Data.DocumentDb
 {
     public class DocumentDbContext : DbContext
     {

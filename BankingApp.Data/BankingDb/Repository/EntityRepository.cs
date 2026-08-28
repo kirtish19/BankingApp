@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace BankingApp.Data.BankingDb.Repository
+﻿namespace BankingApp.Data.BankingDb.Repository
 {
     public class EntityRepository<T>(BankingDbContext dbContext) : IEntityRepository<T> where T : class
     {

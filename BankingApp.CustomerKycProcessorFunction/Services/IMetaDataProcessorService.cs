@@ -1,6 +1,4 @@
-﻿using BankingApp.Shared.Models;
-
-namespace BankingApp.CustomerKycProcessorFunction.Services
+﻿namespace BankingApp.CustomerKycProcessorFunction.Services
 {
     public interface IMetaDataProcessorService
     {

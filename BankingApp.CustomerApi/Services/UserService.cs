@@ -1,10 +1,4 @@
-﻿using BankingApp.CustomerApi.Extensions.Mappings;
-using BankingApp.Data.BankingDb.Repository;
-using BankingApp.Data.BankingDb.Tables;
-using BankingApp.Shared.Helpers;
-using BankingApp.Shared.Models;
-
-namespace BankingApp.CustomerApi.Services
+﻿namespace BankingApp.CustomerApi.Services
 {
     public class UserService(IUnitOfWork unitOfWork, IStorageHandler storageHandler, IServiceBusHandler serviceBusHandler, IConfiguration configuration) : IUserService
     {
@@ -18,13 +12,13 @@ namespace BankingApp.CustomerApi.Services
             try
             {
                 var user = request.ToUser();
-                await _unitOfWork.Users.AddAsync(user);
+                await _unitOfWork.UserRepository.AddAsync(user);
 
                 // Customer is created only for Customer registration
                 if (request.UserType == UserType.Customer)
                 {
                     var customer = request.ToCustomer(user.Id);
-                    await _unitOfWork.Customers.AddAsync(customer);
+                    await _unitOfWork.CustomerRepository.AddAsync(customer);
 
 
                     if (request.KycDocuments is not null && request.KycDocuments.Any())

@@ -1,15 +1,18 @@
-﻿using BankingApp.Data.BankingDb.Tables;
-
-namespace BankingApp.Data.BankingDb.Repository
+﻿namespace BankingApp.Data.BankingDb.Repository
 {
     public class UnitOfWork(
-     IUserRepository userRepository,
-     ICustomerRepository customerRepository,
-     ITransactionManager transactionManager)
+     IServiceProvider serviceProvider)
      : IUnitOfWork
     {
-        public IUserRepository Users { get; } = userRepository;
-        public ICustomerRepository Customers { get; } = customerRepository;
-        public ITransactionManager TransactionManager { get; } = transactionManager;
+
+        private readonly IServiceProvider _serviceProvider = serviceProvider;
+        ITransactionManager? _transactionManager;
+        IUserRepository? _userRepository;
+        ICustomerRepository? _customerRepository;
+
+        public IUserRepository UserRepository => _userRepository ??= (IUserRepository)_serviceProvider.GetRequiredService(typeof(IUserRepository));
+        public ICustomerRepository CustomerRepository => _customerRepository ??= (ICustomerRepository)_serviceProvider.GetRequiredService(typeof(ICustomerRepository));
+        public ITransactionManager TransactionManager => _transactionManager ??= (ITransactionManager)_serviceProvider.GetRequiredService(typeof(ITransactionManager));
+
     }
 }

@@ -1,7 +1,3 @@
-using BankingApp.Shared.Extensions;
-using Serilog;
-using System.Text.Json.Serialization;
-
 try
 {
 

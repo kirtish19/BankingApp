@@ -2,8 +2,8 @@
 {
     public interface IUnitOfWork
     {
-        IUserRepository Users { get; }
-        ICustomerRepository Customers { get; }
+        IUserRepository UserRepository { get; }
+        ICustomerRepository CustomerRepository { get; }
         ITransactionManager TransactionManager { get; }
     }
 }

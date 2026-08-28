@@ -1,12 +1,4 @@
-﻿using BankingApp.Data.BankingDb.Repository;
-using BankingApp.Data.DocumentDb.Container;
-using BankingApp.Data.DocumentDb.Repository;
-using BankingApp.Shared.Constants.Enums;
-using BankingApp.Shared.Helpers;
-using BankingApp.Shared.Models;
-using Microsoft.Extensions.Configuration;
-
-namespace BankingApp.CustomerKycProcessorFunction.Services
+﻿namespace BankingApp.CustomerKycProcessorFunction.Services
 {
     public class MetaDataProcessorService(IUnitOfWork unitOfWork, IKycDocumentsRepository kycDocumentsRepository, IServiceBusHandler serviceBusHandler, IConfiguration configuration) : IMetaDataProcessorService
     {
@@ -21,7 +13,7 @@ namespace BankingApp.CustomerKycProcessorFunction.Services
             string KYCRemarks;
             (KYCVerified, KYCRemarks) = ValidateDocuments(message.Documents);
 
-            var user = await _unitOfWork.Users.GetUserByCustomerId(message.CustomerId);
+            var user = await _unitOfWork.UserRepository.GetUserByCustomerId(message.CustomerId);
             user.IsActive = KYCVerified;
             user.Customer!.Status = KYCVerified ? CustomerStatus.Active : CustomerStatus.Rejected;
             await _unitOfWork.TransactionManager.SaveChangesAsync();

@@ -2,8 +2,7 @@
 
 namespace BankingApp.Data.BankingDb.Repository
 {
-    public interface ICustomerRepository
-    {
-        Task AddAsync(Customer customer);
+    public interface ICustomerRepository:IEntityRepository<Customer>
+    {   
     }
 }

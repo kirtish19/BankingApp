@@ -1,6 +1,4 @@
-﻿using Serilog;
-
-namespace BankingApp.CustomerApi.Extensions
+﻿namespace BankingApp.CustomerApi.Extensions
 {
     public static class SerilogExtensions
     {

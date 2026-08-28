@@ -1,6 +1,4 @@
-﻿using BankingApp.Data.DocumentDb.Container;
-
-namespace BankingApp.Data.DocumentDb.Repository
+﻿namespace BankingApp.Data.DocumentDb.Repository
 {
     public class KycDocumentsRepository : IKycDocumentsRepository
     {

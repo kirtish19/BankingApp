@@ -1,6 +1,4 @@
-﻿using BankingApp.Data.BankingDb.Tables;
-
-namespace BankingApp.Data.BankingDb
+﻿namespace BankingApp.Data.BankingDb
 {
     public class BankingDbContext : DbContext
     {
