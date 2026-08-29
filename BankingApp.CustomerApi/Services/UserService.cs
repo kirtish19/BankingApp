@@ -21,17 +21,18 @@
                     await _unitOfWork.CustomerRepository.AddAsync(customer);
 
 
+                    Dictionary<string, string>? uploadedBlobUrls = null;
                     if (request.KycDocuments is not null && request.KycDocuments.Any())
                     {
                         var storageConnectionString = _configuration.GetValue<string>("StorageAccountConnectionString")!;
                         var containerName = _configuration.GetValue<string>("StorageContainerName")!;
-                        await _storageHandler.UploadBlobAsync(storageConnectionString, containerName, user.Customer!.Id.ToString(), request.KycDocuments);
+                        uploadedBlobUrls = await _storageHandler.UploadBlobAsync(storageConnectionString, containerName, user.Customer!.Id.ToString(), request.KycDocuments);
                     }
 
-                    CustomerKYCMessage customerKYCMessage = CreateCustomerKYCMessage(request, customer);
+                    CustomerKYCMessage customerKYCMessage = CreateCustomerKYCMessage(request, customer, uploadedBlobUrls);
 
                     var message = customerKYCMessage;
-                    var topicName = "DocumentTopic";
+                    var topicName = _configuration.GetValue<string>("KycTopicName")!;
                     var serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusWriter")!;
                     var additionalProperties = new Dictionary<string, object>
                     {
@@ -49,7 +50,7 @@
             }
         }
 
-        private static CustomerKYCMessage CreateCustomerKYCMessage(PostUserRegisterationRequest request, Customer customer)
+        private static CustomerKYCMessage CreateCustomerKYCMessage(PostUserRegisterationRequest request, Customer customer, Dictionary<string, string>? uploadedBlobUrls = null)
         {
             CustomerKYCMessage customerKYCEvent = new CustomerKYCMessage
             {
@@ -64,12 +65,16 @@
             {
                 foreach (var doc in request.KycDocuments)
                 {
+                    var blobUrl = (uploadedBlobUrls != null && uploadedBlobUrls.TryGetValue(doc.FileName, out var url))
+                        ? url
+                        : $"https://team1bankingapp.blob.core.windows.net/kyc-documents/{customer.Id}/{doc.FileName}"; // fallback to previously used pattern if upload did not return URL
+
                     customerKYCEvent.Documents.Add(
                       new CustomerKYCDocument
                       {
                           DocumentId = Guid.NewGuid(),
                           DocumentName = doc.FileName,
-                          BlobUrl = $"https://team1bankingapp.blob.core.windows.net/kyc-documents/{customer.Id}/{doc.FileName}" //TODO - This URL should be generated based on the actual blob storage URL after upload
+                          BlobUrl = blobUrl
                       }
                     );
                 }

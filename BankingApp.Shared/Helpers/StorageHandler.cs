@@ -19,14 +19,16 @@
             return Task.FromResult<AsyncPageable<BlobItem>?>(blobItems);
         }
 
-        public async Task UploadBlobAsync(string connectionString, string containerName, string directoryName, IFormFileCollection formFiles)
+        public async Task<Dictionary<string, string>> UploadBlobAsync(string connectionString, string containerName, string directoryName, IFormFileCollection formFiles)
         {
             BlobContainerClient container = new BlobContainerClient(connectionString, containerName);
 
             await container.CreateIfNotExistsAsync();
 
             if (formFiles == null || !formFiles.Any())
-                return;
+                return [];
+
+            var uploadedUrls = new Dictionary<string, string>();
 
             foreach (var formFile in formFiles)
             {
@@ -37,7 +39,12 @@
                 BlobClient blobClient = container.GetBlobClient($"{directoryName}/{fileName}");
                 using var stream = formFile.OpenReadStream();
                 await blobClient.UploadAsync(stream, overwrite: true);
+
+                // Record the blob URI where the file was uploaded. This is the canonical URL to the blob.
+                uploadedUrls[fileName] = blobClient.Uri.ToString();
             }
+
+            return uploadedUrls;
         }
     }
 }

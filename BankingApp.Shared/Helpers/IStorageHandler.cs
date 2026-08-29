@@ -2,7 +2,7 @@
 {
     public interface IStorageHandler
     {
-        public Task UploadBlobAsync(string connectionString, string containerName, string directoryName, IFormFileCollection formFiles);
+        public Task<Dictionary<string, string>> UploadBlobAsync(string connectionString, string containerName, string directoryName, IFormFileCollection formFiles);
 
         public Task DownloadBlobAsync(string connectionString, string containerName, string blobName, string downloadPath);
 
