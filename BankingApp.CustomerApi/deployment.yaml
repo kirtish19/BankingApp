@@ -1,0 +1,27 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bankingapp-customerapi
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: bankingapp-customerapi
+
+  template:
+    metadata:
+      labels:
+        app: bankingapp-customerapi
+
+    spec:
+      containers:
+
+      - name: bankingapp-customerapi
+
+        image: team1bankingappacr.azurecr.io/bankingapp-customerapi:v1
+        imagePullPolicy: Always
+
+        ports:
+          - containerPort: 8080

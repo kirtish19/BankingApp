@@ -1,3 +1,5 @@
+using Microsoft.OpenApi;
+
 try
 {
 
@@ -10,7 +12,9 @@ try
         .CreateLogger();
 
     var keyvaulturi = builder.Configuration.GetConnectionString("KeyVault")!;
-    builder.Configuration.AddCustomKeyVault(keyvaulturi);
+    var runningLocal = builder.Configuration.GetValue<bool>("RunningLocal")!;
+    
+    builder.Configuration.AddCustomKeyVault(keyvaulturi, runningLocal);
 
 
     builder.Host.UseSerilog();
@@ -20,15 +24,44 @@ try
     // Add services to the container.
     builder.Services.AddApplicationServices(builder.Configuration);
 
+
     builder.Services
         .AddControllers()
         .AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.Converters.Add(
                 new JsonStringEnumConverter());
+
+            options.JsonSerializerOptions.NumberHandling =
+            JsonNumberHandling.Strict;
         });
 
-    builder.Services.AddOpenApi();
+    builder.Services.AddOpenApi(options =>
+    {
+        options.AddSchemaTransformer((schema, context, cancellationToken) =>
+        {
+            // Convert number|string -> number
+            if (schema.Type.HasValue &&
+                schema.Type.Value.HasFlag(JsonSchemaType.Number) &&
+                schema.Type.Value.HasFlag(JsonSchemaType.String))
+            {
+                schema.Type = JsonSchemaType.Number;
+                schema.Pattern = null;
+            }
+
+            // Convert integer|string -> integer
+            if (schema.Type.HasValue &&
+                schema.Type.Value.HasFlag(JsonSchemaType.Integer) &&
+                schema.Type.Value.HasFlag(JsonSchemaType.String))
+            {
+                schema.Type = JsonSchemaType.Integer;
+                schema.Pattern = null;
+            }
+
+            return Task.CompletedTask;
+        });
+    });
+
 
     var app = builder.Build();
 
@@ -38,7 +71,7 @@ try
     {
         options.SwaggerEndpoint(
             "/openapi/v1.json",
-            "Loan API v1");
+            "Customer API v1");
     });
 
     // Serilog request logging
