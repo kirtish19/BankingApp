@@ -1,4 +1,5 @@
 using Microsoft.Azure.Cosmos;
+using OpenTelemetry;
 
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -20,11 +21,10 @@ builder.Services.AddSingleton(s =>
     return new CosmosClient(builder.Configuration.GetValue<string>("CosmosDbConnectionString")!);
 });
 
-if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING")))
-{
-    builder.Services.AddOpenTelemetry()
+builder.Services
+        .AddOpenTelemetry()
         .UseFunctionsWorkerDefaults()
+        .WithLogging()
         .UseAzureMonitorExporter();
-}
 
 builder.Build().Run();

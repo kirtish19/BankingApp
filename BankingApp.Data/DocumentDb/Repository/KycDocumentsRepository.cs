@@ -1,6 +1,7 @@
 ﻿using BankingApp.Data.DocumentDb.Containers;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace BankingApp.Data.DocumentDb.Repository
 {
@@ -23,18 +24,30 @@ namespace BankingApp.Data.DocumentDb.Repository
         //}
 
         private readonly Container _container;
-        public KycDocumentsRepository(CosmosClient cosmosClient, IConfiguration configuration)
+        private readonly ILogger<KycDocumentsRepository> _logger;
+
+        public KycDocumentsRepository(CosmosClient cosmosClient, IConfiguration configuration, ILogger<KycDocumentsRepository> logger)
         {
             var databaseName = configuration.GetValue<string>("CosmosDbName");
             var containerName = configuration.GetValue<string>("KycContainerName");
             _container = cosmosClient.GetContainer(databaseName, containerName);
+            _logger = logger;
         }
         public async Task AddKycRecords(IEnumerable<KycDocument> kycDocuments)
         {
-            foreach (var kycDocument in kycDocuments)
+            try
             {
-                await _container.CreateItemAsync(kycDocument, new PartitionKey(kycDocument.CustomerId.ToString()));
+                foreach (var kycDocument in kycDocuments)
+                {
+                    await _container.CreateItemAsync(kycDocument, new PartitionKey(kycDocument.CustomerId.ToString()));
+                }
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                throw;
+            }
+            
         }
     }
 }

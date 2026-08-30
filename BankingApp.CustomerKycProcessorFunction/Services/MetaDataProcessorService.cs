@@ -2,25 +2,46 @@
 
 namespace BankingApp.CustomerKycProcessorFunction.Services
 {
-    public class MetaDataProcessorService(IUnitOfWork unitOfWork, IKycDocumentsRepository kycDocumentsRepository, IServiceBusHandler serviceBusHandler, IConfiguration configuration) : IMetaDataProcessorService
+    public class MetaDataProcessorService(IUnitOfWork unitOfWork, IKycDocumentsRepository kycDocumentsRepository, IServiceBusHandler serviceBusHandler, IConfiguration configuration, ILogger<MetaDataProcessorService> logger) : IMetaDataProcessorService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IKycDocumentsRepository _kycDocumentsRepository = kycDocumentsRepository;
         private readonly IServiceBusHandler _serviceBusHandler = serviceBusHandler;
         private readonly IConfiguration _configuration = configuration;
+        private readonly ILogger<MetaDataProcessorService> _logger = logger;
 
         public async Task ProcessMetaData(CustomerKYCMessage message)
         {
             bool KYCVerified;
             string KYCRemarks;
-            (KYCVerified, KYCRemarks) = ValidateDocuments(message.Documents);
+            try
+            {
+                (KYCVerified, KYCRemarks) = ValidateDocuments(message.Documents);
 
-            var user = await _unitOfWork.UserRepository.GetUserByCustomerId(message.CustomerId);
-            user.IsActive = KYCVerified;
-            user.Customer!.Status = KYCVerified ? CustomerStatus.Active : CustomerStatus.Rejected;
-            await _unitOfWork.TransactionManager.SaveChangesAsync();
-            await CreateKycRecords(message);
+                var user = await _unitOfWork.UserRepository.GetUserByCustomerId(message.CustomerId);
+                user.IsActive = KYCVerified;
+                user.Customer!.Status = KYCVerified ? CustomerStatus.Active : CustomerStatus.Rejected;
 
+                _logger.LogInformation("Writing to cosmos");
+
+                await CreateKycRecords(message);
+
+                _logger.LogInformation("Completed writting to cosmos");
+                
+                _logger.LogInformation("Calling method to send event to service bus");
+
+                await DispatchNotificationEvent(message, KYCVerified, KYCRemarks, user);
+
+                _logger.LogInformation("Message sent to service bus");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+            }
+        }
+
+        private async Task DispatchNotificationEvent(CustomerKYCMessage message, bool KYCVerified, string KYCRemarks, Data.BankingDb.Tables.User user)
+        {
             KycNotification kycNotification = new()
             {
                 EventId = message.EventId,
@@ -28,7 +49,7 @@ namespace BankingApp.CustomerKycProcessorFunction.Services
                 EventTime = DateTime.Now,
                 NotificationType = "KYC",
                 CustomerId = message.CustomerId,
-                CustomerName = user.Customer.FirstName + " " + user.Customer.LastName,
+                CustomerName = user.Customer!.FirstName + " " + user.Customer.LastName,
                 Status = KYCVerified ? "KYCVerified" : "KYCRejected",
                 Email = user.Customer.Email,
                 MobileNumber = user.Customer.MobileNumber,
@@ -44,6 +65,7 @@ namespace BankingApp.CustomerKycProcessorFunction.Services
                 _configuration.GetValue<string>("ServiceBusWriter")!,
                 additionalProperties);
         }
+
         private async Task CreateKycRecords(CustomerKYCMessage message)
         {
             var kycRecords = new List<KycDocument>();
@@ -67,18 +89,18 @@ namespace BankingApp.CustomerKycProcessorFunction.Services
             string validationRemarks = string.Empty;
             if (documents is null || documents.Count != 2)
                 return (validated, "Documents were not uploaded.");
-
+            //TODO - fix below logic
             foreach (var document in documents)
             {
-                if (document.DocumentName.Contains("PAN", StringComparison.OrdinalIgnoreCase))                
-                    validated = true;                
+                if (document.DocumentName.Contains("PAN", StringComparison.OrdinalIgnoreCase))
+                    validated = true;
                 else
                 {
                     validated = false;
                     validationRemarks = "PAN Verificaiton Failed.";
                 }
 
-                if (document.DocumentName.Contains("Aadhar", StringComparison.OrdinalIgnoreCase))                
+                if (document.DocumentName.Contains("Aadhar", StringComparison.OrdinalIgnoreCase))
                     validated = true;
                 else
                 {

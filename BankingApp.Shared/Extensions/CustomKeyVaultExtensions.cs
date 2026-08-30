@@ -6,16 +6,19 @@
         {
             public IConfigurationBuilder AddCustomKeyVault(string keyVaultUri)
             {
-                var credential = new DefaultAzureCredential(
-                new DefaultAzureCredentialOptions
-                {
-                    ExcludeEnvironmentCredential = true,
-                    ExcludeWorkloadIdentityCredential = true,
-                    ExcludeManagedIdentityCredential = true,
-                    ExcludeVisualStudioCodeCredential = true,
-                    ExcludeAzurePowerShellCredential = true,
-                    ExcludeAzureDeveloperCliCredential = true
-                });
+                //use this to run fast on local
+                //var credential = new DefaultAzureCredential(
+                //new DefaultAzureCredentialOptions
+                //{
+                //    ExcludeEnvironmentCredential = true,
+                //    ExcludeWorkloadIdentityCredential = true,
+                //    ExcludeManagedIdentityCredential = true,
+                //    ExcludeVisualStudioCodeCredential = true,
+                //    ExcludeAzurePowerShellCredential = true,
+                //    ExcludeAzureDeveloperCliCredential = true
+                //});
+
+                var credential = new DefaultAzureCredential();
                 configuration.AddAzureKeyVault(new Uri(keyVaultUri), credential);
                 return configuration;
             }
