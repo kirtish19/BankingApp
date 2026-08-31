@@ -24,7 +24,7 @@
         {
             return new Customer
             {
-                Id = Guid.NewGuid(),
+                Id = request.Id,
                 UserId = userId,
                 FirstName = request.FirstName,
                 LastName = request.LastName,
@@ -34,8 +34,8 @@
                 AnnualIncome = request.AnnualIncome,
                 CreditScore = request.CreditScore,
                 DateOfBirth = request.DateOfBirth,
-                Status = CustomerStatus.New,
-                CreatedDate = DateTime.Now
+                Status = request.Status,
+                CreatedDate = request.CreatedDate
             };
         }
     }

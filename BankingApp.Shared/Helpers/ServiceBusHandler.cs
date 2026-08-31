@@ -8,8 +8,9 @@
             await using var client = new ServiceBusClient(connectionString);
 
             ServiceBusSender sender = client.CreateSender(queueOrTopicName);
-            var options = new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve };
-            string jsonMessage = JsonSerializer.Serialize(message, options);
+            //var options = new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve };
+            //string jsonMessage = JsonSerializer.Serialize(message, options);
+            string jsonMessage = JsonSerializer.Serialize(message);
             ServiceBusMessage serviceBusMessage = new ServiceBusMessage(jsonMessage)
             {
                 MessageId = Guid.NewGuid().ToString()

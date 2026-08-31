@@ -4,7 +4,7 @@
     {
         extension(IConfigurationBuilder configuration)
         {
-            public IConfigurationBuilder AddCustomKeyVault(string keyVaultUri, bool runningLocal = true)
+            public IConfigurationBuilder AddCustomKeyVault(string keyVaultUri, bool runningLocal = false)
             {
                 if (runningLocal)
                 {

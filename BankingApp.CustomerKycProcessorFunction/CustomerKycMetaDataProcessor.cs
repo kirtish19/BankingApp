@@ -18,8 +18,9 @@ public class CustomerKycMetaDataProcessor
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {
-        var options = new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve };
-        var documentMessage = JsonSerializer.Deserialize<CustomerKYCMessage>(message.Body, options);
+        //var options = new JsonSerializerOptions { ReferenceHandler = ReferenceHandler.Preserve };
+        //var documentMessage = JsonSerializer.Deserialize<CustomerKYCMessage>(message.Body, options);
+        var documentMessage = JsonSerializer.Deserialize<CustomerKYCMessage>(message.Body);
         await _metaDataProcessorService.ProcessMetaData(documentMessage!);
         // Complete the message
         await messageActions.CompleteMessageAsync(message);
