@@ -7,14 +7,16 @@ COPY BankingApp.CustomerApi/BankingApp.CustomerApi.csproj BankingApp.CustomerApi
 COPY BankingApp.Data/BankingApp.Data.csproj BankingApp.Data/
 COPY BankingApp.Shared/BankingApp.Shared.csproj BankingApp.Shared/
 
-# Restore only the CustomerApi project (resolves project references using copied csproj files)
-RUN dotnet restore BankingApp.CustomerApi/BankingApp.CustomerApi.csproj
+# Configure a writable NuGet package cache and restore only the CustomerApi project
+ENV NUGET_PACKAGES=/tmp/nuget
+RUN mkdir -p /tmp/nuget && chmod -R 777 /tmp/nuget
+RUN dotnet restore BankingApp.CustomerApi/BankingApp.CustomerApi.csproj --packages /tmp/nuget
 
 # Copy the rest of the source
 COPY . .
 
-# Publish the CustomerApi project (no-restore to use cached restore)
-RUN dotnet publish BankingApp.CustomerApi/BankingApp.CustomerApi.csproj -c Release -o /app --no-restore
+# Publish the CustomerApi project (restore again during publish to ensure assets are available)
+RUN dotnet publish BankingApp.CustomerApi/BankingApp.CustomerApi.csproj -c Release -o /app --packages /tmp/nuget
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 

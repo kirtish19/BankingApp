@@ -11,13 +11,15 @@
         {
             try
             {
-                var user = request.ToUser();
+                var userDto = request.ToUserDto();
+                var user = userDto.ToUser();
                 await _unitOfWork.UserRepository.AddAsync(user);
 
                 // Customer is created only for Customer registration
                 if (request.UserType == UserType.Customer)
                 {
-                    var customer = request.ToCustomer(user.Id);
+                    var customerDto = request.ToCustomerDto();
+                    var customer = customerDto.ToCustomer(userDto.Id);
                     await _unitOfWork.CustomerRepository.AddAsync(customer);
 
 
@@ -26,10 +28,10 @@
                     {
                         var storageConnectionString = _configuration.GetValue<string>("StorageAccountConnectionString")!;
                         var containerName = _configuration.GetValue<string>("StorageContainerName")!;
-                        uploadedBlobUrls = await _storageHandler.UploadBlobAsync(storageConnectionString, containerName, user.Customer!.Id.ToString(), request.KycDocuments);
+                        uploadedBlobUrls = await _storageHandler.UploadBlobAsync(storageConnectionString, containerName, customerDto.Id.ToString(), request.KycDocuments);
                     }
 
-                    CustomerKYCMessage customerKYCMessage = CreateCustomerKYCMessage(request, customer, uploadedBlobUrls);
+                    CustomerKYCMessage customerKYCMessage = CreateCustomerKYCMessage(request, customerDto, uploadedBlobUrls);
 
                     var message = customerKYCMessage;
                     var topicName = _configuration.GetValue<string>("KycTopicName")!;
@@ -50,7 +52,7 @@
             }
         }
 
-        private static CustomerKYCMessage CreateCustomerKYCMessage(PostUserRegisterationRequest request, Customer customer, Dictionary<string, string>? uploadedBlobUrls = null)
+        private static CustomerKYCMessage CreateCustomerKYCMessage(PostUserRegisterationRequest request, CustomerDto customer, Dictionary<string, string>? uploadedBlobUrls = null)
         {
             CustomerKYCMessage customerKYCEvent = new CustomerKYCMessage
             {

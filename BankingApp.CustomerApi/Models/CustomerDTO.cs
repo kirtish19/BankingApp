@@ -1,6 +1,6 @@
 ﻿namespace BankingApp.CustomerApi.Models
 {
-    public class CustomerDTO
+    public class CustomerDto
     {
         public Guid Id { get; set; }
         public string FirstName { get; set; } = null!;
@@ -13,6 +13,5 @@
         public int CreditScore { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
         public DateTime DateOfBirth { get; set; }
-        public Guid UserId { get; set; }
     }
 }

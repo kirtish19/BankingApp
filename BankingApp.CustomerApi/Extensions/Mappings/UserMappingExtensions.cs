@@ -2,23 +2,40 @@
 {
     public static class UserMappingExtensions
     {
-        public static User ToUser(this PostUserRegisterationRequest request)
+        public static UserDto ToUserDto(this PostUserRegisterationRequest request)
         {
             var hmac = new HMACSHA512();
-            var user = new User();
-
-            user.Id = Guid.NewGuid();
-            user.UserName = request.UserName;
-            user.IsActive = request.UserType == UserType.Staff ? true : false;
-            user.CreateDate = DateTime.UtcNow;
-            user.UserType = request.UserType;
-            user.LoginPasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.LoginPassword));
-            user.LoginPasswordSalt = hmac.Key;
+            var user = new UserDto
+            {
+                Id = Guid.NewGuid(),
+                UserName = request.UserName,
+                IsActive = request.UserType == UserType.Staff ? true : false,
+                CreateDate = DateTime.UtcNow,
+                UserType = request.UserType,
+                LoginPasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.LoginPassword)),
+                LoginPasswordSalt = hmac.Key
+            };
             hmac = new HMACSHA512();
             user.ProfilePasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.ProfilePassword));
             user.ProfilePasswordSalt = hmac.Key;
 
             return user;
+        }
+
+        public static User ToUser(this UserDto userDto)
+        {
+            return new User
+            {
+                Id = userDto.Id,
+                UserName = userDto.UserName,
+                IsActive = userDto.IsActive,
+                CreateDate = userDto.CreateDate,
+                UserType = userDto.UserType,
+                LoginPasswordHash = userDto.LoginPasswordHash,
+                LoginPasswordSalt = userDto.LoginPasswordSalt,
+                ProfilePasswordHash = userDto.ProfilePasswordHash,
+                ProfilePasswordSalt = userDto.ProfilePasswordSalt
+            };
         }
     }
 }
