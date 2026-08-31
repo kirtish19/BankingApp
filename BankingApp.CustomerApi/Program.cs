@@ -1,21 +1,20 @@
-using Microsoft.OpenApi;
-
 try
 {
-
-
     var builder = WebApplication.CreateBuilder(args);
-
-    // Serilog
-    Log.Logger = new LoggerConfiguration()
-        .ReadFrom.Configuration(builder.Configuration)
-        .CreateLogger();
 
     var keyvaulturi = builder.Configuration.GetConnectionString("KeyVault")!;
     var runningLocal = builder.Configuration.GetValue<bool>("RunningLocal")!;
-    
+
     builder.Configuration.AddCustomKeyVault(keyvaulturi, runningLocal);
 
+    var appInsightConnectionString = builder.Configuration.GetValue<string>("CustomerApiAppInsightConnectionString")!;
+
+    Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .WriteTo.ApplicationInsights(
+                appInsightConnectionString,
+                TelemetryConverter.Traces)
+            .CreateLogger();
 
     builder.Host.UseSerilog();
 
@@ -87,5 +86,9 @@ try
 }
 catch (Exception ex)
 {
-    Console.WriteLine(ex.Message);
+    Log.Fatal(ex, "Application terminated unexpectedly");
+}
+finally
+{
+    Log.CloseAndFlush();
 }
