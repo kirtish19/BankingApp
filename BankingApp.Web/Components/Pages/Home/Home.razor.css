@@ -1,0 +1,129 @@
+﻿
+.home-hero {
+    padding: 50px 20px 30px;
+}
+
+.team-member {
+    padding: 8px 16px;
+    border: 1px solid #dee2e6;
+    border-radius: 50px;
+    background: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+
+/* Workflow */
+
+.workflow-section {
+    width: 100%;
+}
+
+.workflow-heading {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+    .workflow-heading h2 {
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .workflow-heading p {
+        margin: 5px 0 0;
+        color: #6c757d;
+    }
+
+.workflow-number {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 14px;
+    background: #212529;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+
+/* Image Card */
+
+.workflow-card {
+    width: 100%;
+    padding: 30px;
+    overflow: auto;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 16px;
+    text-align: center;
+}
+
+
+/* Images displayed at 30% of original size */
+
+.workflow-image {
+    display: block;
+    height: auto;
+    max-width: none;
+    margin: 0 auto;
+    background: white;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+
+/* Authentication
+   Original: 1206 × 2706
+   30%:     362 × 812
+*/
+
+.authentication-image {
+    width: 302px;
+}
+
+
+/* Registration
+   Original: 2406 × 2910
+   30%:     722 × 873
+*/
+
+.registration-image {
+    width: 602px;
+}
+
+
+/* Loan
+   Original: 3396 × 3066
+   30%:     1019 × 920
+*/
+
+.loan-image {
+    width: 849px;
+}
+
+
+/* Team */
+
+/*.team-card {
+    padding: 14px 22px;
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 10px;
+}
+*/
+
+@media (max-width: 767px) {
+
+    .workflow-card {
+        padding: 15px;
+    }
+
+    .workflow-heading {
+        align-items: flex-start;
+    }
+}
+

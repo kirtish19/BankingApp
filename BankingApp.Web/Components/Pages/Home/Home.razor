@@ -1,10 +1,143 @@
-﻿@page "/"
+﻿
+@page "/"
 @rendermode InteractiveServer
-<h1>Hello Blazor!</h1>
 
-<p>Count: @count</p>
+<PageTitle>BankingApp | Team 1</PageTitle>
 
-<button @onclick="IncrementCount">
-    Click me
-</button>
+<div class="container-fluid px-4 py-4">
+
+    <!-- HERO -->
+    <section class="home-hero text-center mb-5">
+        <span class="badge bg-primary-subtle text-primary px-3 py-2 mb-3">
+            BANKING APPLICATION
+        </span>
+
+        <h1 class="display-4 fw-bold mb-3">
+            BankingApp
+        </h1>
+
+        <p class="lead text-muted">
+            End-to-end banking workflows designed and implemented by Team 1.
+        </p>
+
+        <div class="d-flex justify-content-center flex-wrap gap-2 mt-4">
+            <span class="team-member">Sagar Dhapare</span>
+            <span class="team-member">Kirtish Maheshwari</span>
+            <span class="team-member">Yash Kashid</span>
+        </div>
+    </section>
+
+
+    <!-- WORKFLOWS -->
+    <section>
+
+        <div class="text-center mb-5">
+            <h2 class="fw-bold">Application Workflows</h2>
+            <p class="text-muted">
+                Explore the complete BankingApp workflow
+            </p>
+        </div>
+
+
+        <!-- AUTHENTICATION -->
+        <div class="workflow-section mb-5">
+
+            <div class="workflow-heading">
+                <span class="workflow-number">01</span>
+
+                <div>
+                    <h2>Authentication Workflow</h2>
+                    <p>
+                        Secure authentication and authorization flow.
+                    </p>
+                </div>
+            </div>
+
+            <div class="workflow-card">
+                <img src="images/AuthenticationWorkFlow.png"
+                     alt="Authentication Workflow"
+                     class="workflow-image authentication-image" />
+            </div>
+
+        </div>
+
+
+        <!-- CUSTOMER REGISTRATION -->
+        <div class="workflow-section mb-5">
+
+            <div class="workflow-heading">
+                <span class="workflow-number">02</span>
+
+                <div>
+                    <h2>Customer Registration Workflow</h2>
+                    <p>
+                        Customer onboarding and KYC registration flow.
+                    </p>
+                </div>
+            </div>
+
+            <div class="workflow-card">
+                <img src="images/CustomerRegisterFlow.png"
+                     alt="Customer Registration Workflow"
+                     class="workflow-image registration-image" />
+            </div>
+
+        </div>
+
+
+        <!-- LOAN APPLICATION -->
+        <div class="workflow-section mb-5">
+
+            <div class="workflow-heading">
+                <span class="workflow-number">03</span>
+
+                <div>
+                    <h2>Loan Application Workflow</h2>
+                    <p>
+                        End-to-end loan application processing flow.
+                    </p>
+                </div>
+            </div>
+
+            <div class="workflow-card">
+                <img src="images/LoanApplicationWorkFlow.png"
+                     alt="Loan Application Workflow"
+                     class="workflow-image loan-image" />
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- PROJECT CONCLUSION -->
+    <section class="py-5 my-4">
+
+        <div class="text-center">
+
+            <div class="mx-auto mb-4"
+                 style="width: 60px; height: 2px; background-color: #212529;">
+            </div>
+
+            <h3 class="fw-bold mb-3">
+                End-to-End Banking Experience
+            </h3>
+
+            <p class="text-muted mx-auto mb-0"
+               style="max-width: 700px;">
+                From secure authentication and customer onboarding
+                to loan application processing, BankingApp brings
+                the complete banking journey together through
+                connected and streamlined workflows.
+            </p>
+
+            <p class="text-muted small mt-4 mb-0">
+                BankingApp · Team 1
+            </p>
+
+        </div>
+
+    </section>
+
+
+</div>
 

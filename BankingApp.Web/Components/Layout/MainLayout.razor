@@ -1,23 +1,96 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
+<div class="min-vh-100 bg-light">
 
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
 
-    <main>
+        <div class="container-fluid px-4">
 
-        <div class="top-row px-4">
-            <span class="fw-semibold">
-                Digital Banking Platform
-            </span>
+            <!-- Brand -->
+            <a class="navbar-brand fw-bold fs-4"
+               href="/">
+                BankingApp
+            </a>
+
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#bankingNavbar"
+                    aria-controls="bankingNavbar"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+
+                <span class="navbar-toggler-icon"></span>
+
+            </button>
+
+            <!-- Navigation -->
+            <div class="collapse navbar-collapse"
+                 id="bankingNavbar">
+
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
+
+                    <!-- Home -->
+                    <li class="nav-item">
+
+                        <NavLink class="nav-link px-3"
+                                 href="/"
+                                 Match="NavLinkMatch.All">
+
+                            <i class="bi bi-house-door-fill me-1"></i>
+                            Home
+
+                        </NavLink>
+
+                    </li>
+
+                    <!-- Login -->
+                    <li class="nav-item">
+
+                        <NavLink class="nav-link px-3"
+                                 href="/login">
+
+                            <i class="bi bi-box-arrow-in-right me-1"></i>
+                            Login
+
+                        </NavLink>
+
+                    </li>
+
+                    <!-- Register -->
+                    <li class="nav-item">
+
+                        <NavLink class="nav-link px-3"
+                                 href="/register">
+
+                            <i class="bi bi-person-plus-fill me-1"></i>
+                            Register
+
+                        </NavLink>
+
+                    </li>
+
+                </ul>
+
+            </div>
+
         </div>
 
-        <article class="content px-4 py-4">
+    </nav>
+
+
+    <!-- Page Content -->
+    <main>
+
+        <div class="container-fluid px-4 py-4">
+
             @Body
-        </article>
+
+        </div>
 
     </main>
 
 </div>
+
