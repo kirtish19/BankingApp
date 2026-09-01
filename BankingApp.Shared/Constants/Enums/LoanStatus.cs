@@ -2,8 +2,8 @@
 {
     public enum LoanStatus
     {
+        Submitted,
         Approved,
-        Rejected,
-        ManualReview,
+        Rejected
     }
 }

@@ -16,6 +16,6 @@
         public DateTime DateOfBirth { get; set; }
         public Guid UserId { get; set; }
         public User User { get; set; } = null!;
-        public ICollection<Account> Accounts { get; set; } = [];
+        ICollection<LoanApplications> LoanApplications { get; set; } = [];
     }
 }

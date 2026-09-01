@@ -7,8 +7,7 @@
         }
 
         public DbSet<Customer> Customers { get; set; }
-        public DbSet<Account> Accounts { get; set; }
-        public DbSet<Loan> Loans { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<LoanApplications> LoanApplications { get; set; }
     }
 }
