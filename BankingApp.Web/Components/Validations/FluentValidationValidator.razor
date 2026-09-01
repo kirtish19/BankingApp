@@ -1,0 +1,113 @@
+﻿@using FluentValidation
+@using Microsoft.AspNetCore.Components.Forms
+
+@implements IDisposable
+
+@inject IServiceProvider ServiceProvider
+
+@code {
+
+    [CascadingParameter]
+    private EditContext CurrentEditContext { get; set; } = default!;
+
+    private ValidationMessageStore? messageStore;
+
+
+    protected override void OnInitialized()
+    {
+        if (CurrentEditContext is null)
+        {
+            throw new InvalidOperationException(
+                $"{nameof(FluentValidationValidator)} requires a cascading EditContext.");
+        }
+
+        messageStore =
+            new ValidationMessageStore(CurrentEditContext);
+
+        CurrentEditContext.OnValidationRequested +=
+            OnValidationRequested;
+
+        CurrentEditContext.OnFieldChanged +=
+            OnFieldChanged;
+    }
+
+
+    private void OnValidationRequested(
+        object? sender,
+        ValidationRequestedEventArgs args)
+    {
+        ValidateModel();
+    }
+
+
+    private void OnFieldChanged(
+        object? sender,
+        FieldChangedEventArgs args)
+    {
+        ValidateModel();
+    }
+
+
+    private void ValidateModel()
+    {
+        if (messageStore is null)
+        {
+            return;
+        }
+
+        messageStore.Clear();
+
+        var validator = GetValidator(
+            CurrentEditContext.Model);
+
+        if (validator is null)
+        {
+            CurrentEditContext.NotifyValidationStateChanged();
+            return;
+        }
+
+        var context =
+            new ValidationContext<object>(
+                CurrentEditContext.Model);
+
+        var result =
+            validator.Validate(context);
+
+        foreach (var error in result.Errors)
+        {
+            var fieldIdentifier =
+                new FieldIdentifier(
+                    CurrentEditContext.Model,
+                    error.PropertyName);
+
+            messageStore.Add(
+                fieldIdentifier,
+                error.ErrorMessage);
+        }
+
+        CurrentEditContext.NotifyValidationStateChanged();
+    }
+
+
+    private IValidator? GetValidator(
+        object model)
+    {
+        var validatorType =
+            typeof(IValidator<>)
+                .MakeGenericType(model.GetType());
+
+        return ServiceProvider.GetService(
+            validatorType) as IValidator;
+    }
+
+
+    public void Dispose()
+    {
+        CurrentEditContext.OnValidationRequested -=
+            OnValidationRequested;
+
+        CurrentEditContext.OnFieldChanged -=
+            OnFieldChanged;
+    }
+}
+

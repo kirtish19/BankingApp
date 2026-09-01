@@ -1,0 +1,209 @@
+﻿@page "/customer-dashboard"
+
+@using BankingApp.Web.Services.Authentication
+
+@inject IAuthenticationService AuthenticationService
+@inject NavigationManager Navigation
+
+<PageTitle>Customer Dashboard | BankingApp</PageTitle>
+
+<div class="container py-4">
+
+    <!-- Header -->
+
+    <div class="d-flex
+        flex-wrap
+        justify-content-between
+        align-items-center
+        mb-4">
+
+        <div>
+
+            <h2 class="fw-bold mb-1">
+                Welcome back!
+            </h2>
+
+            <p class="text-muted mb-0">
+                Here's an overview of your banking activity.
+            </p>
+
+        </div>
+
+
+        <button class="btn btn-outline-danger"
+                @onclick="Logout">
+
+            Logout
+
+        </button>
+
+    </div>
+
+
+    <!-- Status Cards -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        KYC Status
+                    </small>
+
+                    <h4 class="fw-bold text-success mt-2">
+                        ✓ Approved
+                    </h4>
+
+                    <small class="text-muted">
+                        Your account is active.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Active Loans
+                    </small>
+
+                    <h4 class="fw-bold mt-2">
+                        0
+                    </h4>
+
+                    <small class="text-muted">
+                        No active loans.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Applications
+                    </small>
+
+                    <h4 class="fw-bold mt-2">
+                        0
+                    </h4>
+
+                    <small class="text-muted">
+                        No applications yet.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Loan -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex
+                flex-wrap
+                justify-content-between
+                align-items-center">
+
+                <div>
+
+                    <h4 class="fw-bold">
+                        Apply for a Loan
+                    </h4>
+
+                    <p class="text-muted mb-0">
+                        Choose from our available loan products.
+                    </p>
+
+                </div>
+
+
+                <button class="btn btn-primary
+                    mt-3 mt-md-0"
+                        @onclick="GoToLoans">
+
+                    Explore Loans
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Recent Applications -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-4">
+
+            <h5 class="fw-bold mb-3">
+                Recent Applications
+            </h5>
+
+            <div class="text-center
+                py-5
+                text-muted">
+
+                <div class="fs-1 mb-2">
+                    📄
+                </div>
+
+                <p class="mb-0">
+                    No applications yet.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    private void GoToLoans()
+    {
+        Navigation.NavigateTo("/apply-loan");
+    }
+
+
+    private async Task Logout()
+    {
+        await AuthenticationService.LogoutAsync();
+
+        Navigation.NavigateTo("/login");
+    }
+}
+

@@ -1,0 +1,18 @@
+﻿@page "/"
+@rendermode InteractiveServer
+<h1>Hello Blazor!</h1>
+
+<p>Count: @count</p>
+
+<button @onclick="IncrementCount">
+    Click me
+</button>
+
+@code {
+    private int count = 0;
+
+    private void IncrementCount()
+    {
+        count++;
+    }
+}

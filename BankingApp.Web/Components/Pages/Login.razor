@@ -1,0 +1,381 @@
+﻿
+@page "/login"
+@rendermode InteractiveServer
+
+@using BankingApp.Web.Constants
+@using BankingApp.Web.Models.Authentication
+@using BankingApp.Web.Services.Authentication
+
+@inject IAuthenticationService AuthenticationService
+@inject NavigationManager Navigation
+
+<PageTitle>Login | BankingApp</PageTitle>
+
+<div class="container-fluid min-vh-100 bg-light">
+
+    <div class="row min-vh-100">
+
+        <!-- ========================================= -->
+        <!-- LEFT SIDE - BANKING INFORMATION -->
+        <!-- ========================================= -->
+
+        <div class="col-lg-7
+            d-none d-lg-flex
+            align-items-center
+            justify-content-center
+            bg-primary
+            text-white">
+
+            <div class="px-5" style="max-width: 650px;">
+
+                <div class="mb-4">
+
+                    <div class="fs-1 mb-3">
+                        🏦
+                    </div>
+
+                    <h1 class="display-5 fw-bold">
+                        Welcome to BankingApp
+                    </h1>
+
+                    <p class="lead mt-3">
+                        Secure digital banking made simple.
+                    </p>
+
+                </div>
+
+
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+
+                        <div class="d-flex">
+
+                            <div class="fs-3 me-3">
+                                🔐
+                            </div>
+
+                            <div>
+
+                                <h6 class="fw-bold">
+                                    Secure Banking
+                                </h6>
+
+                                <p class="small mb-0">
+                                    Your banking information is
+                                    protected with enterprise-grade
+                                    security.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="d-flex">
+
+                            <div class="fs-3 me-3">
+                                ⚡
+                            </div>
+
+                            <div>
+
+                                <h6 class="fw-bold">
+                                    Digital Experience
+                                </h6>
+
+                                <p class="small mb-0">
+                                    Manage your banking services
+                                    anytime, anywhere.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- RIGHT SIDE - LOGIN -->
+        <!-- ========================================= -->
+
+        <div class="col-lg-5
+            d-flex
+            align-items-center
+            justify-content-center
+            py-5">
+
+            <div class="card border-0 shadow-sm"
+                 style="width: 100%; max-width: 430px;">
+
+                <div class="card-body p-4 p-md-5">
+
+
+                    <!-- Header -->
+
+                    <div class="text-center mb-4">
+
+                        <div class="fs-1 mb-2">
+                            🏦
+                        </div>
+
+                        <h2 class="fw-bold mb-1">
+                            Sign in
+                        </h2>
+
+                        <p class="text-muted">
+                            Access your BankingApp account
+                        </p>
+
+                    </div>
+
+
+                    <!-- Error -->
+                    @if (!string.IsNullOrWhiteSpace(ErrorMessage))
+                    {
+                        <div class="alert alert-danger"
+                             role="alert">
+
+                            @ErrorMessage
+
+                        </div>
+                    }
+
+
+                    <!-- ================================= -->
+                    <!-- LOGIN FORM -->
+                    <!-- ================================= -->
+
+                    <EditForm Model="@loginRequest"
+                              OnValidSubmit="@HandleLogin"
+                              FormName="LoginForm">
+
+                        <DataAnnotationsValidator />
+
+
+                        <!-- Username -->
+
+                        <div class="mb-3">
+
+                            <label for="username"
+                                   class="form-label fw-semibold">
+
+                                Username
+
+                            </label>
+
+                            <InputText id="username"
+                                       @bind-Value="loginRequest.UserName"
+                                       class="form-control form-control-lg"
+                                       placeholder="Enter username"
+                                       autocomplete="username" />
+
+                            <ValidationMessage For="@(() => loginRequest.UserName)" />
+
+                        </div>
+
+
+                        <!-- Password -->
+
+                        <div class="mb-3">
+
+                            <label for="password"
+                                   class="form-label fw-semibold">
+
+                                Password
+
+                            </label>
+
+                            <InputText id="password"
+                                       @bind-Value="loginRequest.Password"
+                                       type="password"
+                                       class="form-control form-control-lg"
+                                       placeholder="Enter password"
+                                       autocomplete="current-password" />
+
+                            <ValidationMessage For="@(() => loginRequest.Password)" />
+
+                        </div>
+
+
+                        <!-- Remember / Forgot -->
+
+                        <div class="d-flex
+                            justify-content-between
+                            align-items-center
+                            mb-4">
+
+                            <div class="form-check">
+
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       id="rememberMe" />
+
+                                <label class="form-check-label"
+                                       for="rememberMe">
+
+                                    Remember me
+
+                                </label>
+
+                            </div>
+
+
+                            <a href="#"
+                               class="text-decoration-none">
+
+                                Forgot password?
+
+                            </a>
+
+                        </div>
+
+
+                        <!-- Login Button -->
+
+                        <button type="submit"
+                                class="btn btn-primary
+                            btn-lg
+                            w-100"
+                                disabled="@IsLoggingIn">
+
+                            @if (IsLoggingIn)
+                            {
+                                <span class="spinner-border
+                                    spinner-border-sm
+                                    me-2">
+                                </span>
+
+                                <span>
+                                    Signing in...
+                                </span>
+                            }
+                            else
+                            {
+                                <span>
+                                    Sign in
+                                </span>
+                            }
+
+                        </button>
+
+                    </EditForm>
+
+
+                    <!-- Registration -->
+
+                    <div class="text-center mt-4">
+
+                        <span class="text-muted">
+                            Don't have an account?
+                        </span>
+
+                        <a href="/register"
+                           class="text-decoration-none
+                            fw-semibold
+                            ms-1">
+
+                            Register
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    private readonly LoginRequest loginRequest = new();
+
+    private bool IsLoggingIn;
+
+    private string? ErrorMessage;
+
+
+    private async Task HandleLogin()
+    {
+        ErrorMessage = null;
+
+        IsLoggingIn = true;
+
+        try
+        {
+            var result =
+                await AuthenticationService.LoginAsync(
+                    loginRequest);
+
+
+            // ======================================
+            // Authentication failed
+            // ======================================
+
+            if (!result.IsAuthenticated)
+            {
+                ErrorMessage =
+                    result.ErrorMessage ??
+                    "Invalid username or password.";
+
+                return;
+            }
+
+
+            // ======================================
+            // Account inactive
+            // ======================================
+
+            if (!result.IsActive)
+            {
+                ErrorMessage =
+                    "Your account is not active yet.";
+
+                return;
+            }
+
+
+            // ======================================
+            // Staff
+            // ======================================
+
+            if (result.UserType == UserType.Staff)
+            {
+                Navigation.NavigateTo(
+                    "/staff-dashboard");
+
+                return;
+            }
+
+
+            // ======================================
+            // Customer
+            // ======================================
+
+            Navigation.NavigateTo(
+                "/customer-dashboard");
+        }
+        finally
+        {
+            IsLoggingIn = false;
+        }
+    }
+}
+

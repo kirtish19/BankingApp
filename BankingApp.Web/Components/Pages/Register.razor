@@ -1,0 +1,770 @@
+﻿@page "/register"
+@rendermode InteractiveServer
+@using BankingApp.Web.Models.Registration
+@using BankingApp.Web.Services.Customer
+@using BankingApp.Web.Constants
+
+
+@inject ICustomerService CustomerService
+
+<PageTitle>Register - BankingApp</PageTitle>
+
+<div class="container py-4 py-md-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-12 col-xl-9">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4 p-md-5">
+
+                    <div class="text-center mb-5">
+
+                        <h2 class="fw-bold">
+                            Create Your Account
+                        </h2>
+
+                        <p class="text-muted">
+                            Register with BankingApp
+                        </p>
+
+                    </div>
+
+
+                    <EditForm EditContext="@editContext"
+                              OnValidSubmit="@HandleSubmit">
+
+                        <FluentValidationValidator />
+
+
+                        <!-- ============================= -->
+                        <!-- ACCOUNT TYPE -->
+                        <!-- ============================= -->
+
+                        <section class="mb-5">
+
+                            <h5 class="fw-semibold mb-3">
+                                Account Type
+                            </h5>
+
+                            <div class="row g-3">
+
+                                <div class="col-12 col-md-6">
+
+                                    <div class="form-check border rounded p-3">
+
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="userType"
+                                               checked="@(registrationRequest.UserType == UserType.Customer)"
+                                               @onchange="SelectCustomer" />
+
+                                        <label class="form-check-label">
+
+                                            <strong>
+                                                Customer
+                                            </strong>
+
+                                            <span class="d-block text-muted small">
+                                                Create a personal banking account.
+                                            </span>
+
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-12 col-md-6">
+
+                                    <div class="form-check border rounded p-3">
+
+                                        <input class="form-check-input"
+                                               type="radio"
+                                               name="userType"
+                                               checked="@(registrationRequest.UserType == UserType.Staff)"
+                                               @onchange="SelectStaff" />
+
+                                        <label class="form-check-label">
+
+                                            <strong>
+                                                Staff
+                                            </strong>
+
+                                            <span class="d-block text-muted small">
+                                                Create a bank staff account.
+                                            </span>
+
+                                        </label>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        <!-- ============================= -->
+                        <!-- ACCOUNT INFORMATION -->
+                        <!-- ============================= -->
+
+                        <section class="mb-5">
+
+                            <h5 class="fw-semibold mb-4">
+                                Account Information
+                            </h5>
+
+                            <div class="row g-3">
+
+                                <div class="col-12">
+
+                                    <label class="form-label">
+                                        Username
+                                    </label>
+
+                                    <InputText class="form-control"
+                                               @bind-Value="registrationRequest.UserName"
+                                               placeholder="Enter username" />
+
+                                    <ValidationMessage
+                                        For="@(() => registrationRequest.UserName)"
+                                        class="text-danger small" />
+
+                                </div>
+
+
+                                <div class="col-12 col-md-6">
+
+                                    <label class="form-label">
+                                        Login Password
+                                    </label>
+
+                                    <InputText type="password"
+                                               class="form-control"
+                                               @bind-Value="registrationRequest.LoginPassword"
+                                               placeholder="Enter login password" />
+
+                                    <ValidationMessage
+                                        For="@(() => registrationRequest.LoginPassword)"
+                                        class="text-danger small" />
+
+                                </div>
+
+
+                                <div class="col-12 col-md-6">
+
+                                    <label class="form-label">
+                                        Confirm Login Password
+                                    </label>
+
+                                    <InputText type="password"
+                                               class="form-control"
+                                               @bind-Value="registrationRequest.ConfirmLoginPassword"
+                                               placeholder="Confirm login password" />
+
+                                    <ValidationMessage
+                                        For="@(() => registrationRequest.ConfirmLoginPassword)"
+                                        class="text-danger small" />
+
+                                </div>
+
+
+                                <div class="col-12 col-md-6">
+
+                                    <label class="form-label">
+                                        Profile Password
+                                    </label>
+
+                                    <InputText type="password"
+                                               class="form-control"
+                                               @bind-Value="registrationRequest.ProfilePassword"
+                                               placeholder="Enter profile password" />
+
+                                    <ValidationMessage
+                                        For="@(() => registrationRequest.ProfilePassword)"
+                                        class="text-danger small" />
+
+                                </div>
+
+
+                                <div class="col-12 col-md-6">
+
+                                    <label class="form-label">
+                                        Confirm Profile Password
+                                    </label>
+
+                                    <InputText type="password"
+                                               class="form-control"
+                                               @bind-Value="registrationRequest.ConfirmProfilePassword"
+                                               placeholder="Confirm profile password" />
+
+                                    <ValidationMessage
+                                        For="@(() => registrationRequest.ConfirmProfilePassword)"
+                                        class="text-danger small" />
+
+                                </div>
+
+                            </div>
+
+                        </section>
+
+
+                        @if (registrationRequest.UserType == UserType.Customer)
+                        {
+                            <!-- ============================= -->
+                            <!-- PERSONAL INFORMATION -->
+                            <!-- ============================= -->
+
+                            <section class="mb-5">
+
+                                <h5 class="fw-semibold mb-4">
+                                    Personal Information
+                                </h5>
+
+                                <div class="row g-3">
+
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            First Name
+                                        </label>
+
+                                        <InputText class="form-control"
+                                                   @bind-Value="registrationRequest.FirstName" />
+
+                                        <ValidationMessage
+                                            For="@(() => registrationRequest.FirstName)"
+                                            class="text-danger small" />
+
+                                    </div>
+
+
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Last Name
+                                        </label>
+
+                                        <InputText class="form-control"
+                                                   @bind-Value="registrationRequest.LastName" />
+
+                                        <ValidationMessage
+                                            For="@(() => registrationRequest.LastName)"
+                                            class="text-danger small" />
+
+                                    </div>
+
+
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Email
+                                        </label>
+
+                                        <InputText type="email"
+                                                   class="form-control"
+                                                   @bind-Value="registrationRequest.Email" />
+
+                                        <ValidationMessage
+                                            For="@(() => registrationRequest.Email)"
+                                            class="text-danger small" />
+
+                                    </div>
+
+
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Mobile Number
+                                        </label>
+
+                                        <InputText class="form-control"
+                                                   @bind-Value="registrationRequest.MobileNumber" />
+
+                                        <ValidationMessage
+                                            For="@(() => registrationRequest.MobileNumber)"
+                                            class="text-danger small" />
+
+                                    </div>
+
+
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Date of Birth
+                                        </label>
+
+                                        <InputDate class="form-control"
+                                                   @bind-Value="registrationRequest.DateOfBirth" />
+
+                                        <ValidationMessage
+                                            For="@(() => registrationRequest.DateOfBirth)"
+                                            class="text-danger small" />
+
+                                    </div>
+
+                                </div>
+
+                            </section>
+
+
+                            <!-- ============================= -->
+                            <!-- EMPLOYMENT -->
+                            <!-- ============================= -->
+
+                            <section class="mb-5">
+
+                                <h5 class="fw-semibold mb-4">
+                                    Employment & Financial Information
+                                </h5>
+
+                                <div class="row g-3">
+
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Employment Type
+                                        </label>
+
+                                        <InputSelect class="form-select"
+                                                     @bind-Value="registrationRequest.EmploymentType">
+
+                                            @foreach (var type in
+                                                Enum.GetValues<EmploymentType>())
+                                            {
+                                                <option value="@type">
+                                                    @GetEmploymentDisplayName(type)
+                                                </option>
+                                            }
+
+                                        </InputSelect>
+
+                                        <ValidationMessage
+                                            For="@(() => registrationRequest.EmploymentType)"
+                                            class="text-danger small" />
+
+                                    </div>
+
+
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Annual Income
+                                        </label>
+
+                                        <InputNumber class="form-control"
+                                                     @bind-Value="registrationRequest.AnnualIncome" />
+
+                                        <ValidationMessage
+                                            For="@(() => registrationRequest.AnnualIncome)"
+                                            class="text-danger small" />
+
+                                    </div>
+
+
+                                    <div class="col-12 col-md-6">
+
+                                        <label class="form-label">
+                                            Credit Score
+                                        </label>
+
+                                        <InputNumber class="form-control"
+                                                     @bind-Value="registrationRequest.CreditScore" />
+
+                                        <ValidationMessage
+                                            For="@(() => registrationRequest.CreditScore)"
+                                            class="text-danger small" />
+
+                                    </div>
+
+                                </div>
+
+                            </section>
+
+
+                            <!-- ============================= -->
+                            <!-- KYC -->
+                            <!-- ============================= -->
+
+                            <section class="mb-5">
+
+                                <h5 class="fw-semibold mb-3">
+                                    KYC Documents
+                                </h5>
+
+                                <p class="text-muted small">
+                                    Add your KYC documents one at a time.
+                                </p>
+
+
+                                <div class="card bg-light border-0">
+
+                                    <div class="card-body">
+
+                                        <div class="row g-3 align-items-end">
+
+                                            <div class="col-12 col-md-9">
+
+                                                <InputFile
+                                                    OnChange="HandleKycFileSelected"
+                                                    accept=".pdf,.jpg,.jpeg,.png"
+                                                    class="form-control" />
+
+                                                <div class="form-text">
+                                                    PDF, JPG or PNG. Maximum 10 MB.
+                                                </div>
+
+                                            </div>
+
+
+                                            <div class="col-12 col-md-3">
+
+                                                <button type="button"
+                                                        class="btn btn-primary w-100"
+                                                        @onclick="AddKycDocument"
+                                                        disabled="@(selectedKycFile is null)">
+
+                                                    Add Document
+
+                                                </button>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        @if (!string.IsNullOrWhiteSpace(kycErrorMessage))
+                                        {
+                                            <div class="alert alert-danger mt-3">
+                                                @kycErrorMessage
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                </div>
+
+
+                                @if (registrationRequest.KycDocuments.Count > 0)
+                                {
+                                    <div class="mt-4">
+
+                                        <h6 class="fw-semibold">
+                                            Added Documents
+                                        </h6>
+
+                                        <div class="list-group mt-3">
+
+                                            @foreach (var document in
+                                                registrationRequest.KycDocuments)
+                                            {
+                                                <div class="list-group-item">
+
+                                                    <div class="d-flex justify-content-between align-items-center">
+
+                                                        <div>
+
+                                                            <div class="fw-semibold">
+                                                                @document.Name
+                                                            </div>
+
+                                                            <small class="text-muted">
+                                                                @FormatFileSize(document.Size)
+                                                            </small>
+
+                                                        </div>
+
+
+                                                        <button type="button"
+                                                                class="btn btn-sm btn-outline-danger"
+                                                                @onclick="() => RemoveKycDocument(document)">
+
+                                                            Remove
+
+                                                        </button>
+
+                                                    </div>
+
+                                                </div>
+                                            }
+
+                                        </div>
+
+                                    </div>
+                                }
+
+
+                                <ValidationMessage
+                                    For="@(() => registrationRequest.KycDocuments)"
+                                    class="text-danger small" />
+
+                            </section>
+                        }
+
+
+                        <!-- ============================= -->
+                        <!-- RESULT -->
+                        <!-- ============================= -->
+
+                        @if (!string.IsNullOrWhiteSpace(errorMessage))
+                        {
+                            <div class="alert alert-danger">
+                                @errorMessage
+                            </div>
+                        }
+
+
+                        @if (registrationSuccessful)
+                        {
+                            <div class="alert alert-success">
+                                Registration submitted successfully.
+                            </div>
+                        }
+
+
+                        <!-- ============================= -->
+                        <!-- ACTIONS -->
+                        <!-- ============================= -->
+
+                        <div class="d-flex flex-column flex-sm-row justify-content-end gap-2">
+
+                            <a href="/login"
+                               class="btn btn-outline-secondary px-4">
+                                Back to Login
+                            </a>
+
+
+                            <button type="submit"
+                                    class="btn btn-primary px-4"
+                                    disabled="@isSubmitting">
+
+                                @if (isSubmitting)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                    <span>Registering...</span>
+                                }
+                                else
+                                {
+                                    <span>Create Account</span>
+                                }
+
+                            </button>
+
+                        </div>
+
+                    </EditForm>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    private RegistrationRequest registrationRequest = new();
+
+    private EditContext editContext = default!;
+
+    private IBrowserFile? selectedKycFile;
+
+    private string? kycErrorMessage;
+
+    private string? errorMessage;
+
+    private bool isSubmitting;
+
+    private bool registrationSuccessful;
+
+
+    protected override void OnInitialized()
+    {
+        editContext =
+            new EditContext(registrationRequest);
+    }
+
+
+    private void SelectCustomer(
+        ChangeEventArgs args)
+    {
+        registrationRequest.UserType =
+            UserType.Customer;
+
+        ClearMessages();
+
+        editContext =
+            new EditContext(registrationRequest);
+    }
+
+
+    private void SelectStaff(
+        ChangeEventArgs args)
+    {
+        registrationRequest.UserType =
+            UserType.Staff;
+
+        ClearMessages();
+
+        editContext =
+            new EditContext(registrationRequest);
+    }
+
+
+    private async Task HandleSubmit()
+    {
+        errorMessage = null;
+        registrationSuccessful = false;
+
+        isSubmitting = true;
+
+        try
+        {
+            var result =
+                await CustomerService.RegisterAsync(
+                    registrationRequest);
+
+            if (result)
+            {
+                registrationSuccessful = true;
+            }
+            else
+            {
+                errorMessage =
+                    "Registration failed. Please try again.";
+            }
+        }
+        catch (HttpRequestException)
+        {
+            errorMessage =
+                "Unable to connect to the banking service.";
+        }
+        catch (Exception)
+        {
+            errorMessage =
+                "Something went wrong during registration.";
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
+
+
+    private void HandleKycFileSelected(
+        InputFileChangeEventArgs e)
+    {
+        kycErrorMessage = null;
+
+        selectedKycFile = e.File;
+
+        if (selectedKycFile is null)
+        {
+            return;
+        }
+
+        const long maxFileSize =
+            10 * 1024 * 1024;
+
+        if (selectedKycFile.Size > maxFileSize)
+        {
+            kycErrorMessage =
+                "File size cannot exceed 10 MB.";
+
+            selectedKycFile = null;
+        }
+    }
+
+
+    private void AddKycDocument()
+    {
+        kycErrorMessage = null;
+
+        if (selectedKycFile is null)
+        {
+            kycErrorMessage =
+                "Please select a document.";
+
+            return;
+        }
+
+        if (registrationRequest.KycDocuments.Any(
+                x => x.Name.Equals(
+                    selectedKycFile.Name,
+                    StringComparison.OrdinalIgnoreCase)))
+        {
+            kycErrorMessage =
+                "This document has already been added.";
+
+            return;
+        }
+
+        registrationRequest.KycDocuments.Add(
+            selectedKycFile);
+
+        selectedKycFile = null;
+    }
+
+
+    private void RemoveKycDocument(
+        IBrowserFile document)
+    {
+        registrationRequest.KycDocuments.Remove(
+            document);
+    }
+
+
+    private void ClearMessages()
+    {
+        errorMessage = null;
+        registrationSuccessful = false;
+        kycErrorMessage = null;
+        selectedKycFile = null;
+    }
+
+
+    private static string FormatFileSize(
+        long bytes)
+    {
+        if (bytes < 1024)
+        {
+            return $"{bytes} B";
+        }
+
+        if (bytes < 1024 * 1024)
+        {
+            return $"{bytes / 1024.0:F1} KB";
+        }
+
+        return $"{bytes / (1024.0 * 1024.0):F1} MB";
+    }
+
+
+    private static string GetEmploymentDisplayName(
+        EmploymentType employmentType)
+    {
+        return employmentType switch
+        {
+            EmploymentType.SelfEmployed =>
+                "Self Employed",
+
+            EmploymentType.Salaried =>
+                "Salaried",
+
+            EmploymentType.Unemployed =>
+                "Unemployed",
+
+            _ =>
+                employmentType.ToString()
+        };
+    }
+}
+
