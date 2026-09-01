@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="BankingApp.CustomerApi/BankingApp.CustomerApi.csproj" Id="400e15cc-a6ad-4fef-b884-53243b4ae0ae" />
   <Project Path="BankingApp.CustomerKycProcessorFunction/BankingApp.CustomerKycProcessorFunction.csproj" Id="f12c57b3-6b8e-4103-a3b1-be513cf51516" />
+  <Project Path="BankingApp.CustomerLoanProcessorFunction/BankingApp.CustomerLoanProcessorFunction.csproj" Id="a7bd4dcd-d1d4-42e7-9220-567e8d852ddb" />
   <Project Path="BankingApp.Data/BankingApp.Data.csproj" Id="13e85a61-b0b0-49df-ba94-74ec040b7475" />
   <Project Path="BankingApp.LoanApi/BankingApp.LoanApi.csproj" Id="83bd52cd-c3ff-43d1-83f9-d7fda3cfd158" />
   <Project Path="BankingApp.Shared/BankingApp.Shared.csproj" Id="de7ae185-185b-44ee-89fe-919de61e9c7a" />
