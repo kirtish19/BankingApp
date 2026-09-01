@@ -1,13 +1,5 @@
-﻿
-@page "/login"
+﻿@page "/login"
 @rendermode InteractiveServer
-
-@using BankingApp.Web.Constants
-@using BankingApp.Web.Models.Authentication
-@using BankingApp.Web.Services.Authentication
-
-@inject IAuthenticationService AuthenticationService
-@inject NavigationManager Navigation
 
 <PageTitle>Login | BankingApp</PageTitle>
 
@@ -44,7 +36,6 @@
 
                 </div>
 
-
                 <div class="row g-4">
 
                     <div class="col-md-6">
@@ -72,7 +63,6 @@
                         </div>
 
                     </div>
-
 
                     <div class="col-md-6">
 
@@ -105,7 +95,6 @@
 
         </div>
 
-
         <!-- ========================================= -->
         <!-- RIGHT SIDE - LOGIN -->
         <!-- ========================================= -->
@@ -120,7 +109,6 @@
                  style="width: 100%; max-width: 430px;">
 
                 <div class="card-body p-4 p-md-5">
-
 
                     <!-- Header -->
 
@@ -140,7 +128,6 @@
 
                     </div>
 
-
                     <!-- Error -->
                     @if (!string.IsNullOrWhiteSpace(ErrorMessage))
                     {
@@ -152,7 +139,6 @@
                         </div>
                     }
 
-
                     <!-- ================================= -->
                     <!-- LOGIN FORM -->
                     <!-- ================================= -->
@@ -162,7 +148,6 @@
                               FormName="LoginForm">
 
                         <DataAnnotationsValidator />
-
 
                         <!-- Username -->
 
@@ -184,7 +169,6 @@
                             <ValidationMessage For="@(() => loginRequest.UserName)" />
 
                         </div>
-
 
                         <!-- Password -->
 
@@ -208,7 +192,6 @@
 
                         </div>
 
-
                         <!-- Remember / Forgot -->
 
                         <div class="d-flex
@@ -231,7 +214,6 @@
 
                             </div>
 
-
                             <a href="#"
                                class="text-decoration-none">
 
@@ -240,7 +222,6 @@
                             </a>
 
                         </div>
-
 
                         <!-- Login Button -->
 
@@ -272,7 +253,6 @@
 
                     </EditForm>
 
-
                     <!-- Registration -->
 
                     <div class="text-center mt-4">
@@ -301,81 +281,3 @@
     </div>
 
 </div>
-
-
-@code {
-
-    private readonly LoginRequest loginRequest = new();
-
-    private bool IsLoggingIn;
-
-    private string? ErrorMessage;
-
-
-    private async Task HandleLogin()
-    {
-        ErrorMessage = null;
-
-        IsLoggingIn = true;
-
-        try
-        {
-            var result =
-                await AuthenticationService.LoginAsync(
-                    loginRequest);
-
-
-            // ======================================
-            // Authentication failed
-            // ======================================
-
-            if (!result.IsAuthenticated)
-            {
-                ErrorMessage =
-                    result.ErrorMessage ??
-                    "Invalid username or password.";
-
-                return;
-            }
-
-
-            // ======================================
-            // Account inactive
-            // ======================================
-
-            if (!result.IsActive)
-            {
-                ErrorMessage =
-                    "Your account is not active yet.";
-
-                return;
-            }
-
-
-            // ======================================
-            // Staff
-            // ======================================
-
-            if (result.UserType == UserType.Staff)
-            {
-                Navigation.NavigateTo(
-                    "/staff-dashboard");
-
-                return;
-            }
-
-
-            // ======================================
-            // Customer
-            // ======================================
-
-            Navigation.NavigateTo(
-                "/customer-dashboard");
-        }
-        finally
-        {
-            IsLoggingIn = false;
-        }
-    }
-}
-

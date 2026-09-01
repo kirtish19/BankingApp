@@ -1,10 +1,5 @@
 ﻿@page "/customer-dashboard"
 
-@using BankingApp.Web.Services.Authentication
-
-@inject IAuthenticationService AuthenticationService
-@inject NavigationManager Navigation
-
 <PageTitle>Customer Dashboard | BankingApp</PageTitle>
 
 <div class="container py-4">
@@ -191,19 +186,4 @@
 </div>
 
 
-@code {
-
-    private void GoToLoans()
-    {
-        Navigation.NavigateTo("/apply-loan");
-    }
-
-
-    private async Task Logout()
-    {
-        await AuthenticationService.LogoutAsync();
-
-        Navigation.NavigateTo("/login");
-    }
-}
 
