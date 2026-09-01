@@ -86,5 +86,11 @@
             customerKYCEvent.SourceSystem = "CustomerService";
             return customerKYCEvent;
         }
+
+        public Task<bool> LoginUserAsync(PostLoginRequest request)
+        {
+            //validate user id and password and also ensure the logged in user is active if not reject.
+            throw new NotImplementedException();
+        }
     }
 }
