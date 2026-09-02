@@ -72,5 +72,5 @@ namespace BankingApp.Web.Components.Pages.Login
                 IsLoggingIn = false;
             }
         }
-}
+    }
 }

@@ -27,7 +27,7 @@ namespace BankingApp.CustomerKycProcessorFunction.Services
                 await CreateKycRecords(message);
 
                 _logger.LogInformation("Completed writting to cosmos");
-                
+
                 _logger.LogInformation("Calling method to send event to service bus");
 
                 await DispatchNotificationEvent(message, KYCVerified, KYCRemarks, user);

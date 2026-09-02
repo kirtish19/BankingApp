@@ -47,7 +47,7 @@ namespace BankingApp.Data.DocumentDb.Repository
                 _logger.LogError(ex.Message, ex);
                 throw;
             }
-            
+
         }
     }
 }

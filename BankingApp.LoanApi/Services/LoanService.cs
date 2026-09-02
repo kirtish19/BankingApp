@@ -46,7 +46,7 @@
                 await _unitOfWork.TransactionManager.SaveChangesAsync();
                 await _unitOfWork.TransactionManager.CommitAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 await _unitOfWork.TransactionManager.RollbackAsync();
                 throw;
