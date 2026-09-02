@@ -1,0 +1,108 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="CustomerStaffAuth" id="0">
+    <mxGraphModel dx="1233" dy="534" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="a" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;" value="Customer / Staff UI" vertex="1">
+          <mxGeometry height="60" width="220" x="310" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="b" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Login Request" vertex="1">
+          <mxGeometry height="60" width="220" x="310" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="c" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="Login Controller" vertex="1">
+          <mxGeometry height="60" width="220" x="310" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="d" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;" value="Validate User in SQL Database" vertex="1">
+          <mxGeometry height="70" width="280" x="280" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="e" parent="1" style="rhombus;whiteSpace=wrap;html=1;" value="User Type?" vertex="1">
+          <mxGeometry height="80" width="120" x="360" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="f" parent="1" style="rounded=1;html=1;fillColor=#dae8fc;" value="Generate Azure Entra ID JWT&amp;nbsp;&lt;div&gt;token&amp;nbsp;&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;using&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;&lt;div&gt;Customer App Reg&lt;/div&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="220" x="85" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="g" parent="1" style="rounded=1;html=1;fillColor=#f8cecc;" value="Generate Azure Entra ID JWT&amp;nbsp;&lt;div&gt;token &lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;using&amp;nbsp;&lt;/span&gt;&lt;/div&gt;&lt;div&gt;Staff App Reg&lt;/div&gt;" vertex="1">
+          <mxGeometry height="70" width="220" x="545" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="h" parent="1" style="rounded=1;html=1;fillColor=#d5e8d4;" value="Return Token to Client" vertex="1">
+          <mxGeometry height="80" width="280" x="280" y="660" as="geometry" />
+        </mxCell>
+        <mxCell id="j" parent="1" style="rounded=1;html=1;fillColor=#e1d5e7;" value="Azure API Management" vertex="1">
+          <mxGeometry height="60" width="240" x="301" y="830" as="geometry" />
+        </mxCell>
+        <mxCell id="k" parent="1" style="rounded=1;html=1;fillColor=#ffe6cc;" value="Validate-jwt using policy" vertex="1">
+          <mxGeometry height="60" width="191" x="326" y="930" as="geometry" />
+        </mxCell>
+        <mxCell id="l" parent="1" style="rounded=1;html=1;" value="Read Oid" vertex="1">
+          <mxGeometry height="60" width="201" x="321" y="1030" as="geometry" />
+        </mxCell>
+        <mxCell id="m" parent="1" style="rhombus;html=1;" value="Oid?" vertex="1">
+          <mxGeometry height="80" width="120" x="361" y="1160" as="geometry" />
+        </mxCell>
+        <mxCell id="n" parent="1" style="rounded=1;html=1;fillColor=#dae8fc;" value="Customer API" vertex="1">
+          <mxGeometry height="70" width="220" x="86" y="1300" as="geometry" />
+        </mxCell>
+        <mxCell id="o" parent="1" style="rounded=1;html=1;fillColor=#f8cecc;" value="Staff API" vertex="1">
+          <mxGeometry height="70" width="220" x="546" y="1300" as="geometry" />
+        </mxCell>
+        <mxCell id="p" parent="1" style="rounded=1;html=1;fillColor=#dae8fc;" value="Customer Dashboard&amp;nbsp;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Create Loan application&lt;/div&gt;&lt;div&gt;View Applications Loan Status&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="220" x="86" y="1420" as="geometry" />
+        </mxCell>
+        <mxCell id="q" parent="1" style="rounded=1;html=1;fillColor=#f8cecc;" value="Staff Dashboard&amp;nbsp;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Approve/Reject Loan&lt;/div&gt;" vertex="1">
+          <mxGeometry height="100" width="220" x="546" y="1420" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" edge="1" parent="1" source="a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="b" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2" edge="1" parent="1" source="b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="c" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3" edge="1" parent="1" source="c" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="d" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4" edge="1" parent="1" source="d" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="e" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge5" edge="1" parent="1" source="e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="f" value="Customer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge6" edge="1" parent="1" source="e" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="g" value="Staff">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge7" edge="1" parent="1" source="f" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="h" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge8" edge="1" parent="1" source="g" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="h" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge10" edge="1" parent="1" source="h" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="j" value="Bearer Token">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="425" y="769.9999999999998" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge11" edge="1" parent="1" source="j" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="k" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge12" edge="1" parent="1" source="k" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="l" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge13" edge="1" parent="1" source="l" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="m" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge14" edge="1" parent="1" source="m" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="n" value="Customer">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge15" edge="1" parent="1" source="m" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="o" value="Staff">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge16" edge="1" parent="1" source="n" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="p" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge17" edge="1" parent="1" source="o" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;" target="q" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
