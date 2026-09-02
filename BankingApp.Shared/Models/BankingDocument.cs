@@ -1,6 +1,6 @@
 namespace BankingApp.Shared.Models
 {
-    public class CustomerKYCDocument
+    public class BankingDocument
     {
         public Guid DocumentId { get; set; }
         public string DocumentName { get; set; } = null!;

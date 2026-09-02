@@ -1,0 +1,15 @@
+﻿global using BankingApp.Data.BankingDb.Extensions;
+global using BankingApp.Data.BankingDb.Repository;
+global using BankingApp.Data.BankingDb.Tables;
+global using BankingApp.LoanApi.Extensions;
+global using BankingApp.LoanApi.Extensions.Mappings;
+global using BankingApp.LoanApi.Models;
+global using BankingApp.LoanApi.Services;
+global using BankingApp.Shared.Constants.Enums;
+global using BankingApp.Shared.Extensions;
+global using BankingApp.Shared.Helpers;
+global using BankingApp.Shared.Models;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.OpenApi;
+global using Serilog;
+global using System.Text.Json.Serialization;

@@ -15,7 +15,7 @@ public class LoanAssessmentFunction
 
     [Function(nameof(LoanAssessmentFunction))]
     public async Task Run(
-        [ServiceBusTrigger("%LoanQueueName%", Connection = "ServiceBusReader")]
+        [ServiceBusTrigger("%LoanQueueName%", Connection = "ServiceBusReader", AutoCompleteMessages = false)]
         ServiceBusReceivedMessage message,
         ServiceBusMessageActions messageActions)
     {

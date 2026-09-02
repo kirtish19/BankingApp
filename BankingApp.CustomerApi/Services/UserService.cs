@@ -72,7 +72,7 @@
                         : $"https://team1bankingapp.blob.core.windows.net/kyc-documents/{customer.Id}/{doc.FileName}"; // fallback to previously used pattern if upload did not return URL
 
                     customerKYCEvent.Documents.Add(
-                      new CustomerKYCDocument
+                      new BankingDocument
                       {
                           DocumentId = Guid.NewGuid(),
                           DocumentName = doc.FileName,
@@ -82,7 +82,7 @@
                 }
             }
 
-            customerKYCEvent.UploadedBy = "Customer";
+            customerKYCEvent.UploadedBy = "CustomerApi";
             customerKYCEvent.SourceSystem = "CustomerService";
             return customerKYCEvent;
         }

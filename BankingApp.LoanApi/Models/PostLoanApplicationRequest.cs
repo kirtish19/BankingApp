@@ -1,6 +1,4 @@
-﻿using BankingApp.Shared.Constants.Enums;
-
-namespace BankingApp.LoanApi.Models
+﻿namespace BankingApp.LoanApi.Models
 {
     public class PostLoanApplicationRequest
     {

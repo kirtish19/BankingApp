@@ -1,6 +1,4 @@
-﻿using BankingApp.LoanApi.Models;
-
-namespace BankingApp.LoanApi.Services
+﻿namespace BankingApp.LoanApi.Services
 {
     public interface ILoanService
     {

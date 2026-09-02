@@ -83,7 +83,7 @@ namespace BankingApp.CustomerKycProcessorFunction.Services
             await _kycDocumentsRepository.AddKycRecords(kycRecords);
         }
 
-        private (bool, string) ValidateDocuments(List<CustomerKYCDocument> documents)
+        private (bool, string) ValidateDocuments(List<BankingDocument> documents)
         {
             bool validated = false;
             string validationRemarks = string.Empty;
