@@ -1,9 +1,12 @@
 <mxfile host="app.diagrams.net">
   <diagram name="Loan Assessment Workflow" id="0">
-    <mxGraphModel dx="2353" dy="649" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="3470" dy="1135" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
+        <mxCell id="i9yKMTE77I9d35zipEpO-3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="140" width="970" x="-720" y="260" as="geometry" />
+        </mxCell>
         <mxCell id="8yGKU04aGsixKv7Fq8Wi-10" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="" vertex="1">
           <mxGeometry height="320" width="580" x="-250" y="490" as="geometry" />
         </mxCell>
@@ -11,51 +14,58 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="c1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;" value="Customer" vertex="1">
-          <mxGeometry height="60" width="120" x="-720" y="60" as="geometry" />
+          <mxGeometry height="60" width="120" x="-630" y="60" as="geometry" />
         </mxCell>
         <mxCell id="8yGKU04aGsixKv7Fq8Wi-2" edge="1" parent="1" source="c2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c3" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="c2" parent="1" style="rounded=1;" value="Select Loan Product&#xa;(Personal/Home/&#xa;Vehicle/Education)" vertex="1">
-          <mxGeometry height="80" width="160" x="-540" y="50" as="geometry" />
+          <mxGeometry height="80" width="160" x="-450" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="8yGKU04aGsixKv7Fq8Wi-3" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c4" value="">
+        <mxCell id="i9yKMTE77I9d35zipEpO-4" edge="1" parent="1" source="c3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c6" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="c3" parent="1" style="rounded=1;" value="Enter Loan Details&#xa;(Amount, Tenure, &#xa;Income, Liabilities)" vertex="1">
-          <mxGeometry height="80" width="170" x="-320" y="50" as="geometry" />
+          <mxGeometry height="80" width="170" x="-230" y="50" as="geometry" />
         </mxCell>
-        <mxCell id="8yGKU04aGsixKv7Fq8Wi-4" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c5" value="">
+        <mxCell id="i9yKMTE77I9d35zipEpO-2" edge="1" parent="1" source="c4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c5" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="c4" parent="1" style="rounded=1;" value="Upload Loan Documents&#xa;(Salary Slip, &#xa;Bank Statement, etc.)" vertex="1">
-          <mxGeometry height="80" width="180" x="-90" y="50" as="geometry" />
+          <mxGeometry height="80" width="180" x="-700" y="290" as="geometry" />
         </mxCell>
         <mxCell id="c5" parent="1" style="shape=cylinder;fillColor=#f8cecc;" value="Blob Storage" vertex="1">
-          <mxGeometry height="60" width="130" x="160" y="60" as="geometry" />
+          <mxGeometry height="60" width="130" x="-445" y="300" as="geometry" />
         </mxCell>
-        <mxCell id="8yGKU04aGsixKv7Fq8Wi-6" edge="1" parent="1" source="c6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c7" value="">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-6" edge="1" parent="1" source="c6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="i9yKMTE77I9d35zipEpO-3" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="180.06" y="90" />
+              <mxPoint x="180.06" y="200" />
+              <mxPoint x="-249.94" y="200" />
+            </Array>
+            <mxPoint x="-250" y="220" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="c6" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Loan Service" vertex="1">
-          <mxGeometry height="60" width="140" x="-540" y="300" as="geometry" />
+          <mxGeometry height="60" width="140" y="60" as="geometry" />
         </mxCell>
         <mxCell id="8yGKU04aGsixKv7Fq8Wi-9" edge="1" parent="1" source="c7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c8" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="c7" parent="1" style="shape=cylinder;fillColor=#ffe6cc;" value="Create LoanApplication Record&#xa;(SQL Database)" vertex="1">
-          <mxGeometry height="80" width="180" x="-325" y="290" as="geometry" />
+          <mxGeometry height="80" width="180" x="-220" y="290" as="geometry" />
         </mxCell>
-        <mxCell id="8yGKU04aGsixKv7Fq8Wi-7" edge="1" parent="1" source="c8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c9" value="">
+        <mxCell id="8yGKU04aGsixKv7Fq8Wi-7" edge="1" parent="1" source="c8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="c9" value="">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="70" y="420" />
-              <mxPoint x="-680" y="420" />
+              <mxPoint x="120" y="450" />
+              <mxPoint x="-680" y="450" />
             </Array>
           </mxGeometry>
         </mxCell>
         <mxCell id="c8" parent="1" style="rounded=1;fillColor=#d5e8d4;" value="Publish LoanApplicationSubmitted &#xa;Event" vertex="1">
-          <mxGeometry height="60" width="220" x="-40" y="300" as="geometry" />
+          <mxGeometry height="60" width="220" x="10" y="300" as="geometry" />
         </mxCell>
         <mxCell id="8yGKU04aGsixKv7Fq8Wi-8" edge="1" parent="1" source="c9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" target="c10" value="">
           <mxGeometry relative="1" as="geometry" />
@@ -109,16 +119,10 @@
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="c22" parent="1" style="rounded=1;fillColor=#dae8fc;" value="Send Approval Email&#xa;Send Rejection Email" vertex="1">
-          <mxGeometry height="80" width="220" x="-80" y="990" as="geometry" />
+          <mxGeometry height="80" width="190" x="-80" y="990" as="geometry" />
         </mxCell>
         <mxCell id="c23" parent="1" style="rounded=1;fillColor=#dae8fc;" value="Customer Notified" vertex="1">
-          <mxGeometry height="60" width="180" x="180" y="1000" as="geometry" />
-        </mxCell>
-        <mxCell id="8yGKU04aGsixKv7Fq8Wi-5" edge="1" parent="1" source="c5" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" target="c6" value="">
-          <mxGeometry height="50" relative="1" width="50" as="geometry">
-            <mxPoint x="-300" y="250" as="sourcePoint" />
-            <mxPoint x="-250" y="200" as="targetPoint" />
-          </mxGeometry>
+          <mxGeometry height="60" width="160" x="160" y="1000" as="geometry" />
         </mxCell>
         <mxCell id="8yGKU04aGsixKv7Fq8Wi-12" edge="1" parent="1" source="8yGKU04aGsixKv7Fq8Wi-10" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;edgeStyle=orthogonalEdgeStyle;" target="c19" value="">
           <mxGeometry height="50" relative="1" width="50" as="geometry">
