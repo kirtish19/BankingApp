@@ -85,32 +85,30 @@ namespace BankingApp.CustomerKycProcessorFunction.Services
 
         private (bool, string) ValidateDocuments(List<BankingDocument> documents)
         {
-            bool validated = false;
-            string validationRemarks = string.Empty;
-            if (documents is null || documents.Count != 2)
-                return (validated, "Documents were not uploaded.");
-            //TODO - fix below logic
+            if (documents is null || documents.Count == 0)
+                return (false, "Documents were not uploaded.");
+
+            bool hasPAN = false;
+            bool hasAadhar = false;
+
             foreach (var document in documents)
             {
-                if (document.DocumentName.Contains("PAN", StringComparison.OrdinalIgnoreCase))
-                    validated = true;
-                else
-                {
-                    validated = false;
-                    validationRemarks = "PAN Verificaiton Failed.";
-                }
-
-                if (document.DocumentName.Contains("Aadhar", StringComparison.OrdinalIgnoreCase))
-                    validated = true;
-                else
-                {
-                    validated = false;
-                    validationRemarks = "Aadhar Verificaiton Failed.";
-                }
+                var name = document?.DocumentName ?? string.Empty;
+                if (name.Contains("PAN", StringComparison.OrdinalIgnoreCase))
+                    hasPAN = true;
+                if (name.Contains("Aadhar", StringComparison.OrdinalIgnoreCase) ||
+                    name.Contains("Aadhaar", StringComparison.OrdinalIgnoreCase))
+                    hasAadhar = true;
             }
 
-            validationRemarks = validated ? "KYC verification completed successfully" : validationRemarks;
-            return (validated, validationRemarks);
+            var missing = new List<string>();
+            if (!hasPAN) missing.Add("PAN is not uploaded.");
+            if (!hasAadhar) missing.Add("Aadhar is not uploaded.");
+
+            if (missing.Count == 0)
+                return (true, "KYC verification completed successfully");
+
+            return (false, string.Join(" ", missing));
         }
     }
 }

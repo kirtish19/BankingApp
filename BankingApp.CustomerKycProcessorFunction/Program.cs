@@ -5,7 +5,7 @@ var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();
 
-builder.Configuration.AddCustomKeyVault(builder.Configuration.GetValue<string>("KeyVaultUri")!);
+builder.Configuration.AddCustomKeyVault(builder.Configuration.GetValue<string>("KeyVaultUri")!, builder.Configuration.GetValue<bool>("RunningLocal"));
 builder.Services.AddScoped<IMetaDataProcessorService, MetaDataProcessorService>();
 builder.Services.AddScoped<IKycDocumentsRepository, KycDocumentsRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();

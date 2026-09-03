@@ -16,18 +16,30 @@ namespace BankingApp.CustomerLoanProcessorFunction.Services
         {
             try
             {
-                var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(message.CustomerId) ?? throw new InvalidDataException("Customer not found.");
-                var loanApplication = await _unitOfWork.LoanApplicationRepository.GetByIdAsync(message.LoanApplicationId) ?? throw new InvalidDataException("Loan application not found.");
-                
-                var riskAssesmentScore = CreditRiskAssesmentHelper.CalculateCustomerRisk(customer.CreditScore);                
-                var loanStatus = CalculateLoanEligibility(loanApplication, riskAssesmentScore, customer);
-                var interestRate = CalculateInterestRate(loanApplication.LoanType);
-                var monthlyEMI = CalculateMonthlyEMI(loanApplication.LoanAmount, loanApplication.TenureMonths, interestRate);
-                loanApplication.InterestRate = interestRate;
-                loanApplication.MonthlyEMI = monthlyEMI;
-                await _unitOfWork.TransactionManager.SaveChangesAsync();
+                var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(message.CustomerId)
+                    ?? throw new InvalidDataException("Customer not found.");
+                var loanApplication = await _unitOfWork.LoanApplicationRepository.GetByIdAsync(message.LoanApplicationId)
+                    ?? throw new InvalidDataException("Loan application not found.");
 
+                var (isValid, remarks) = ValidateDocuments(message.Documents);
 
+                if (isValid)
+                {
+                    await CreateLoanDocumentRecords(message);
+                    var riskAssesmentScore = CreditRiskAssesmentHelper.CalculateCustomerRisk(customer.CreditScore);
+                    loanApplication.Status = CalculateLoanEligibility(loanApplication, riskAssesmentScore, customer, ref remarks);
+                    if (loanApplication.Status == LoanStatus.Approved)
+                    {
+                        var interestRate = CalculateInterestRate(loanApplication.LoanType);
+                        var monthlyEMI = CalculateMonthlyEMI(loanApplication.LoanAmount, loanApplication.TenureMonths, interestRate);
+                        loanApplication.InterestRate = interestRate;
+                        loanApplication.MonthlyEMI = monthlyEMI;
+                    }
+                    loanApplication.UpdatedDate = DateTime.Now;
+                    await _unitOfWork.TransactionManager.SaveChangesAsync();
+                }
+
+                await DispatchNotificationEvent(message, loanApplication, remarks);
 
             }
             catch (Exception ex)
@@ -68,14 +80,20 @@ namespace BankingApp.CustomerLoanProcessorFunction.Services
 
             return (decimal)emi;
         }
-        private LoanStatus CalculateLoanEligibility(LoanApplications loanApplication, RiskAssesment riskAssesment, Customer customer)
+        private LoanStatus CalculateLoanEligibility(LoanApplications loanApplication, RiskAssesment riskAssesment, Customer customer, ref string remarks)
         {
             if (customer.AnnualIncome <= 0)
+            {
+                remarks = "Income criteria not met.";
                 return LoanStatus.Rejected;
+            }
 
             // Use enum values for employment type
             if (customer.EmploymentType == EmploymentType.Unemployed)
+            {
+                remarks = "Employment criteria not met.";
                 return LoanStatus.Rejected;
+            }
 
             decimal baseThreshold = customer.EmploymentType switch
             {
@@ -118,82 +136,94 @@ namespace BankingApp.CustomerLoanProcessorFunction.Services
 
             // VeryHigh risk: require especially strong income; otherwise reject
             if (riskAssesment == RiskAssesment.VeryHigh)
-                return customer.AnnualIncome >= requiredIncome ? LoanStatus.Approved : LoanStatus.Rejected;
+                if (customer.AnnualIncome >= requiredIncome)
+                    return LoanStatus.Approved;
+                else
+                {
+                    remarks = "Income criteria not met for Very High risk assessment.";
+                    return LoanStatus.Rejected;
+                }
 
             // For other risks: approve when income meets or exceeds required threshold
-            return customer.AnnualIncome >= requiredIncome ? LoanStatus.Approved : LoanStatus.Rejected;
+            if (customer.AnnualIncome >= requiredIncome)
+                return LoanStatus.Approved;
+            else
+            {
+                remarks = "Income criteria not met.";
+                return LoanStatus.Rejected;
+            }
         }
-        private async Task DispatchNotificationEvent(LoanApplicationMessage message, bool KYCVerified, string KYCRemarks, Data.BankingDb.Tables.User user)
+        private async Task DispatchNotificationEvent(LoanApplicationMessage message, LoanApplications loanApplication, string remarks)
         {
-            KycNotification kycNotification = new()
+            LoanNotification loanNotification = new()
             {
                 EventId = message.EventId,
-                EventType = "KYCVerificationCompleted",
+                EventType = "LoanApplicationProcessed",
                 EventTime = DateTime.Now,
-                NotificationType = "KYC",
+                NotificationType = "LOAN",
                 CustomerId = message.CustomerId,
-                CustomerName = user.Customer!.FirstName + " " + user.Customer.LastName,
-                Status = KYCVerified ? "KYCVerified" : "KYCRejected",
-                Email = user.Customer.Email,
-                MobileNumber = user.Customer.MobileNumber,
-                Remarks = KYCRemarks,
-                SourceSystem = "CustomerKycProcessorFunction"
+                CustomerName = loanApplication.Customer!.FirstName + " " + loanApplication.Customer.LastName,
+                Status = loanApplication.Status == LoanStatus.Approved ? nameof(LoanStatus.Approved) : nameof(LoanStatus.Rejected),
+                Email = loanApplication.Customer.Email,
+                MobileNumber = loanApplication.Customer.MobileNumber,
+                Remarks = remarks,
+                SourceSystem = "CustomerLoanProcessorFunction"
             };
             var additionalProperties = new Dictionary<string, object>
                     {
-                        { nameof(KycNotification.NotificationType), kycNotification.NotificationType },
+                        { nameof(LoanNotification.NotificationType), loanNotification.NotificationType },
                     };
-            await _serviceBusHandler.SendMessageToQueueOrTopic(kycNotification,
+            await _serviceBusHandler.SendMessageToQueueOrTopic(loanNotification,
                 _configuration.GetValue<string>("NotificationTopicName")!,
                 _configuration.GetValue<string>("ServiceBusWriter")!,
                 additionalProperties);
         }
-
-        private async Task CreateKycRecords(CustomerKYCMessage message)
-        {
-            var kycRecords = new List<KycDocument>();
-            foreach (var kycdocument in message.Documents)
-            {
-                KycDocument document = new()
-                {
-                    Id = kycdocument.DocumentId,
-                    CustomerId = message.CustomerId,
-                    DocumentName = kycdocument.DocumentName,
-                    BlobUrl = kycdocument.BlobUrl
-                };
-                kycRecords.Add(document);
-            }
-            await _kycDocumentsRepository.AddKycRecords(kycRecords);
-        }
-
         private (bool, string) ValidateDocuments(List<BankingDocument> documents)
         {
-            bool validated = false;
-            string validationRemarks = string.Empty;
-            if (documents is null || documents.Count != 2)
-                return (validated, "Documents were not uploaded.");
-            //TODO - fix below logic
+            if (documents is null || documents.Count == 0)
+                return (false, "Documents were not uploaded.");
+
+            bool hasBankStatement = false;
+            bool hasEmploymentLetter = false;
+            bool hasSalarySlip = false;
+
             foreach (var document in documents)
             {
-                if (document.DocumentName.Contains("PAN", StringComparison.OrdinalIgnoreCase))
-                    validated = true;
-                else
-                {
-                    validated = false;
-                    validationRemarks = "PAN Verificaiton Failed.";
-                }
-
-                if (document.DocumentName.Contains("Aadhar", StringComparison.OrdinalIgnoreCase))
-                    validated = true;
-                else
-                {
-                    validated = false;
-                    validationRemarks = "Aadhar Verificaiton Failed.";
-                }
+                var name = document?.DocumentName ?? string.Empty;
+                if (name.Contains("BankStatement", StringComparison.OrdinalIgnoreCase))
+                    hasBankStatement = true;
+                if (name.Contains("EmploymentLetter", StringComparison.OrdinalIgnoreCase))
+                    hasEmploymentLetter = true;
+                if (name.Contains("SalarySlip", StringComparison.OrdinalIgnoreCase))
+                    hasSalarySlip = true;
             }
 
-            validationRemarks = validated ? "KYC verification completed successfully" : validationRemarks;
-            return (validated, validationRemarks);
+            var missing = new List<string>();
+            if (!hasBankStatement) missing.Add("BankStatement is not uploaded.");
+            if (!hasEmploymentLetter) missing.Add("Employment Letter is not uploaded.");
+            if (!hasSalarySlip) missing.Add("Salary Slip is not uploaded.");
+
+            if (missing.Count == 0)
+                return (true, "Loan application processed successfully.");
+
+            return (false, string.Join(" ", missing));
+        }
+
+        private async Task CreateLoanDocumentRecords(LoanApplicationMessage message)
+        {
+            var loanDocuments = new List<LoanDocuments>();
+            foreach (var document in message.Documents)
+            {
+                LoanDocuments loanDocument = new()
+                {
+                    Id = document.DocumentId,
+                    CustomerId = message.CustomerId,
+                    DocumentName = document.DocumentName,
+                    BlobUrl = document.BlobUrl
+                };
+                loanDocuments.Add(loanDocument);
+            }
+            await _loanDocumentRepository.AddLoanDocumentRecords(loanDocuments);
         }
     }
 }
