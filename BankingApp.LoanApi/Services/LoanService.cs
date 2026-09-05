@@ -86,5 +86,17 @@
             loanApplicationEvent.SourceSystem = "LoanService";
             return loanApplicationEvent;
         }
+
+        public async Task<IEnumerable<LoanApplicationsDto>> GetAllLoanApplications()
+        {
+            var loanApplications = await _unitOfWork.LoanApplicationRepository.GetAllAsync();
+            return loanApplications.ToLoanApplicationDtoList();
+        }
+
+        public async Task<LoanApplicationsDto?> GetLoanApplicationById(Guid id)
+        {
+            var loanApplication = await _unitOfWork.LoanApplicationRepository.GetByIdAsync(id);
+            return loanApplication?.ToLoanApplicationDto();
+        }
     }
 }

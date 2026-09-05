@@ -14,5 +14,19 @@
             return Ok("Loan application submitted successfully");
         }
 
+        [HttpGet()]
+        public async Task<IActionResult> GetAllAsync()
+        {
+            var loanApplications = await _loanService.GetAllLoanApplications();
+            return Ok(loanApplications);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetLoanApplicationAsync(Guid id)
+        {
+            var loanApplication = await _loanService.GetLoanApplicationById(id);
+            if (loanApplication is null) return NotFound("Loan application not found");
+            return Ok(loanApplication);
+        }
     }
 }

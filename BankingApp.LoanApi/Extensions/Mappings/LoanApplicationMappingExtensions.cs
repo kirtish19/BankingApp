@@ -31,5 +31,27 @@
                 UpdatedDate = request.UpdatedDate
             };
         }
+
+        public static LoanApplicationsDto ToLoanApplicationDto(this LoanApplications request)
+        {
+            return new LoanApplicationsDto
+            {
+                Id = request.Id,
+                CustomerId = request.CustomerId,
+                LoanType = request.LoanType,
+                LoanAmount = request.LoanAmount,
+                TenureMonths = request.TenureMonths,
+                Status = request.Status,
+                CreatedDate = request.CreatedDate,
+                UpdatedDate = request.UpdatedDate,
+                InterestRate = request.InterestRate,
+                MonthlyEMI = request.MonthlyEMI,
+            };
+        }
+
+        public static IEnumerable<LoanApplicationsDto> ToLoanApplicationDtoList(this IEnumerable<LoanApplications> loanApplications)
+        {
+            return loanApplications.Select(x => x.ToLoanApplicationDto());
+        }
     }
 }
