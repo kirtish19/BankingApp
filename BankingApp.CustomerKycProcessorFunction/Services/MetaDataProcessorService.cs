@@ -17,11 +17,11 @@ namespace BankingApp.CustomerKycProcessorFunction.Services
             try
             {
                 (KYCVerified, KYCRemarks) = ValidateDocuments(message.Documents);
-
+                await _unitOfWork.TransactionManager.BeginTransactionAsync();
                 var user = await _unitOfWork.UserRepository.GetUserByCustomerId(message.CustomerId);
                 user.IsActive = KYCVerified;
                 user.Customer!.Status = KYCVerified ? CustomerStatus.Active : CustomerStatus.Rejected;
-
+                await _unitOfWork.TransactionManager.SaveChangesAsync();
                 _logger.LogInformation("Writing to cosmos");
 
                 await CreateKycRecords(message);
@@ -33,10 +33,14 @@ namespace BankingApp.CustomerKycProcessorFunction.Services
                 await DispatchNotificationEvent(message, KYCVerified, KYCRemarks, user);
 
                 _logger.LogInformation("Message sent to service bus");
+                await _unitOfWork.TransactionManager.SaveChangesAsync();
+                await _unitOfWork.TransactionManager.CommitAsync();
             }
             catch (Exception ex)
             {
+                await _unitOfWork.TransactionManager.RollbackAsync();
                 _logger.LogError(ex, ex.Message);
+                throw;
             }
         }
 
