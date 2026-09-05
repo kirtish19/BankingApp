@@ -1,10 +1,15 @@
 ﻿@page "/customer-dashboard"
+@rendermode InteractiveServer
+
+@inject NavigationManager Navigation
 
 <PageTitle>Customer Dashboard | BankingApp</PageTitle>
 
 <div class="container py-4">
 
-    <!-- Header -->
+    <!-- ========================================= -->
+    <!-- HEADER -->
+    <!-- ========================================= -->
 
     <div class="d-flex
         flex-wrap
@@ -19,11 +24,10 @@
             </h2>
 
             <p class="text-muted mb-0">
-                Here's an overview of your banking activity.
+                Manage your banking services and applications.
             </p>
 
         </div>
-
 
         <button class="btn btn-outline-danger"
                 @onclick="Logout">
@@ -35,9 +39,13 @@
     </div>
 
 
-    <!-- Status Cards -->
+    <!-- ========================================= -->
+    <!-- ACCOUNT STATUS -->
+    <!-- ========================================= -->
 
     <div class="row g-4 mb-4">
+
+        <!-- KYC -->
 
         <div class="col-md-4">
 
@@ -64,6 +72,8 @@
         </div>
 
 
+        <!-- ACTIVE LOANS -->
+
         <div class="col-md-4">
 
             <div class="card border-0 shadow-sm h-100">
@@ -89,6 +99,8 @@
         </div>
 
 
+        <!-- APPLICATIONS -->
+
         <div class="col-md-4">
 
             <div class="card border-0 shadow-sm h-100">
@@ -96,7 +108,7 @@
                 <div class="card-body">
 
                     <small class="text-muted">
-                        Applications
+                        Loan Applications
                     </small>
 
                     <h4 class="fw-bold mt-2">
@@ -116,37 +128,43 @@
     </div>
 
 
-    <!-- Loan -->
+    <!-- ========================================= -->
+    <!-- APPLY FOR LOAN -->
+    <!-- ========================================= -->
 
     <div class="card border-0 shadow-sm mb-4">
 
         <div class="card-body p-4">
 
-            <div class="d-flex
-                flex-wrap
-                justify-content-between
-                align-items-center">
+            <div class="row align-items-center">
 
-                <div>
+                <div class="col-md-8">
+
+                    <span class="badge bg-primary mb-2">
+                        Loans
+                    </span>
 
                     <h4 class="fw-bold">
                         Apply for a Loan
                     </h4>
 
                     <p class="text-muted mb-0">
-                        Choose from our available loan products.
+                        Choose a loan product and submit
+                        your application online.
                     </p>
 
                 </div>
 
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
 
-                <button class="btn btn-primary
-                    mt-3 mt-md-0"
-                        @onclick="GoToLoans">
+                    <button class="btn btn-primary px-4"
+                            @onclick="GoToLoans">
 
-                    Explore Loans
+                        Explore Loans
 
-                </button>
+                    </button>
+
+                </div>
 
             </div>
 
@@ -155,7 +173,9 @@
     </div>
 
 
-    <!-- Recent Applications -->
+    <!-- ========================================= -->
+    <!-- RECENT APPLICATIONS -->
+    <!-- ========================================= -->
 
     <div class="card border-0 shadow-sm">
 
@@ -165,16 +185,14 @@
                 Recent Applications
             </h5>
 
-            <div class="text-center
-                py-5
-                text-muted">
+            <div class="text-center py-5 text-muted">
 
                 <div class="fs-1 mb-2">
                     📄
                 </div>
 
                 <p class="mb-0">
-                    No applications yet.
+                    No loan applications yet.
                 </p>
 
             </div>
@@ -186,4 +204,16 @@
 </div>
 
 
+@code {
+
+    private void GoToLoans()
+    {
+        Navigation.NavigateTo("/apply-loan");
+    }
+
+    private void Logout()
+    {
+        Navigation.NavigateTo("/login");
+    }
+}
 

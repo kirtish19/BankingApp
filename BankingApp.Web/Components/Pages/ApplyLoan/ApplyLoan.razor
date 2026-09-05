@@ -1,13 +1,18 @@
 ﻿
 @page "/apply-loan"
-
 @using BankingApp.Web.Constants
+@rendermode InteractiveServer
+
 
 @inject NavigationManager Navigation
 
-<PageTitle>Apply for Loan | BankingApp</PageTitle>
+<PageTitle>Choose Loan | BankingApp</PageTitle>
 
 <div class="container py-4">
+
+    <!-- ========================================= -->
+    <!-- HEADER -->
+    <!-- ========================================= -->
 
     <div class="mb-4">
 
@@ -20,7 +25,6 @@
 
         </button>
 
-
         <h2 class="fw-bold">
             Choose a Loan
         </h2>
@@ -31,6 +35,10 @@
 
     </div>
 
+
+    <!-- ========================================= -->
+    <!-- LOAN TYPES -->
+    <!-- ========================================= -->
 
     <div class="row g-4">
 
@@ -44,7 +52,8 @@
 
                     <div class="card-body
                         d-flex
-                        flex-column">
+                        flex-column
+                        p-4">
 
                         <div class="fs-1 mb-3">
                             @loan.Icon
@@ -78,4 +87,53 @@
 </div>
 
 
+@code {
+
+    private readonly List<LoanOption> LoanTypes =
+    [
+        new(
+            LoanType.Personal,
+            "Personal Loan",
+            "For personal expenses, emergencies and other financial needs.",
+            "💳"),
+
+        new(
+            LoanType.Home,
+            "Home Loan",
+            "Finance the purchase or construction of your home.",
+            "🏠"),
+
+        new(
+            LoanType.Education,
+            "Education Loan",
+            "Support higher education and related educational expenses.",
+            "🎓"),
+
+        new(
+            LoanType.Vehicle,
+            "Vehicle Loan",
+            "Finance the purchase of a new or used vehicle.",
+            "🚗")
+    ];
+
+
+    private void SelectLoan(LoanType loanType)
+    {
+        Navigation.NavigateTo(
+            $"/loan-application/{loanType}");
+    }
+
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/customer-dashboard");
+    }
+
+
+    private record LoanOption(
+        LoanType Type,
+        string Name,
+        string Description,
+        string Icon);
+}
 

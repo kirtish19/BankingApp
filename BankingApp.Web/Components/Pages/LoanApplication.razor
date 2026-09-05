@@ -1,0 +1,391 @@
+﻿@page "/loan-application/{SelectedLoanType}"
+@rendermode InteractiveServer
+
+@using BankingApp.Web.Constants
+@using BankingApp.Web.Models.Loan
+@using Microsoft.AspNetCore.Components.Forms
+
+<div class="container py-5">
+
+    <!-- HEADER -->
+    <div class="mb-4">
+
+        <button class="btn btn-outline-secondary mb-3"
+                @onclick="GoBack">
+            ← Back
+        </button>
+
+        <h2 class="fw-bold">
+            Loan Application
+        </h2>
+
+        <p class="text-muted">
+            Complete the details below to submit your loan application.
+        </p>
+
+    </div>
+
+
+    <!-- LOAN TYPE -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body p-4">
+
+            <h5 class="fw-bold mb-3">
+                Loan Type
+            </h5>
+
+            <div class="alert alert-light border mb-0">
+                <strong>
+                    @GetLoanTypeName()
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- LOAN DETAILS -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body p-4">
+
+            <h5 class="fw-bold mb-4">
+                Loan Details
+            </h5>
+
+            <div class="row g-4">
+
+                <!-- LOAN AMOUNT -->
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+                        Loan Amount
+                    </label>
+
+                    <InputNumber @bind-Value="loanApplication.LoanAmount"
+                                 class="form-control"
+                                 placeholder="Enter loan amount" />
+
+                    <small class="text-muted">
+                        Enter the amount you want to borrow.
+                    </small>
+
+                </div>
+
+
+                <!-- TENURE -->
+                <div class="col-md-6">
+
+                    <label class="form-label fw-semibold">
+                        Tenure
+                    </label>
+
+                    <InputNumber @bind-Value="loanApplication.TenureMonths"
+                                 class="form-control"
+                                 placeholder="Enter tenure in months" />
+
+                    <small class="text-muted">
+                        Enter the repayment period in months.
+                    </small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- REQUIRED DOCUMENTS -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body p-4">
+
+            <h5 class="fw-bold mb-1">
+                Required Documents
+            </h5>
+
+            <p class="text-muted mb-4">
+                Upload all three required documents.
+            </p>
+
+
+            <!-- SALARY SLIP -->
+            <div class="mb-4">
+
+                <label class="form-label fw-semibold">
+                    Salary Slip
+                </label>
+
+                <InputFile OnChange="OnSalarySlipSelected"
+                           class="form-control"
+                           accept=".pdf,.jpg,.jpeg,.png" />
+
+                @if (loanApplication.SalarySlip != null)
+                {
+                    <div class="mt-2 d-flex align-items-center">
+
+                        <span class="text-success">
+                            ✓ @loanApplication.SalarySlip.Name
+                        </span>
+
+                        <button type="button"
+                                class="btn btn-sm btn-outline-danger ms-3"
+                                @onclick="RemoveSalarySlip">
+                            Remove
+                        </button>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- BANK STATEMENT -->
+            <div class="mb-4">
+
+                <label class="form-label fw-semibold">
+                    Bank Statement
+                </label>
+
+                <InputFile OnChange="OnBankStatementSelected"
+                           class="form-control"
+                           accept=".pdf,.jpg,.jpeg,.png" />
+
+                @if (loanApplication.BankStatement != null)
+                {
+                    <div class="mt-2 d-flex align-items-center">
+
+                        <span class="text-success">
+                            ✓ @loanApplication.BankStatement.Name
+                        </span>
+
+                        <button type="button"
+                                class="btn btn-sm btn-outline-danger ms-3"
+                                @onclick="RemoveBankStatement">
+                            Remove
+                        </button>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <!-- EMPLOYMENT LETTER -->
+            <div class="mb-2">
+
+                <label class="form-label fw-semibold">
+                    Employment Letter
+                </label>
+
+                <InputFile OnChange="OnEmploymentLetterSelected"
+                           class="form-control"
+                           accept=".pdf,.jpg,.jpeg,.png" />
+
+                @if (loanApplication.EmploymentLetter != null)
+                {
+                    <div class="mt-2 d-flex align-items-center">
+
+                        <span class="text-success">
+                            ✓ @loanApplication.EmploymentLetter.Name
+                        </span>
+
+                        <button type="button"
+                                class="btn btn-sm btn-outline-danger ms-3"
+                                @onclick="RemoveEmploymentLetter">
+                            Remove
+                        </button>
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUBMIT -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-4">
+
+            @if (!CanSubmit)
+            {
+                <div class="alert alert-warning">
+                    Please enter the loan amount, tenure and upload all
+                    required documents before submitting.
+                </div>
+            }
+
+            <div class="d-flex justify-content-end">
+
+                <button type="button"
+                        class="btn btn-primary px-4"
+                        disabled="@(!CanSubmit)"
+                        @onclick="SubmitApplication">
+
+                    Submit Loan Application
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@code {
+
+    // Route parameter
+    [Parameter]
+    public string? SelectedLoanType { get; set; }
+
+
+    // Selected loan type
+    private LoanType loanType;
+
+
+    // Loan application request
+    private LoanApplicationRequest loanApplication = new();
+
+
+    protected override void OnInitialized()
+    {
+        if (!Enum.TryParse<LoanType>(
+                SelectedLoanType,
+                true,
+                out var parsedLoanType))
+        {
+            NavigationManager.NavigateTo("/apply-loan");
+            return;
+        }
+
+        loanType = parsedLoanType;
+
+        loanApplication.LoanType = loanType;
+    }
+
+
+    // -----------------------------
+    // DOCUMENT UPLOAD
+    // -----------------------------
+
+    private void OnSalarySlipSelected(
+        InputFileChangeEventArgs e)
+    {
+        loanApplication.SalarySlip = e.File;
+    }
+
+
+    private void OnBankStatementSelected(
+        InputFileChangeEventArgs e)
+    {
+        loanApplication.BankStatement = e.File;
+    }
+
+
+    private void OnEmploymentLetterSelected(
+        InputFileChangeEventArgs e)
+    {
+        loanApplication.EmploymentLetter = e.File;
+    }
+
+
+    // -----------------------------
+    // REMOVE DOCUMENTS
+    // -----------------------------
+
+    private void RemoveSalarySlip()
+    {
+        loanApplication.SalarySlip = null;
+    }
+
+
+    private void RemoveBankStatement()
+    {
+        loanApplication.BankStatement = null;
+    }
+
+
+    private void RemoveEmploymentLetter()
+    {
+        loanApplication.EmploymentLetter = null;
+    }
+
+
+    // -----------------------------
+    // VALIDATION
+    // -----------------------------
+
+    private bool CanSubmit =>
+        loanApplication.LoanAmount > 0 &&
+        loanApplication.TenureMonths > 0 &&
+        loanApplication.SalarySlip != null &&
+        loanApplication.BankStatement != null &&
+        loanApplication.EmploymentLetter != null;
+
+
+    // -----------------------------
+    // SUBMIT
+    // -----------------------------
+
+    private void SubmitApplication()
+    {
+        if (!CanSubmit)
+            return;
+
+        // API integration will be added later.
+        //
+        // The LoanService will eventually receive:
+        //
+        // loanApplication.LoanType
+        // loanApplication.LoanAmount
+        // loanApplication.TenureMonths
+        // loanApplication.SalarySlip
+        // loanApplication.BankStatement
+        // loanApplication.EmploymentLetter
+
+        NavigationManager.NavigateTo(
+            "/loan-application-success");
+    }
+
+
+    // -----------------------------
+    // LOAN TYPE DISPLAY
+    // -----------------------------
+
+    private string GetLoanTypeName()
+    {
+        return loanType switch
+        {
+            LoanType.Personal => "Personal Loan",
+            LoanType.Home => "Home Loan",
+            LoanType.Education => "Education Loan",
+            LoanType.Vehicle => "Vehicle Loan",
+            _ => "Loan"
+        };
+    }
+
+
+    // -----------------------------
+    // NAVIGATION
+    // -----------------------------
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/apply-loan");
+    }
+
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = null!;
+}
