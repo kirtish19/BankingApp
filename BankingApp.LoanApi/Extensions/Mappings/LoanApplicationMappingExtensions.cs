@@ -47,6 +47,7 @@
                 InterestRate = request.InterestRate,
                 MonthlyEMI = request.MonthlyEMI,
                 ReviewComments = request.ReviewComments,
+                RiskAssesmentScore = request.RiskAssesmentScore,
             };
         }
 
