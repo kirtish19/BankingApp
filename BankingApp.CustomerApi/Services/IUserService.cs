@@ -5,5 +5,6 @@
         public Task RegisterUserAsync(PostUserRegisterationRequest request);
         public Task<LoginResponseDto> LoginUserAsync(PostLoginRequest request);
         public Task<string> GetTokenAsync(User user);
+        public Task<CustomerDto?> GetCustomerDetailsAsync(Guid customerId);
     }
 }

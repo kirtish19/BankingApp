@@ -38,5 +38,23 @@
                 CreatedDate = request.CreatedDate
             };
         }
+
+        public static CustomerDto ToCustomerDto(this Customer customer)
+        {
+            return new CustomerDto
+            {
+                Id = customer.Id,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Email = customer.Email,
+                MobileNumber = customer.MobileNumber,
+                EmploymentType = customer.EmploymentType,
+                AnnualIncome = customer.AnnualIncome,
+                CreditScore = customer.CreditScore,
+                DateOfBirth = customer.DateOfBirth,
+                Status = customer.Status,
+                CreatedDate = customer.CreatedDate
+            };
+        }
     }
 }

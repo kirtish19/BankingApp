@@ -131,5 +131,11 @@ namespace BankingApp.CustomerApi.Services
                 throw new InvalidOperationException("Failed to acquire token from Entra ID.", msalEx);
             }
         }
+
+        public async Task<CustomerDto?> GetCustomerDetailsAsync(Guid customerId)
+        {
+            var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(customerId);
+            return customer?.ToCustomerDto();
+        }
     }
 }

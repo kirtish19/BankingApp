@@ -33,5 +33,14 @@
             };
             return Ok(response);
         }
+
+        [Consumes("application/json")]
+        [HttpGet("GetCustomerDetails/{customerId}")]
+        public async Task<IActionResult> GetCustomerDetailsAsync(Guid customerId)
+        {
+            var customerDetails = await _userService.GetCustomerDetailsAsync(customerId);
+            if (customerDetails is null) return NotFound("Customer not found");
+            return Ok(customerDetails);
+        }
     }
 }
