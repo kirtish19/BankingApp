@@ -98,5 +98,17 @@
             var loanApplication = await _unitOfWork.LoanApplicationRepository.GetByIdAsync(id);
             return loanApplication?.ToLoanApplicationDto();
         }
+
+        public async Task<IEnumerable<LoanApplicationsDto>> GetLoanApplicationsForCustomerAsync(Guid customerId)
+        {
+            var loanApplications = await _unitOfWork.LoanApplicationRepository.GetLoanApplicationsForCustomerAsync(customerId);
+            return loanApplications.ToLoanApplicationDtoList();
+        }
+
+        public async Task<IEnumerable<LoanApplicationsDto>> GetPendingLoanApplicationsAsync()
+        {
+            var loanApplications = await _unitOfWork.LoanApplicationRepository.GetLoanApplicationsByStatusAsync(LoanStatus.ManualReview);
+            return loanApplications.ToLoanApplicationDtoList();
+        }
     }
 }

@@ -15,6 +15,7 @@
         }
 
         [HttpGet()]
+        [Consumes("application/json")]
         public async Task<IActionResult> GetAllAsync()
         {
             var loanApplications = await _loanService.GetAllLoanApplications();
@@ -22,11 +23,28 @@
         }
 
         [HttpGet("{id}")]
+        [Consumes("application/json")]
         public async Task<IActionResult> GetLoanApplicationAsync(Guid id)
         {
             var loanApplication = await _loanService.GetLoanApplicationById(id);
             if (loanApplication is null) return NotFound("Loan application not found");
             return Ok(loanApplication);
+        }
+
+        [HttpGet("GetLoansForCustomer/{customerId}")]
+        [Consumes("application/json")]
+        public async Task<IActionResult> GetLoansForCustomerAsync(Guid customerId)
+        {
+            var loanApplications = await _loanService.GetLoanApplicationsForCustomerAsync(customerId);
+            return Ok(loanApplications);
+        }
+
+        [HttpGet("GetPendingLoans")]
+        [Consumes("application/json")]
+        public async Task<IActionResult> GetPendingLoansAsync()
+        {
+            var loanApplications = await _loanService.GetPendingLoanApplicationsAsync();
+            return Ok(loanApplications);
         }
     }
 }

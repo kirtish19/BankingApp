@@ -10,6 +10,7 @@
         public decimal? MonthlyEMI { get; set; }
         public decimal? InterestRate { get; set; }
         public LoanStatus Status { get; set; }
+        public string? ReviewComments { get; set; }
         public RiskAssesment? RiskAssesmentScore { get; set; }
         public DateTime CreatedDate { get; set; }
         public DateTime UpdatedDate { get; set; }

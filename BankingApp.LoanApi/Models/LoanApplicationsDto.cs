@@ -9,6 +9,7 @@
         public int TenureMonths { get; set; }
         public decimal? MonthlyEMI { get; set; }
         public decimal? InterestRate { get; set; }
+        public string? ReviewComments { get; set; }
         public LoanStatus Status { get; set; }
         public RiskAssesment? RiskAssesmentScore { get; set; }
         public DateTime CreatedDate { get; set; }

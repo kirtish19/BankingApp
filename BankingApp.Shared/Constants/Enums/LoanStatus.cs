@@ -5,6 +5,7 @@
     {
         Submitted,
         Approved,
-        Rejected
+        Rejected,
+        ManualReview
     }
 }

@@ -1,8 +1,4 @@
-﻿using BankingApp.Data.BankingDb.Tables;
-using BankingApp.Data.DocumentDb.Containers;
-using BankingApp.Shared.Constants.Enums;
-
-namespace BankingApp.CustomerLoanProcessorFunction.Services
+﻿namespace BankingApp.CustomerLoanProcessorFunction.Services
 {
     public class LoanAssessmentService(IUnitOfWork unitOfWork, ILoanDocumentRepository loanDocumentRepository, IServiceBusHandler serviceBusHandler, IConfiguration configuration, ILogger<LoanAssessmentService> logger) : ILoanAssessmentService
     {
@@ -29,18 +25,24 @@ namespace BankingApp.CustomerLoanProcessorFunction.Services
                     var riskAssesmentScore = CreditRiskAssesmentHelper.CalculateCustomerRisk(customer.CreditScore);
                     loanApplication.RiskAssesmentScore = riskAssesmentScore;
                     loanApplication.Status = CalculateLoanEligibility(loanApplication, riskAssesmentScore, customer, ref remarks);
+
                     if (loanApplication.Status == LoanStatus.Approved)
                     {
                         var interestRate = CalculateInterestRate(loanApplication.LoanType);
                         var monthlyEMI = CalculateMonthlyEMI(loanApplication.LoanAmount, loanApplication.TenureMonths, interestRate);
                         loanApplication.InterestRate = interestRate;
                         loanApplication.MonthlyEMI = monthlyEMI;
+                        loanApplication.ReviewComments = "Customer loan application approved by the system automatically.";
                     }
-                    loanApplication.UpdatedDate = DateTime.Now;
-                    await _unitOfWork.TransactionManager.SaveChangesAsync();
+                    loanApplication.ReviewComments = remarks;
                 }
+                else
+                    loanApplication.Status = LoanStatus.ManualReview;
 
-                await DispatchNotificationEvent(message, loanApplication, remarks);
+                loanApplication.ReviewComments = remarks;
+                loanApplication.UpdatedDate = DateTime.Now;
+                await _unitOfWork.TransactionManager.SaveChangesAsync();
+                await DispatchNotificationEvent(message, loanApplication);
 
             }
             catch (Exception ex)
@@ -85,15 +87,19 @@ namespace BankingApp.CustomerLoanProcessorFunction.Services
         {
             if (customer.AnnualIncome <= 0)
             {
-                remarks = "Income criteria not met.";
-                return LoanStatus.Rejected;
+                // Provide actionable guidance when income is missing or zero
+                remarks = "Annual income missing or zero. Action: request verified proof of income (recent pay stubs, tax returns, bank statements) or update the customer's income record. " +
+                          "If income cannot be verified, consider manual review for alternative remedies (co-applicant, guarantor, collateral, or reduced loan amount).";
+                return LoanStatus.ManualReview;
             }
 
             // Use enum values for employment type
             if (customer.EmploymentType == EmploymentType.Unemployed)
             {
-                remarks = "Employment criteria not met.";
-                return LoanStatus.Rejected;
+                // Be explicit about next steps for unemployed applicants
+                remarks = "Applicant is marked as Unemployed. Action: request documentation for alternative income sources (pension, benefits, investment income), or ask the applicant to provide a co-applicant/guarantor. " +
+                          "If no verifiable income or guarantor is provided, escalate for manual underwriting and consider requesting collateral or reducing the requested loan amount.";
+                return LoanStatus.ManualReview;
             }
 
             decimal baseThreshold = customer.EmploymentType switch
@@ -141,8 +147,11 @@ namespace BankingApp.CustomerLoanProcessorFunction.Services
                     return LoanStatus.Approved;
                 else
                 {
-                    remarks = "Income criteria not met for Very High risk assessment.";
-                    return LoanStatus.Rejected;
+                    var deficit = requiredIncome - customer.AnnualIncome;
+                    remarks = $"Very High risk assessment: required annual income for automatic approval is {requiredIncome:C}. " +
+                              $"Reported income is {customer.AnnualIncome:C} (shortfall of {deficit:C}). Action: escalate to manual underwriting. " +
+                              "Recommended actions: request a guarantor or collateral, reduce the loan amount, or obtain additional verified income documentation to close the shortfall.";
+                    return LoanStatus.ManualReview;
                 }
 
             // For other risks: approve when income meets or exceeds required threshold
@@ -150,11 +159,13 @@ namespace BankingApp.CustomerLoanProcessorFunction.Services
                 return LoanStatus.Approved;
             else
             {
-                remarks = "Income criteria not met.";
-                return LoanStatus.Rejected;
+                var deficit = requiredIncome - customer.AnnualIncome;
+                remarks = $"Income below required threshold. Required annual income: {requiredIncome:C}. " +
+                          $"Reported income: {customer.AnnualIncome:C} (shortfall of {deficit:C}). Action: request additional income documentation, consider a co-applicant/guarantor, request collateral, or propose a lower loan amount to the applicant.";
+                return LoanStatus.ManualReview;
             }
         }
-        private async Task DispatchNotificationEvent(LoanApplicationMessage message, LoanApplications loanApplication, string remarks)
+        private async Task DispatchNotificationEvent(LoanApplicationMessage message, LoanApplications loanApplication)
         {
             LoanNotification loanNotification = new()
             {
@@ -164,12 +175,13 @@ namespace BankingApp.CustomerLoanProcessorFunction.Services
                 NotificationType = "LOAN",
                 CustomerId = message.CustomerId,
                 CustomerName = loanApplication.Customer!.FirstName + " " + loanApplication.Customer.LastName,
-                Status = loanApplication.Status == LoanStatus.Approved ? nameof(LoanStatus.Approved) : nameof(LoanStatus.Rejected),
+                Status = loanApplication.Status == LoanStatus.Approved ? nameof(LoanStatus.Approved) : nameof(LoanStatus.ManualReview),
                 Email = loanApplication.Customer.Email,
                 MobileNumber = loanApplication.Customer.MobileNumber,
-                Remarks = remarks,
+                Remarks = loanApplication.Status == LoanStatus.Approved ? "Congratulations! Your loan application has been approved." : "Your loan application requires manual attention, please contact bank representative.",
                 SourceSystem = "CustomerLoanProcessorFunction"
             };
+
             var additionalProperties = new Dictionary<string, object>
                     {
                         { nameof(LoanNotification.NotificationType), loanNotification.NotificationType },

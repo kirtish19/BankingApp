@@ -46,6 +46,7 @@
                 UpdatedDate = request.UpdatedDate,
                 InterestRate = request.InterestRate,
                 MonthlyEMI = request.MonthlyEMI,
+                ReviewComments = request.ReviewComments,
             };
         }
 

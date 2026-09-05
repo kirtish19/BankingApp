@@ -2,7 +2,10 @@
 global using BankingApp.CustomerLoanProcessorFunction.Services;
 global using BankingApp.Data.BankingDb.Extensions;
 global using BankingApp.Data.BankingDb.Repository;
+global using BankingApp.Data.BankingDb.Tables;
+global using BankingApp.Data.DocumentDb.Containers;
 global using BankingApp.Data.DocumentDb.Repository;
+global using BankingApp.Shared.Constants.Enums;
 global using BankingApp.Shared.Extensions;
 global using BankingApp.Shared.Helpers;
 global using BankingApp.Shared.Models;
