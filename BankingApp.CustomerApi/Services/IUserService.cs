@@ -3,6 +3,7 @@
     public interface IUserService
     {
         public Task RegisterUserAsync(PostUserRegisterationRequest request);
-        public Task<bool> LoginUserAsync(PostLoginRequest request);
+        public Task<LoginResponseDto> LoginUserAsync(PostLoginRequest request);
+        public Task<string> GetTokenAsync(User user);
     }
 }

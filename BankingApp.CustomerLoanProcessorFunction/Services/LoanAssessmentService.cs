@@ -27,6 +27,7 @@ namespace BankingApp.CustomerLoanProcessorFunction.Services
                 {
                     await CreateLoanDocumentRecords(message);
                     var riskAssesmentScore = CreditRiskAssesmentHelper.CalculateCustomerRisk(customer.CreditScore);
+                    loanApplication.RiskAssesmentScore = riskAssesmentScore;
                     loanApplication.Status = CalculateLoanEligibility(loanApplication, riskAssesmentScore, customer, ref remarks);
                     if (loanApplication.Status == LoanStatus.Approved)
                     {

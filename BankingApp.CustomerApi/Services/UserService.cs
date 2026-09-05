@@ -1,6 +1,9 @@
-﻿namespace BankingApp.CustomerApi.Services
+﻿using Microsoft.Identity.Client;
+
+namespace BankingApp.CustomerApi.Services
 {
-    public class UserService(IUnitOfWork unitOfWork, IStorageHandler storageHandler, IServiceBusHandler serviceBusHandler, IConfiguration configuration) : IUserService
+    public class UserService(IUnitOfWork unitOfWork, IStorageHandler storageHandler,
+        IServiceBusHandler serviceBusHandler, IConfiguration configuration) : IUserService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
         private readonly IStorageHandler _storageHandler = storageHandler;
@@ -87,10 +90,46 @@
             return customerKYCEvent;
         }
 
-        public Task<bool> LoginUserAsync(PostLoginRequest request)
+        public async Task<LoginResponseDto> LoginUserAsync(PostLoginRequest request)
         {
-            //validate user id and password and also ensure the logged in user is active if not reject.
-            throw new NotImplementedException();
+            var user = await _unitOfWork.UserRepository.GetUserByUserName(request.UserName);
+            if (user == null) return new LoginResponseDto { LoginSuccess = false };
+            using var hmac = new HMACSHA512(user.LoginPasswordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.Password));
+            for (int i = 0; i < computedHash.Length; i++)
+            {
+                if (computedHash[i] != user.LoginPasswordHash[i]) return new LoginResponseDto { LoginSuccess = false };
+            }
+            return new LoginResponseDto { LoginSuccess = true, User = user };
+        }
+
+        public async Task<string> GetTokenAsync(User user)
+        {
+            var tenantId = _configuration.GetValue<string>("AzureEntra:TenantId");
+            var clientId = _configuration.GetValue<string>("AzureEntra:Customer:ClientId");
+            var clientSecret = _configuration.GetValue<string>("AzureEntra:Customer:ClientSecret");
+            var scope = _configuration.GetValue<string>("AzureEntra:Scope");
+            var instance = _configuration.GetValue<string>("AzureEntra:Instance");
+            var authority = $"{instance}/{tenantId}";
+
+            IConfidentialClientApplication app = ConfidentialClientApplicationBuilder
+                .Create(clientId)
+                .WithClientSecret(clientSecret)
+                .WithAuthority(new Uri(authority))
+                .Build();
+
+            var scopes = new[] { scope };
+
+            try
+            {
+                var result = await app.AcquireTokenForClient(scopes).ExecuteAsync();
+                return result.AccessToken;
+            }
+            catch (MsalServiceException msalEx)
+            {
+                // bubble up with context or log as needed
+                throw new InvalidOperationException("Failed to acquire token from Entra ID.", msalEx);
+            }
         }
     }
 }

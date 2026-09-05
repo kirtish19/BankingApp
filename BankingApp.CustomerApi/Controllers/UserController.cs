@@ -18,8 +18,20 @@
         [HttpPost("Login")]
         public async Task<IActionResult> LoginAsync([FromBody] PostLoginRequest request)
         {
-            await _userService.LoginUserAsync(request);
-            return Ok("User logged in successfully"); //TODO - return JWT token instead of success message
+            var loginResponseDto = await _userService.LoginUserAsync(request);
+
+            if (!loginResponseDto.LoginSuccess)
+            {
+                return Unauthorized("Invalid username or password");
+            }
+
+            var token = await _userService.GetTokenAsync(loginResponseDto.User!);
+            var response = new PostLoginResponse
+            {
+                Token = token,
+                CustomerId = loginResponseDto.User!.Customer?.Id
+            };
+            return Ok(response);
         }
     }
 }

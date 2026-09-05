@@ -15,5 +15,13 @@
                 .FirstAsync(x => x.Customer!.Id == id);
             return user;
         }
+
+        public async Task<User> GetUserByUserName(string username)
+        {
+            var user = await _dbContext.Users
+                .Include(x => x.Customer)
+                .FirstAsync(x => x.UserName == username);
+            return user;
+        }
     }
 }

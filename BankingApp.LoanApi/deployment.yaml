@@ -1,0 +1,27 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bankingapp-loanapi
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: bankingapp-loanapi
+
+  template:
+    metadata:
+      labels:
+        app: bankingapp-loanapi
+
+    spec:
+      containers:
+
+      - name: bankingapp-loanapi
+
+        image: team1bankingappacr.azurecr.io/bankingapp-loanapi:v1
+        imagePullPolicy: Always
+
+        ports:
+          - containerPort: 8080
