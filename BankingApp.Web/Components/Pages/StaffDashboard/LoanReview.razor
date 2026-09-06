@@ -2,6 +2,7 @@
 
 @rendermode InteractiveServer
 
+@using System.Globalization
 @using BankingApp.Web.Constants
 @using BankingApp.Web.Models.Loan
 
@@ -97,7 +98,7 @@
                         </label>
 
                         <div class="fw-semibold">
-                            ₹ @Loan.LoanAmount.ToString("N2")
+                            @Loan.LoanAmount.ToString("C2", new CultureInfo("en-IN"))
                         </div>
                     </div>
 
@@ -122,7 +123,7 @@
 
                         <div class="fw-semibold">
                             @(Loan.MonthlyEMI.HasValue
-                                ? $"₹ {Loan.MonthlyEMI.Value:N2}"
+                                ? $"{Loan.MonthlyEMI.Value.ToString("C2", new CultureInfo("en-IN"))}"
                                 : "-")
                         </div>
                     </div>

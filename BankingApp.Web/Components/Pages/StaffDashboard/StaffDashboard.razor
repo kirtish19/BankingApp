@@ -1,5 +1,6 @@
 ﻿@page "/staff-dashboard"
 
+@using System.Globalization
 @using BankingApp.Web.Constants
 @using BankingApp.Web.Models.Loan
 @using BankingApp.Web.Services.Authentication
@@ -184,7 +185,7 @@
 
                                         <!-- Amount -->
                                         <td>
-                                            @loan.LoanAmount.ToString("C2")
+                                            @loan.LoanAmount.ToString("C2", new CultureInfo("en-IN"))
                                         </td>
 
 
@@ -304,7 +305,7 @@
 
                                         <!-- Amount -->
                                         <td>
-                                            @loan.LoanAmount.ToString("C2")
+                                            @loan.LoanAmount.ToString("C2", new CultureInfo("en-IN"))
                                         </td>
 
 
