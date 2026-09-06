@@ -13,9 +13,8 @@ public interface IStaffLoanService
 
     Task<bool> UpdateLoanStatusAsync(
         Guid loanId,
+        Guid customerId,
         string status,
         string statusDescription,
-        string email,
-        string fullName,
         string reviewComments);
 }

@@ -34,6 +34,11 @@ public partial class LoanReview
 
     private bool _initialized;
 
+
+    // =========================================
+    // LOAD LOAN
+    // =========================================
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         Console.WriteLine(
@@ -56,6 +61,11 @@ public partial class LoanReview
 
         StateHasChanged();
     }
+
+
+    // =========================================
+    // LOAD LOAN APPLICATION
+    // =========================================
 
     private async Task LoadLoanAsync()
     {
@@ -85,6 +95,7 @@ public partial class LoanReview
                     "[LoanReview] Session expired. Redirecting to login.");
 
                 Navigation.NavigateTo("/login");
+
                 return;
             }
 
@@ -110,6 +121,9 @@ public partial class LoanReview
 
             Console.WriteLine(
                 $"[LoanReview] Loan received: {Loan.Id}");
+
+            Console.WriteLine(
+                $"[LoanReview] Customer ID: {Loan.CustomerId}");
 
             ReviewComments =
                 Loan.ReviewComments ?? string.Empty;
@@ -152,11 +166,18 @@ public partial class LoanReview
         }
     }
 
+
+    // =========================================
+    // UPDATE LOAN STATUS
+    // =========================================
+
     private async Task UpdateStatus(string status)
     {
         if (Loan is null || IsUpdating)
         {
-            Console.WriteLine("[Loan Review] Update ignored.");
+            Console.WriteLine(
+                "[Loan Review] Update ignored.");
+
             return;
         }
 
@@ -166,28 +187,45 @@ public partial class LoanReview
             ErrorMessage = null;
 
             Console.WriteLine();
-            Console.WriteLine("==================================================");
-            Console.WriteLine("[Loan Review] STATUS UPDATE STARTED");
-            Console.WriteLine("==================================================");
+            Console.WriteLine(
+                "==================================================");
 
-            // --------------------------------------------------
-            // 1. Current loan information
-            // --------------------------------------------------
+            Console.WriteLine(
+                "[Loan Review] STATUS UPDATE STARTED");
 
-            Console.WriteLine($"[Loan Review] Loan ID           : {Loan.Id}");
-            Console.WriteLine($"[Loan Review] Current Status    : {Loan.Status}");
-            Console.WriteLine($"[Loan Review] Selected Status   : {status}");
-            Console.WriteLine($"[Loan Review] Review Comments   : {ReviewComments}");
+            Console.WriteLine(
+                "==================================================");
 
-            // --------------------------------------------------
+
+            // -----------------------------------------
+            // 1. Loan information
+            // -----------------------------------------
+
+            Console.WriteLine(
+                $"[Loan Review] Loan ID        : {Loan.Id}");
+
+            Console.WriteLine(
+                $"[Loan Review] Customer ID    : {Loan.CustomerId}");
+
+            Console.WriteLine(
+                $"[Loan Review] Current Status : {Loan.Status}");
+
+            Console.WriteLine(
+                $"[Loan Review] Selected Status: {status}");
+
+            Console.WriteLine(
+                $"[Loan Review] Review Comments: {ReviewComments}");
+
+
+            // -----------------------------------------
             // 2. Validate session
-            // --------------------------------------------------
+            // -----------------------------------------
 
             var isSessionValid =
                 await AuthStorageService.IsSessionValidAsync();
 
             Console.WriteLine(
-                $"[Loan Review] Session Valid    : {isSessionValid}");
+                $"[Loan Review] Session Valid: {isSessionValid}");
 
             if (!isSessionValid)
             {
@@ -195,54 +233,94 @@ public partial class LoanReview
                     "[Loan Review] Session invalid. Redirecting to login.");
 
                 Navigation.NavigateTo("/login");
+
                 return;
             }
 
-            // --------------------------------------------------
-            // 3. Create status description
-            // --------------------------------------------------
+
+            // -----------------------------------------
+            // 3. Convert UI status to API status
+            // -----------------------------------------
+
+            var statusValue =
+                status switch
+                {
+                    "Approved" => "1",
+
+                    "Rejected" => "2",
+
+                    "ManualReview" => "3",
+
+                    _ => string.Empty
+                };
+
+            if (string.IsNullOrWhiteSpace(statusValue))
+            {
+                Console.WriteLine(
+                    "[Loan Review] Invalid status.");
+
+                ErrorMessage =
+                    "Invalid loan status.";
+
+                return;
+            }
+
+            Console.WriteLine(
+                $"[Loan Review] API Status Value: {statusValue}");
+
+
+            // -----------------------------------------
+            // 4. Create status description
+            // -----------------------------------------
 
             var statusDescription =
                 status switch
                 {
-                    "Approved" =>
-                        "Loan application approved by staff.",
+                    "Approved" => "Approved",
 
-                    "Rejected" =>
-                        "Loan application rejected by staff.",
+                    "Rejected" => "Rejected",
 
-                    "ManualReview" =>
-                        "Loan application moved for manual review.",
+                    "ManualReview" => "ManualReview",
 
-                    _ =>
-                        string.Empty
+                    _ => string.Empty
                 };
 
             Console.WriteLine(
                 $"[Loan Review] Status Description: {statusDescription}");
 
-            // --------------------------------------------------
-            // 4. Call Staff API
-            // --------------------------------------------------
+
+            // -----------------------------------------
+            // 5. Call Staff Loan Service
+            //
+            // StaffLoanService will:
+            //
+            // CustomerId
+            //      ↓
+            // GetCustomerDetails API
+            //      ↓
+            // FirstName + LastName + Email
+            //      ↓
+            // FullName + Email
+            //      ↓
+            // UpdateLoanStatus API
+            // -----------------------------------------
 
             Console.WriteLine();
             Console.WriteLine(
                 "[Loan Review] Calling UpdateLoanStatusAsync...");
-            Console.WriteLine(
-                $"[Loan Review] Sending Status: {status}");
 
             var success =
                 await StaffLoanService.UpdateLoanStatusAsync(
                     Loan.Id,
-                    "1",
-                   "" ,
-                    "yashkashid2002@gmail.com",
-                    "Yash",
+                    Loan.CustomerId,
+                    statusValue,
+                    statusDescription,
                     ReviewComments);
 
-            // --------------------------------------------------
-            // 5. Check result
-            // --------------------------------------------------
+
+            // -----------------------------------------
+            // 6. Check result
+            // -----------------------------------------
 
             Console.WriteLine();
             Console.WriteLine(
@@ -265,27 +343,49 @@ public partial class LoanReview
             Console.WriteLine(
                 "[Loan Review] Redirecting to Staff Dashboard...");
 
-            Console.WriteLine("==================================================");
-            Console.WriteLine("[Loan Review] STATUS UPDATE COMPLETED");
-            Console.WriteLine("==================================================");
+            Console.WriteLine(
+                "==================================================");
+
+            Console.WriteLine(
+                "[Loan Review] STATUS UPDATE COMPLETED");
+
+            Console.WriteLine(
+                "==================================================");
+
             Console.WriteLine();
 
-            // --------------------------------------------------
-            // 6. Redirect
-            // --------------------------------------------------
 
-            Navigation.NavigateTo("/staff-dashboard");
+            // -----------------------------------------
+            // 7. Redirect
+            // -----------------------------------------
+
+            Navigation.NavigateTo(
+                "/staff-dashboard");
         }
         catch (Exception ex)
         {
             Console.WriteLine();
-            Console.WriteLine("==================================================");
-            Console.WriteLine("[Loan Review] STATUS UPDATE ERROR");
-            Console.WriteLine("==================================================");
-            Console.WriteLine($"[Loan Review] Exception Type : {ex.GetType().Name}");
-            Console.WriteLine($"[Loan Review] Message        : {ex.Message}");
-            Console.WriteLine($"[Loan Review] Details        : {ex}");
-            Console.WriteLine("==================================================");
+            Console.WriteLine(
+                "==================================================");
+
+            Console.WriteLine(
+                "[Loan Review] STATUS UPDATE ERROR");
+
+            Console.WriteLine(
+                "==================================================");
+
+            Console.WriteLine(
+                $"[Loan Review] Exception Type : {ex.GetType().Name}");
+
+            Console.WriteLine(
+                $"[Loan Review] Message        : {ex.Message}");
+
+            Console.WriteLine(
+                $"[Loan Review] Details        : {ex}");
+
+            Console.WriteLine(
+                "==================================================");
+
             Console.WriteLine();
 
             ErrorMessage =
@@ -297,49 +397,107 @@ public partial class LoanReview
         }
     }
 
+
+    // =========================================
+    // GO BACK
+    // =========================================
+
     private void GoBack()
     {
-        Navigation.NavigateTo("/staff-dashboard");
+        Navigation.NavigateTo(
+            "/staff-dashboard");
     }
 
-    private string GetLoanTypeName(LoanType loanType)
+
+    // =========================================
+    // LOAN TYPE
+    // =========================================
+
+    private string GetLoanTypeName(
+        LoanType loanType)
     {
         return loanType switch
         {
-            LoanType.Personal => "Personal Loan",
-            LoanType.Home => "Home Loan",
-            LoanType.Education => "Education Loan",
-            LoanType.Vehicle => "Vehicle Loan",
-            _ => "Loan"
+            LoanType.Personal =>
+                "Personal Loan",
+
+            LoanType.Home =>
+                "Home Loan",
+
+            LoanType.Education =>
+                "Education Loan",
+
+            LoanType.Vehicle =>
+                "Vehicle Loan",
+
+            _ =>
+                "Loan"
         };
     }
 
-    private string GetStatusClass(LoanStatus status)
+
+    // =========================================
+    // LOAN STATUS CSS
+    // =========================================
+
+    private string GetStatusClass(
+        LoanStatus status)
     {
         return status switch
         {
-            LoanStatus.Approved => "badge bg-success",
-            LoanStatus.Rejected => "badge bg-danger",
-            LoanStatus.ManualReview => "badge bg-warning text-dark",
-            LoanStatus.Submitted => "badge bg-primary",
-            _ => "badge bg-secondary"
+            LoanStatus.Approved =>
+                "badge bg-success",
+
+            LoanStatus.Rejected =>
+                "badge bg-danger",
+
+            LoanStatus.ManualReview =>
+                "badge bg-warning text-dark",
+
+            LoanStatus.Submitted =>
+                "badge bg-primary",
+
+            _ =>
+                "badge bg-secondary"
         };
     }
 
-    private string GetRiskClass(RiskAssesment? risk)
+
+    // =========================================
+    // RISK CSS
+    // =========================================
+
+    private string GetRiskClass(
+        RiskAssesment? risk)
     {
         return risk switch
         {
-            RiskAssesment.Low => "badge bg-success",
-            RiskAssesment.Medium => "badge bg-warning text-dark",
-            RiskAssesment.High => "badge bg-danger",
-            RiskAssesment.VeryHigh => "badge bg-dark",
-            _ => "badge bg-secondary"
+            RiskAssesment.Low =>
+                "badge bg-success",
+
+            RiskAssesment.Medium =>
+                "badge bg-warning text-dark",
+
+            RiskAssesment.High =>
+                "badge bg-danger",
+
+            RiskAssesment.VeryHigh =>
+                "badge bg-dark",
+
+            _ =>
+                "badge bg-secondary"
         };
     }
 
-    private string GetRiskText(RiskAssesment? risk)
+
+    // =========================================
+    // RISK TEXT
+    // =========================================
+
+    private string GetRiskText(
+        RiskAssesment? risk)
     {
         return risk?.ToString() ?? "-";
     }
 }
+
