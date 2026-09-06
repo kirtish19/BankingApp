@@ -105,30 +105,64 @@ namespace BankingApp.CustomerApi.Services
 
         public async Task<string> GetTokenAsync(User user)
         {
-            var tenantId = _configuration.GetValue<string>("AzureEntra:TenantId");
-            var clientId = _configuration.GetValue<string>("AzureEntra:Customer:ClientId");
-            var clientSecret = _configuration.GetValue<string>("AzureEntra:Customer:ClientSecret");
-            var scope = _configuration.GetValue<string>("AzureEntra:Scope");
-            var instance = _configuration.GetValue<string>("AzureEntra:Instance");
+            var tenantId =
+                _configuration.GetValue<string>("AzureEntra:TenantId");
+
+            var scope =
+                _configuration.GetValue<string>("AzureEntra:Scope");
+
+            var instance =
+                _configuration.GetValue<string>("AzureEntra:Instance");
+
+            string? clientId;
+            string? clientSecret;
+
+            if (user.UserType == UserType.Staff)
+            {
+                clientId =
+                    _configuration.GetValue<string>(
+                        "AzureEntra:Staff:ClientId");
+
+                clientSecret =
+                    _configuration.GetValue<string>(
+                        "AzureEntra:Staff:ClientSecret");
+            }
+            else
+            {
+                clientId =
+                    _configuration.GetValue<string>(
+                        "AzureEntra:Customer:ClientId");
+
+                clientSecret =
+                    _configuration.GetValue<string>(
+                        "AzureEntra:Customer:ClientSecret");
+            }
+
             var authority = $"{instance}/{tenantId}";
 
-            IConfidentialClientApplication app = ConfidentialClientApplicationBuilder
-                .Create(clientId)
-                .WithClientSecret(clientSecret)
-                .WithAuthority(new Uri(authority))
-                .Build();
+            IConfidentialClientApplication app =
+                ConfidentialClientApplicationBuilder
+                    .Create(clientId)
+                    .WithClientSecret(clientSecret)
+                    .WithAuthority(new Uri(authority))
+                    .Build();
 
             var scopes = new[] { scope };
 
             try
             {
-                var result = await app.AcquireTokenForClient(scopes).ExecuteAsync();
+                var result =
+                    await app
+                        .AcquireTokenForClient(scopes)
+                        .ExecuteAsync();
+
                 return result.AccessToken;
             }
             catch (MsalServiceException msalEx)
             {
-                // bubble up with context or log as needed
-                throw new InvalidOperationException("Failed to acquire token from Entra ID.", msalEx);
+                throw new InvalidOperationException(
+                    "Failed to acquire token from Entra ID.",
+                    msalEx);
             }
         }
 
