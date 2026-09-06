@@ -16,9 +16,12 @@ namespace BankingApp.Web
             var builder = WebApplication.CreateBuilder(args);
             var keyvaulturi = builder.Configuration.GetConnectionString("KeyVault")!;
             var runningLocal = builder.Configuration.GetValue<bool>("RunningLocal")!;
-            var apimBaseUrl = builder.Configuration.GetConnectionString("ApimBaseUrl")!;
 
             builder.Configuration.AddCustomKeyVault(keyvaulturi, runningLocal);
+            
+            //Read values from Key vault after here
+
+            var apimBaseUrl = builder.Configuration.GetValue<string>("ApimBaseUrl")!;
 
             // -----------------------------------------
             // Razor Components
