@@ -1,0 +1,332 @@
+﻿@page "/staff-dashboard/loan/{LoanId:guid}"
+
+@rendermode InteractiveServer
+
+@using BankingApp.Web.Constants
+@using BankingApp.Web.Models.Loan
+
+<PageTitle>Loan Review</PageTitle>
+
+<div class="container-fluid py-4">
+
+    @if (IsLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary"
+                 role="status">
+                <span class="visually-hidden">
+                    Loading...
+                </span>
+            </div>
+
+            <p class="text-muted mt-3 mb-0">
+                Loading loan application...
+            </p>
+        </div>
+    }
+    else if (!string.IsNullOrWhiteSpace(ErrorMessage))
+    {
+        <div class="alert alert-danger shadow-sm">
+            <div class="fw-semibold mb-1">
+                Unable to load application
+            </div>
+
+            <div>
+                @ErrorMessage
+            </div>
+        </div>
+
+        <button class="btn btn-outline-secondary"
+                @onclick="GoBack">
+            ← Back to Dashboard
+        </button>
+    }
+    else if (Loan is not null)
+    {
+        <!-- PAGE HEADER -->
+        <div class="d-flex justify-content-between
+            align-items-center mb-4">
+
+            <div>
+                <h2 class="fw-bold mb-1">
+                    Loan Application Review
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Review the application details and update
+                    the loan status.
+                </p>
+            </div>
+
+            <button class="btn btn-outline-secondary"
+                    @onclick="GoBack">
+                ← Back to Dashboard
+            </button>
+        </div>
+
+
+        <!-- APPLICATION DETAILS -->
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0">
+                    Loan Application Details
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-4">
+
+                    <!-- Loan Type -->
+                    <div class="col-md-4">
+                        <label class="text-muted small d-block mb-1">
+                            Loan Type
+                        </label>
+
+                        <div class="fw-semibold">
+                            @GetLoanTypeName(Loan.LoanType)
+                        </div>
+                    </div>
+
+
+                    <!-- Loan Amount -->
+                    <div class="col-md-4">
+                        <label class="text-muted small d-block mb-1">
+                            Loan Amount
+                        </label>
+
+                        <div class="fw-semibold">
+                            ₹ @Loan.LoanAmount.ToString("N2")
+                        </div>
+                    </div>
+
+
+                    <!-- Tenure -->
+                    <div class="col-md-4">
+                        <label class="text-muted small d-block mb-1">
+                            Tenure
+                        </label>
+
+                        <div class="fw-semibold">
+                            @Loan.TenureMonths months
+                        </div>
+                    </div>
+
+
+                    <!-- Monthly EMI -->
+                    <div class="col-md-4">
+                        <label class="text-muted small d-block mb-1">
+                            Monthly EMI
+                        </label>
+
+                        <div class="fw-semibold">
+                            @(Loan.MonthlyEMI.HasValue
+                                ? $"₹ {Loan.MonthlyEMI.Value:N2}"
+                                : "-")
+                        </div>
+                    </div>
+
+
+                    <!-- Interest Rate -->
+                    <div class="col-md-4">
+                        <label class="text-muted small d-block mb-1">
+                            Interest Rate
+                        </label>
+
+                        <div class="fw-semibold">
+                            @(Loan.InterestRate.HasValue
+                                ? $"{Loan.InterestRate.Value * 100:N2}%"
+                                : "-")
+                        </div>
+                    </div>
+
+
+                    <!-- Risk -->
+                    <div class="col-md-4">
+                        <label class="text-muted small d-block mb-1">
+                            Risk Assessment
+                        </label>
+
+                        <span class="@GetRiskClass(
+                                                        Loan.RiskAssesmentScore)">
+                            @GetRiskText(
+                                Loan.RiskAssesmentScore)
+                        </span>
+                    </div>
+
+
+                    <!-- Customer ID -->
+                    <div class="col-md-6">
+                        <label class="text-muted small d-block mb-1">
+                            Customer ID
+                        </label>
+
+                        <div class="fw-semibold text-break">
+                            @Loan.CustomerId
+                        </div>
+                    </div>
+
+
+                    <!-- Status -->
+                    <div class="col-md-6">
+                        <label class="text-muted small d-block mb-1">
+                            Current Status
+                        </label>
+
+                        <span class="@GetStatusClass(Loan.Status)">
+                            @Loan.Status
+                        </span>
+                    </div>
+
+
+                    <!-- Applied On -->
+                    <div class="col-md-6">
+                        <label class="text-muted small d-block mb-1">
+                            Applied On
+                        </label>
+
+                        <div class="fw-semibold">
+                            @Loan.CreatedDate.ToString(
+                                "dd MMM yyyy, hh:mm tt")
+                        </div>
+                    </div>
+
+
+                    <!-- Last Updated -->
+                    <div class="col-md-6">
+                        <label class="text-muted small d-block mb-1">
+                            Last Updated
+                        </label>
+
+                        <div class="fw-semibold">
+                            @Loan.UpdatedDate.ToString(
+                                "dd MMM yyyy, hh:mm tt")
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- EXISTING REVIEW COMMENTS -->
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-white py-3">
+                <h5 class="fw-bold mb-0">
+                    Existing Review Comments
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                @if (!string.IsNullOrWhiteSpace(
+                    Loan.ReviewComments))
+                {
+                    <div class="bg-light rounded p-3">
+                        <p class="mb-0">
+                            @Loan.ReviewComments
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">
+                        No review comments available.
+                    </p>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- REVIEW SECTION -->
+        @if (Loan.Status == LoanStatus.Submitted ||
+             Loan.Status == LoanStatus.ManualReview)
+        {
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header bg-white py-3">
+                    <h5 class="fw-bold mb-0">
+                        Review Application
+                    </h5>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-semibold">
+                            Review Comments
+                        </label>
+
+                        <textarea class="form-control"
+                                  rows="4"
+                                  @bind="ReviewComments"
+                                  placeholder="Enter your review comments...">
+                        </textarea>
+
+                        <div class="form-text">
+                            Add comments explaining the decision
+                            before updating the application status.
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="d-flex gap-2 flex-wrap">
+
+                        <button class="btn btn-success px-4"
+                                @onclick='() => UpdateStatus("Approved")'
+                                disabled="@IsUpdating">
+
+                            @(IsUpdating
+                                ? "Processing..."
+                                : "✓ Approve")
+                        </button>
+
+
+                        <button class="btn btn-danger px-4"
+                                @onclick='() => UpdateStatus("Rejected")'
+                                disabled="@IsUpdating">
+
+                            ✕ Reject
+                        </button>
+
+
+                        <button class="btn btn-warning px-4"
+                                @onclick='() => UpdateStatus("ManualReview")'
+                                disabled="@IsUpdating">
+
+                            ↻ Manual Review
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+        else
+        {
+            <!-- PROCESSED MESSAGE -->
+            <div class="alert alert-info shadow-sm">
+
+                <div class="fw-semibold mb-1">
+                    Application Already Processed
+                </div>
+
+                <div>
+                    This loan application has already been
+                    processed. No further review action is available.
+                </div>
+
+            </div>
+        }
+    }
+
+</div>

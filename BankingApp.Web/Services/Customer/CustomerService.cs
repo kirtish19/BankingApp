@@ -1,19 +1,43 @@
-﻿using BankingApp.Web.Constants;
+﻿using BankingApp.Web.Components.Pages.Register;
+using BankingApp.Web.Constants;
 using BankingApp.Web.Models.Registration;
+using BankingApp.Web.Services.Authentication;
 using System.Globalization;
 using System.Net.Http.Headers;
 
 namespace BankingApp.Web.Services.Customer;
 
 public class CustomerService(
-    HttpClient httpClient) : ICustomerService
+    HttpClient httpClient,
+    IAccessTokenService accessTokenService) : ICustomerService
 {
     private readonly HttpClient _httpClient = httpClient;
+    private readonly IAccessTokenService _accessTokenService =
+        accessTokenService;
 
     public async Task<bool> RegisterAsync(
         RegistrationRequest request)
     {
-        using var formData = new MultipartFormDataContent();
+        // =========================================
+        // Get Entra Access Token
+        // =========================================
+
+        var accessToken =
+            await _accessTokenService.GetAccessTokenAsync();
+
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue(
+                "Bearer",
+                accessToken);
+
+
+        // =========================================
+        // Create Multipart Form Data
+        // =========================================
+
+        using var formData =
+            new MultipartFormDataContent();
+
 
         // =========================================
         // Common User Information
@@ -92,11 +116,8 @@ public class CustomerService(
 
             foreach (var file in request.KycDocuments)
             {
-                var stream = file.OpenReadStream(
-                    maxAllowedSize: 10 * 1024 * 1024);
-
                 var fileContent =
-                    new StreamContent(stream);
+                    new ByteArrayContent(file.Content);
 
                 fileContent.Headers.ContentType =
                     new MediaTypeHeaderValue(
@@ -111,11 +132,11 @@ public class CustomerService(
 
 
         // =========================================
-        // Call Customer API
+        // Call Customer API through APIM
         // =========================================
 
         var response = await _httpClient.PostAsync(
-            "api/User/Register",
+            "user/api/User/Register", 
             formData);
 
 
@@ -139,4 +160,3 @@ public class CustomerService(
         return response.IsSuccessStatusCode;
     }
 }
-

@@ -1,4 +1,11 @@
 ﻿@page "/customer-dashboard"
+
+@using BankingApp.Web.Constants
+@using BankingApp.Web.Models.Loan
+@using BankingApp.Web.Services.Authentication
+@using BankingApp.Web.Services.Loan
+@using System.Globalization
+
 @rendermode InteractiveServer
 
 @inject NavigationManager Navigation
@@ -85,11 +92,31 @@
                     </small>
 
                     <h4 class="fw-bold mt-2">
-                        0
+                        @ActiveLoanCount
                     </h4>
 
                     <small class="text-muted">
-                        No active loans.
+
+                        @if (IsLoading)
+                        {
+                            <span>
+                                Loading...
+                            </span>
+                        }
+                        else if (ActiveLoanCount == 0)
+                        {
+                            <span>
+                                No active loans.
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                You have @ActiveLoanCount active
+                                @(ActiveLoanCount == 1 ? "loan." : "loans.")
+                            </span>
+                        }
+
                     </small>
 
                 </div>
@@ -99,7 +126,7 @@
         </div>
 
 
-        <!-- APPLICATIONS -->
+        <!-- LOAN APPLICATIONS -->
 
         <div class="col-md-4">
 
@@ -112,11 +139,33 @@
                     </small>
 
                     <h4 class="fw-bold mt-2">
-                        0
+                        @LoanApplications.Count
                     </h4>
 
                     <small class="text-muted">
-                        No applications yet.
+
+                        @if (IsLoading)
+                        {
+                            <span>
+                                Loading...
+                            </span>
+                        }
+                        else if (LoanApplications.Count == 0)
+                        {
+                            <span>
+                                No applications yet.
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                You have @LoanApplications.Count
+                                @(LoanApplications.Count == 1
+                                    ? "application."
+                                    : "applications.")
+                            </span>
+                        }
+
                     </small>
 
                 </div>
@@ -185,17 +234,191 @@
                 Recent Applications
             </h5>
 
-            <div class="text-center py-5 text-muted">
 
-                <div class="fs-1 mb-2">
-                    📄
+            @if (IsLoading)
+            {
+                <div class="text-center py-5 text-muted">
+
+                    <div class="spinner-border mb-3">
+                    </div>
+
+                    <p class="mb-0">
+                        Loading applications...
+                    </p>
+
                 </div>
+            }
+            else if (!string.IsNullOrWhiteSpace(ErrorMessage))
+            {
+                <div class="alert alert-danger">
+                    @ErrorMessage
+                </div>
+            }
+            else if (LoanApplications.Count == 0)
+            {
+                <div class="text-center py-5 text-muted">
 
-                <p class="mb-0">
-                    No loan applications yet.
-                </p>
+                    <div class="fs-1 mb-2">
+                        📄
+                    </div>
 
-            </div>
+                    <p class="mb-0">
+                        No loan applications yet.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table align-middle">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Loan Type
+                                </th>
+
+                                <th>
+                                    Amount
+                                </th>
+
+                                <th>
+                                    Tenure
+                                </th>
+
+                                <th>
+                                    EMI
+                                </th>
+
+                                <th>
+                                    Interest Rate
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Risk
+                                </th>
+
+                                <th>
+                                    Applied On
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var application in RecentApplications)
+                            {
+                                <tr>
+
+                                    <td class="fw-semibold">
+                                        @GetLoanTypeName(
+                                            application.LoanType)
+                                    </td>
+
+                                    <td>
+                                        @FormatCurrency(
+                                            application.LoanAmount)
+                                    </td>
+
+                                    <td>
+                                        @application.TenureMonths months
+                                    </td>
+
+                                    <td>
+                                        @if (application.MonthlyEMI.HasValue)
+                                        {
+                                            <strong>
+                                                @FormatCurrency(
+                                                    application.MonthlyEMI.Value)
+                                            </strong>
+
+                                            <small class="text-muted d-block">
+                                                per month
+                                            </small>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                -
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @if (application.InterestRate.HasValue)
+                                        {
+                                            @FormatInterestRate(
+                                                application.InterestRate.Value)
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                -
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <td>
+                                        <span class="@GetStatusClass(
+                                                                                        application.Status)">
+                                            @application.Status
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="@GetRiskClass(
+                                                                                        application.RiskAssesmentScore)">
+                                            @GetRiskText(
+                                                application.RiskAssesmentScore)
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @application.CreatedDate.ToString(
+                                            "dd MMM yyyy")
+                                    </td>
+
+                                </tr>
+
+                                @if (!string.IsNullOrWhiteSpace(
+                                    application.ReviewComments))
+                                {
+                                    <tr>
+
+                                        <td colspan="8">
+
+                                            <div class="text-muted small">
+
+                                                <strong>
+                                                    💬 Review Comments:
+                                                </strong>
+
+                                                @application.ReviewComments
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
 
         </div>
 
@@ -206,14 +429,257 @@
 
 @code {
 
+    // =========================================
+    // SERVICES
+    // =========================================
+
+    [Inject]
+    private IAuthenticationService AuthenticationService
+    { get; set; } = null!;
+
+    [Inject]
+    private IAuthStorageService AuthStorageService
+    { get; set; } = null!;
+
+    [Inject]
+    private ILoanService LoanService
+    { get; set; } = null!;
+
+
+    // =========================================
+    // DATA
+    // =========================================
+
+    private List<LoanApplicationsDto> LoanApplications = [];
+
+
+    // =========================================
+    // UI STATE
+    // =========================================
+
+    private bool IsLoading = true;
+
+    private string? ErrorMessage;
+
+    private bool _initialized;
+
+
+    // =========================================
+    // ACTIVE LOANS
+    // =========================================
+
+    private int ActiveLoanCount =>
+        LoanApplications.Count(
+            application =>
+                application.Status == LoanStatus.Approved);
+
+
+    // =========================================
+    // RECENT APPLICATIONS
+    // =========================================
+
+    private IEnumerable<LoanApplicationsDto> RecentApplications =>
+        LoanApplications
+            .OrderByDescending(
+                application => application.CreatedDate)
+            .Take(5);
+
+
+    // =========================================
+    // PAGE INITIALIZATION
+    // =========================================
+
+    protected override async Task OnAfterRenderAsync(
+        bool firstRender)
+    {
+        if (!firstRender || _initialized)
+        {
+            return;
+        }
+
+        _initialized = true;
+
+        await LoadLoanApplicationsAsync();
+
+        StateHasChanged();
+    }
+
+
+    // =========================================
+    // LOAD LOAN APPLICATIONS
+    // =========================================
+
+    private async Task LoadLoanApplicationsAsync()
+    {
+        try
+        {
+            IsLoading = true;
+
+            ErrorMessage = null;
+
+
+            // Get CustomerId from sessionStorage.
+            var customerId =
+                await AuthStorageService.GetCustomerIdAsync();
+
+
+            if (customerId is null)
+            {
+                ErrorMessage =
+                    "Unable to identify the logged-in customer.";
+
+                return;
+            }
+
+
+            // Call Loan API.
+            LoanApplications =
+                await LoanService.GetLoansForCustomerAsync(
+                    customerId.Value);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Customer Dashboard: {ex}");
+
+            ErrorMessage =
+                "Unable to load your loan applications.";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
+    // =========================================
+    // LOAN TYPE DISPLAY
+    // =========================================
+
+    private string GetLoanTypeName(
+        LoanType loanType)
+    {
+        return loanType switch
+        {
+            LoanType.Personal =>
+                "Personal Loan",
+
+            LoanType.Home =>
+                "Home Loan",
+
+            LoanType.Education =>
+                "Education Loan",
+
+            LoanType.Vehicle =>
+                "Vehicle Loan",
+
+            _ =>
+                "Loan"
+        };
+    }
+
+
+    // =========================================
+    // STATUS DISPLAY
+    // =========================================
+
+    private string GetStatusClass(
+        LoanStatus status)
+    {
+        return status switch
+        {
+            LoanStatus.Approved =>
+                "badge bg-success",
+
+            LoanStatus.Rejected =>
+                "badge bg-danger",
+
+            LoanStatus.ManualReview =>
+                "badge bg-warning text-dark",
+
+            LoanStatus.Submitted =>
+                "badge bg-primary",
+
+            _ =>
+                "badge bg-secondary"
+        };
+    }
+
+
+    // =========================================
+    // RISK DISPLAY
+    // =========================================
+
+    private string GetRiskClass(
+        RiskAssesment? risk)
+    {
+        return risk switch
+        {
+            RiskAssesment.Low =>
+                "badge bg-success",
+
+            RiskAssesment.Medium =>
+                "badge bg-warning text-dark",
+
+            RiskAssesment.High =>
+                "badge bg-danger",
+
+            RiskAssesment.VeryHigh =>
+                "badge bg-dark",
+
+            _ =>
+                "badge bg-secondary"
+        };
+    }
+
+
+    private string GetRiskText(
+        RiskAssesment? risk)
+    {
+        return risk?.ToString() ?? "-";
+    }
+
+
+    // =========================================
+    // CURRENCY / INTEREST RATE
+    // =========================================
+
+    private string FormatCurrency(
+        decimal amount)
+    {
+        return amount.ToString(
+            "C2",
+            CultureInfo.GetCultureInfo("en-IN"));
+    }
+
+
+    private string FormatInterestRate(
+        decimal rate)
+    {
+        return $"{rate * 100:0.00}%";
+    }
+
+
+    // =========================================
+    // NAVIGATION
+    // =========================================
+
     private void GoToLoans()
     {
-        Navigation.NavigateTo("/apply-loan");
+        Navigation.NavigateTo(
+            "/apply-loan");
     }
 
-    private void Logout()
+
+    // =========================================
+    // LOGOUT
+    // =========================================
+
+    private async Task Logout()
     {
-        Navigation.NavigateTo("/login");
+        await AuthenticationService.LogoutAsync();
+
+        Navigation.NavigateTo(
+            "/login");
     }
 }
-

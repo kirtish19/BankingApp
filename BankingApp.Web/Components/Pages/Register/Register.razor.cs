@@ -1,206 +1,302 @@
 ﻿using BankingApp.Web.Constants;
+using BankingApp.Web.Models.Customer;
 using BankingApp.Web.Models.Registration;
 using BankingApp.Web.Services.Customer;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-namespace BankingApp.Web.Components.Pages.Register
+
+namespace BankingApp.Web.Components.Pages.Register;
+
+public partial class Register
 {
-    public partial class Register
+    [Inject]
+    private ICustomerService CustomerService { get; set; } = default!;
+
+    private RegistrationRequest registrationRequest = new();
+
+    private EditContext editContext = default!;
+
+    private IBrowserFile? selectedKycFile;
+
+    private string? kycErrorMessage;
+
+    private string? errorMessage;
+
+    private bool isSubmitting;
+
+    private bool registrationSuccessful;
+
+
+    protected override void OnInitialized()
     {
-        [Inject]
-        private ICustomerService CustomerService { get; set; } = default!;
-
-        private RegistrationRequest registrationRequest = new();
-
-        private EditContext editContext = default!;
-
-        private IBrowserFile? selectedKycFile;
-
-        private string? kycErrorMessage;
-
-        private string? errorMessage;
-
-        private bool isSubmitting;
-
-        private bool registrationSuccessful;
+        editContext =
+            new EditContext(registrationRequest);
+    }
 
 
-        protected override void OnInitialized()
+    // =========================================
+    // User Type Selection
+    // =========================================
+
+    private void SelectCustomer(ChangeEventArgs args)
+    {
+        registrationRequest.UserType =
+            UserType.Customer;
+
+        ClearMessages();
+
+        editContext.NotifyFieldChanged(
+            new FieldIdentifier(
+                registrationRequest,
+                nameof(registrationRequest.UserType)));
+    }
+
+
+    private void SelectStaff(ChangeEventArgs args)
+    {
+        registrationRequest.UserType =
+            UserType.Staff;
+
+        ClearMessages();
+
+        editContext.NotifyFieldChanged(
+            new FieldIdentifier(
+                registrationRequest,
+                nameof(registrationRequest.UserType)));
+    }
+
+
+    // =========================================
+    // Registration
+    // =========================================
+
+    private async Task HandleSubmit()
+    {
+        errorMessage = null;
+
+        registrationSuccessful = false;
+
+        isSubmitting = true;
+
+        try
         {
-            editContext = new EditContext(registrationRequest);
-        }
+            var result =
+                await CustomerService.RegisterAsync(
+                    registrationRequest);
 
-
-        private void SelectCustomer(ChangeEventArgs args)
-        {
-            registrationRequest.UserType = UserType.Customer;
-
-            ClearMessages();
-
-            editContext = new EditContext(registrationRequest);
-        }
-
-
-        private void SelectStaff(ChangeEventArgs args)
-        {
-            registrationRequest.UserType = UserType.Staff;
-
-            ClearMessages();
-
-            editContext = new EditContext(registrationRequest);
-        }
-
-
-        private async Task HandleSubmit()
-        {
-            errorMessage = null;
-
-            registrationSuccessful = false;
-
-            isSubmitting = true;
-
-            try
+            if (result)
             {
-                var result =
-                    await CustomerService.RegisterAsync(
-                        registrationRequest);
-
-                if (result)
-                {
-                    registrationSuccessful = true;
-                }
-                else
-                {
-                    errorMessage =
-                        "Registration failed. Please try again.";
-                }
+                registrationSuccessful = true;
             }
-            catch (HttpRequestException)
+            else
             {
                 errorMessage =
-                    "Unable to connect to the banking service.";
-            }
-            catch (Exception)
-            {
-                errorMessage =
-                    "Something went wrong during registration.";
-            }
-            finally
-            {
-                isSubmitting = false;
+                    "Registration failed. Please try again.";
             }
         }
-
-
-        private void HandleKycFileSelected(
-            InputFileChangeEventArgs e)
+        catch (HttpRequestException)
         {
-            kycErrorMessage = null;
+            errorMessage =
+                "Unable to connect to the banking service.";
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Registration exception: {ex}");
 
-            selectedKycFile = e.File;
+            errorMessage =
+                ex.Message;
+        }
+        finally
+        {
+            isSubmitting = false;
+        }
+    }
 
-            if (selectedKycFile is null)
-            {
-                return;
-            }
 
-            const long maxFileSize =
-                10 * 1024 * 1024;
+    // =========================================
+    // KYC File Selection
+    // =========================================
 
-            if (selectedKycFile.Size > maxFileSize)
-            {
-                kycErrorMessage =
-                    "File size cannot exceed 10 MB.";
+    private void HandleKycFileSelected(
+        InputFileChangeEventArgs e)
+    {
+        kycErrorMessage = null;
 
-                selectedKycFile = null;
-            }
+        selectedKycFile = e.File;
+
+        if (selectedKycFile is null)
+        {
+            return;
         }
 
+        const long maxFileSize =
+            10 * 1024 * 1024;
 
-        private void AddKycDocument()
+        if (selectedKycFile.Size > maxFileSize)
         {
-            kycErrorMessage = null;
-
-            if (selectedKycFile is null)
-            {
-                kycErrorMessage =
-                    "Please select a document.";
-
-                return;
-            }
-
-            if (registrationRequest.KycDocuments.Any(
-                    x => x.Name.Equals(
-                        selectedKycFile.Name,
-                        StringComparison.OrdinalIgnoreCase)))
-            {
-                kycErrorMessage =
-                    "This document has already been added.";
-
-                return;
-            }
-
-            registrationRequest.KycDocuments.Add(
-                selectedKycFile);
+            kycErrorMessage =
+                "File size cannot exceed 10 MB.";
 
             selectedKycFile = null;
         }
+    }
 
 
-        private void RemoveKycDocument(
-            IBrowserFile document)
+    // =========================================
+    // Add KYC Document
+    // =========================================
+
+    private async Task AddKycDocument()
+    {
+        kycErrorMessage = null;
+
+        if (selectedKycFile is null)
         {
-            registrationRequest.KycDocuments.Remove(
-                document);
+            kycErrorMessage =
+                "Please select a document.";
+
+            return;
         }
 
 
-        private void ClearMessages()
+        // =========================================
+        // Check Duplicate File
+        // =========================================
+
+        if (registrationRequest.KycDocuments.Any(
+                x => x.Name.Equals(
+                    selectedKycFile.Name,
+                    StringComparison.OrdinalIgnoreCase)))
         {
-            errorMessage = null;
+            kycErrorMessage =
+                "This document has already been added.";
 
-            registrationSuccessful = false;
-
-            kycErrorMessage = null;
-
-            selectedKycFile = null;
+            return;
         }
 
 
-        private static string FormatFileSize(long bytes)
+        // =========================================
+        // Read File Immediately
+        // =========================================
+
+        const long maxFileSize =
+            10 * 1024 * 1024;
+
+        await using var stream =
+            selectedKycFile.OpenReadStream(
+                maxFileSize);
+
+        using var memoryStream =
+            new MemoryStream();
+
+        await stream.CopyToAsync(
+            memoryStream);
+
+
+        // =========================================
+        // Create KYC Document
+        // =========================================
+
+        var document = new KycDocument
         {
-            if (bytes < 1024)
-            {
-                return $"{bytes} B";
-            }
+            Name = selectedKycFile.Name,
 
-            if (bytes < 1024 * 1024)
-            {
-                return $"{bytes / 1024.0:F1} KB";
-            }
+            ContentType =
+                selectedKycFile.ContentType,
 
-            return $"{bytes / (1024.0 * 1024.0):F1} MB";
+            Size =
+                selectedKycFile.Size,
+
+            Content =
+                memoryStream.ToArray()
+        };
+
+
+        // =========================================
+        // Add Document
+        // =========================================
+
+        registrationRequest.KycDocuments.Add(
+            document);
+
+
+        // =========================================
+        // Clear Selected File
+        // =========================================
+
+        selectedKycFile = null;
+    }
+
+
+    // =========================================
+    // Remove KYC Document
+    // =========================================
+
+    private void RemoveKycDocument(
+        KycDocument document)
+    {
+        registrationRequest.KycDocuments.Remove(
+            document);
+    }
+
+
+    // =========================================
+    // Clear Messages
+    // =========================================
+
+    private void ClearMessages()
+    {
+        errorMessage = null;
+
+        registrationSuccessful = false;
+
+        kycErrorMessage = null;
+
+        selectedKycFile = null;
+    }
+
+
+    // =========================================
+    // Format File Size
+    // =========================================
+
+    private static string FormatFileSize(long bytes)
+    {
+        if (bytes < 1024)
+        {
+            return $"{bytes} B";
         }
 
-
-        private static string GetEmploymentDisplayName(
-            EmploymentType employmentType)
+        if (bytes < 1024 * 1024)
         {
-            return employmentType switch
-            {
-                EmploymentType.SelfEmployed =>
-                    "Self Employed",
-
-                EmploymentType.Salaried =>
-                    "Salaried",
-
-                EmploymentType.Unemployed =>
-                    "Unemployed",
-
-                _ =>
-                    employmentType.ToString()
-            };
+            return $"{bytes / 1024.0:F1} KB";
         }
 
+        return $"{bytes / (1024.0 * 1024.0):F1} MB";
+    }
+
+
+    // =========================================
+    // Employment Display Name
+    // =========================================
+
+    private static string GetEmploymentDisplayName(
+        EmploymentType employmentType)
+    {
+        return employmentType switch
+        {
+            EmploymentType.SelfEmployed =>
+                "Self Employed",
+
+            EmploymentType.Salaried =>
+                "Salaried",
+
+            EmploymentType.Unemployed =>
+                "Unemployed",
+
+            _ =>
+                employmentType.ToString()
+        };
     }
 }

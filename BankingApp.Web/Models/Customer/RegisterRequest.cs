@@ -1,4 +1,5 @@
 ﻿using BankingApp.Web.Constants;
+using BankingApp.Web.Models.Customer;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace BankingApp.Web.Models.Registration;
@@ -42,6 +43,6 @@ public class RegistrationRequest
 
     public DateTime? DateOfBirth { get; set; }
 
-    public List<IBrowserFile> KycDocuments { get; set; } = [];
+    public List<KycDocument> KycDocuments { get; set; } = [];
 }
 

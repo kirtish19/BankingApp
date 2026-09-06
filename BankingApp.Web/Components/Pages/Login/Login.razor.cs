@@ -1,76 +1,62 @@
-﻿using BankingApp.Web.Constants;
-using BankingApp.Web.Models.Authentication;
+﻿using BankingApp.Web.Models.Authentication;
 using BankingApp.Web.Services.Authentication;
 using Microsoft.AspNetCore.Components;
 
-namespace BankingApp.Web.Components.Pages.Login
+namespace BankingApp.Web.Components.Pages.Login;
+
+public partial class Login
 {
-    public partial class Login
+    [Inject]
+    private IAuthenticationService AuthenticationService { get; set; } = default!;
+
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+
+    private readonly LoginRequest loginRequest = new();
+
+    private bool IsLoggingIn;
+
+    private string? ErrorMessage;
+
+
+    private async Task HandleLogin()
     {
-        [Inject]
-        private IAuthenticationService AuthenticationService { get; set; } = default!;
+        ErrorMessage = null;
 
-        [Inject]
-        private NavigationManager Navigation { get; set; } = default!;
+        IsLoggingIn = true;
 
-        private readonly LoginRequest loginRequest = new();
-
-        private bool IsLoggingIn;
-
-        private string? ErrorMessage;
-
-        private async Task HandleLogin()
+        try
         {
-            ErrorMessage = null;
+            var result =
+                await AuthenticationService.LoginAsync(
+                    loginRequest);
 
-            IsLoggingIn = true;
-
-            try
+            if (!result.IsAuthenticated)
             {
-                var result =
-                    await AuthenticationService.LoginAsync(
-                        loginRequest);
+                ErrorMessage =
+                    result.ErrorMessage ??
+                    "Invalid username or password.";
 
-                // Authentication failed
+                return;
+            }
 
-                if (!result.IsAuthenticated)
-                {
-                    ErrorMessage =
-                        result.ErrorMessage ??
-                        "Invalid username or password.";
-
-                    return;
-                }
-
-                // Account inactive
-
-                if (!result.IsActive)
-                {
-                    ErrorMessage =
-                        "Your account is not active yet.";
-
-                    return;
-                }
-
-                // Staff
-
-                if (result.UserType == UserType.Staff)
-                {
-                    Navigation.NavigateTo(
-                        "/staff-dashboard");
-
-                    return;
-                }
-
-                // Customer
-
+            // CustomerId is available for customers.
+            // CustomerId is null for staff.
+            if (result.CustomerId is null)
+            {
                 Navigation.NavigateTo(
-                    "/customer-dashboard");
+                    "/staff-dashboard");
+
+                return;
             }
-            finally
-            {
-                IsLoggingIn = false;
-            }
+
+            Navigation.NavigateTo(
+                "/customer-dashboard");
+        }
+        finally
+        {
+            IsLoggingIn = false;
         }
     }
 }
+

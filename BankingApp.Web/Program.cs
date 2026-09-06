@@ -1,6 +1,9 @@
 using BankingApp.Web.Components;
+using BankingApp.Web.Extentions;
 using BankingApp.Web.Services.Authentication;
 using BankingApp.Web.Services.Customer;
+using BankingApp.Web.Services.Loan;
+using BankingApp.Web.Services.Staff;
 using BankingApp.Web.Validators.Registration;
 using FluentValidation;
 
@@ -11,6 +14,10 @@ namespace BankingApp.Web
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var keyvaulturi = builder.Configuration.GetConnectionString("KeyVault")!;
+            var runningLocal = builder.Configuration.GetValue<bool>("RunningLocal")!;
+
+            builder.Configuration.AddCustomKeyVault(keyvaulturi, runningLocal);
 
             // -----------------------------------------
             // Razor Components
@@ -27,19 +34,57 @@ namespace BankingApp.Web
 
             builder.Services.AddValidatorsFromAssemblyContaining<
                 RegistrationRequestValidator>();
+            // -----------------------------------------
+            // Entra Authentication
+            // -----------------------------------------
+
+            builder.Services.AddScoped<
+                IAccessTokenService,
+                AccessTokenService>();
+
 
 
             // -----------------------------------------
             // Customer API
             // -----------------------------------------
-
+            builder.Services.AddScoped<
+                IAuthStorageService,
+                AuthStorageService>();
             builder.Services.AddHttpClient<ICustomerService, CustomerService>(
                 client =>
                 {
                     client.BaseAddress =
-                        new Uri("https://localhost:7174/");
+                        new Uri(
+                            "https://team1-bankingapp-apim.azure-api.net/");
                 });
-            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+            builder.Services.AddHttpClient<
+                  IAuthenticationService,
+                  AuthenticationService>(
+                  client =>
+                  {
+                      client.BaseAddress =
+                          new Uri(
+
+                              "https://localhost:7174/");
+                  });
+            builder.Services.AddHttpClient<ILoanService, LoanService>(
+                    client =>
+                    {
+                        client.BaseAddress =
+                            new Uri(
+                                "https://team1-bankingapp-apim.azure-api.net/");
+                    });
+            builder.Services.AddHttpClient<IStaffLoanService, StaffLoanService>(
+                    client =>
+                    {
+                        client.BaseAddress =
+                            new Uri(
+                                "https://team1-bankingapp-apim.azure-api.net/");
+                    });
+
+            //builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
 
             var app = builder.Build();
 

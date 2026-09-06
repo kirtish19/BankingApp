@@ -1,5 +1,8 @@
-﻿namespace BankingApp.Web.Constants
+﻿using System.Text.Json.Serialization;
+
+namespace BankingApp.Web.Constants
 {
+    [JsonConverter(typeof(JsonStringEnumConverter<LoanType>))]
     public enum LoanType
     {
         Personal,

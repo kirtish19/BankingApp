@@ -9,9 +9,7 @@ public class LoanApplicationRequest
 
     public int TenureMonths { get; set; }
 
-    public IBrowserFile? SalarySlip { get; set; }
-
-    public IBrowserFile? BankStatement { get; set; }
-
-    public IBrowserFile? EmploymentLetter { get; set; }
+    public LoanDocument? SalarySlip { get; set; }
+    public LoanDocument? BankStatement { get; set; }
+    public LoanDocument? EmploymentLetter { get; set; }
 }

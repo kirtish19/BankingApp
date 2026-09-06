@@ -1,5 +1,4 @@
-﻿using BankingApp.Web.Constants;
-using BankingApp.Web.Models.Authentication;
+﻿using BankingApp.Web.Models.Authentication;
 
 namespace BankingApp.Web.Services.Authentication;
 
@@ -11,8 +10,8 @@ public interface IAuthenticationService
 
     bool IsAuthenticated { get; }
 
-    UserType? CurrentUserType { get; }
+    string? Token { get; }
 
-    string? CurrentUserName { get; }
+    Guid? CustomerId { get; }
 }
 
