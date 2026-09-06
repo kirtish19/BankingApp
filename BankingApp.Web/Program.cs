@@ -16,6 +16,7 @@ namespace BankingApp.Web
             var builder = WebApplication.CreateBuilder(args);
             var keyvaulturi = builder.Configuration.GetConnectionString("KeyVault")!;
             var runningLocal = builder.Configuration.GetValue<bool>("RunningLocal")!;
+            var apimBaseUrl = builder.Configuration.GetConnectionString("ApimBaseUrl")!;
 
             builder.Configuration.AddCustomKeyVault(keyvaulturi, runningLocal);
 
@@ -54,8 +55,7 @@ namespace BankingApp.Web
                 client =>
                 {
                     client.BaseAddress =
-                        new Uri(
-                            "https://team1-bankingapp-apim.azure-api.net/");
+                        new Uri(apimBaseUrl);
                 });
 
             builder.Services.AddHttpClient<
@@ -64,23 +64,19 @@ namespace BankingApp.Web
                   client =>
                   {
                       client.BaseAddress =
-                          new Uri(
-
-                              "https://localhost:7174/");
+                          new Uri(apimBaseUrl);
                   });
             builder.Services.AddHttpClient<ILoanService, LoanService>(
                     client =>
                     {
                         client.BaseAddress =
-                            new Uri(
-                                "https://team1-bankingapp-apim.azure-api.net/");
+                            new Uri(apimBaseUrl);
                     });
             builder.Services.AddHttpClient<IStaffLoanService, StaffLoanService>(
                     client =>
                     {
                         client.BaseAddress =
-                            new Uri(
-                                "https://team1-bankingapp-apim.azure-api.net/");
+                            new Uri(apimBaseUrl);
                     });
 
             //builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();

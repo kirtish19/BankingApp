@@ -57,9 +57,7 @@ public class AuthenticationService(
 
             // Call Customer API Login through APIM.
             var response =
-                await _httpClient.PostAsJsonAsync(
-                    "/api/User/Login", 
-                    request);
+                await _httpClient.PostAsJsonAsync("user/api/User/Login", request);
 
 
             // Invalid username/password.

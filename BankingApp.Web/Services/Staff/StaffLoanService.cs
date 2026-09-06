@@ -80,10 +80,10 @@ public class StaffLoanService(
         }
 
         var loans =
-            System.Text.Json.JsonSerializer.Deserialize<
+            JsonSerializer.Deserialize<
                 List<LoanApplicationsDto>>(
                     responseContent,
-                    new System.Text.Json.JsonSerializerOptions
+                    new JsonSerializerOptions
                     {
                         PropertyNameCaseInsensitive = true
                     });
@@ -196,7 +196,8 @@ public class StaffLoanService(
      string fullName,
      string reviewComments)
     {
-        string url = "https://team1-bankingapp-apim.azure-api.net/UpdateLoanStatus/paths/invoke";
+        var apimBaseUrl = _httpClient.BaseAddress?.ToString() ?? "";
+        string url = $"{apimBaseUrl}UpdateLoanStatus/paths/invoke";
 
         var requestBody =
             new UpdateLoanStatusRequest

@@ -34,12 +34,13 @@ public class AccessTokenService(
                 ?? throw new InvalidOperationException(
                     "Entra:Scope is not configured.");
 
-
+            var instance = _configuration["AzureEntra:Instance"]
+                ?? throw new InvalidOperationException(
+                    "Entra:Instance is not configured.");
             var app = ConfidentialClientApplicationBuilder
                 .Create(clientId)
                 .WithClientSecret(clientSecret)
-                .WithAuthority(
-                    $"https://login.microsoftonline.com/{tenantId}")
+                .WithAuthority($"{instance}/{tenantId}")
                 .Build();
 
          
