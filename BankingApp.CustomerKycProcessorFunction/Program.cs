@@ -1,3 +1,4 @@
+using BankingApp.Data;
 using Microsoft.Azure.Cosmos;
 using Serilog;
 

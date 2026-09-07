@@ -1,4 +1,5 @@
-﻿using BankingApp.Data.DocumentDb.Containers;
+﻿using BankingApp.Data;
+using BankingApp.Data.DocumentDb.Containers;
 
 namespace BankingApp.CustomerKycProcessorFunction.Services
 {

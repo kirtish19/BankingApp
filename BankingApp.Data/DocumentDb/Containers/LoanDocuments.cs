@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Azure.Core.Pipeline;
+using Newtonsoft.Json;
 
 namespace BankingApp.Data.DocumentDb.Containers
 {
@@ -7,6 +8,7 @@ namespace BankingApp.Data.DocumentDb.Containers
         [JsonProperty("id")]
         public Guid Id { get; set; }
         public Guid CustomerId { get; set; }
+        public Guid LoanApplicationId { get; set; }
         public string DocumentName { get; set; } = null!;
         public string BlobUrl { get; set; } = null!;
     }

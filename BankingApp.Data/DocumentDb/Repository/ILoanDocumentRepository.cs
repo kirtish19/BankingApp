@@ -5,5 +5,6 @@ namespace BankingApp.Data.DocumentDb.Repository
     public interface ILoanDocumentRepository
     {
         public Task AddLoanDocumentRecords(IEnumerable<LoanDocuments> loanDocuments);
+        public Task<IEnumerable<LoanDocuments>> GetLoanDocumentsByLoanId(Guid loanApplicationId);
     }
 }

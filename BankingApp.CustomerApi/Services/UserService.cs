@@ -1,4 +1,6 @@
-﻿using Microsoft.Identity.Client;
+﻿using BankingApp.Data;
+using BankingApp.Data.DocumentDb.Containers;
+using Microsoft.Identity.Client;
 
 namespace BankingApp.CustomerApi.Services
 {
@@ -170,6 +172,12 @@ namespace BankingApp.CustomerApi.Services
         {
             var customer = await _unitOfWork.CustomerRepository.GetByIdAsync(customerId);
             return customer?.ToCustomerDto();
+        }
+
+        public async Task<IEnumerable<KycDocument>> GetKycDocumentsAsync(Guid customerId)
+        {
+            var kycDocuments = await _unitOfWork.KycDocumentsRepository.GetKycDocumentsByCustomerId(customerId);
+            return kycDocuments;
         }
     }
 }

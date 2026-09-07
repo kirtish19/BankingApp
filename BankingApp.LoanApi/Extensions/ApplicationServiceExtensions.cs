@@ -1,4 +1,8 @@
-﻿namespace BankingApp.LoanApi.Extensions
+﻿using BankingApp.Data;
+using BankingApp.Data.DocumentDb.Repository;
+using Microsoft.Azure.Cosmos;
+
+namespace BankingApp.LoanApi.Extensions
 {
     public static class ApplicationServiceExtensions
     {
@@ -14,6 +18,11 @@
                 services.AddScoped<ICustomerRepository, CustomerRepository>();
                 services.AddScoped<ILoanService, LoanService>();
                 services.AddScoped<IUnitOfWork, UnitOfWork>();
+                services.AddScoped<ILoanDocumentRepository, LoanDocumentRepository>();
+                services.AddSingleton(s =>
+                {
+                    return new CosmosClient(configuration.GetValue<string>("CosmosDbConnectionString")!);
+                });
                 return services;
             }
         }

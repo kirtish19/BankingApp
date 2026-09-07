@@ -1,4 +1,6 @@
-﻿namespace BankingApp.LoanApi.Services
+﻿using BankingApp.Data.DocumentDb.Containers;
+
+namespace BankingApp.LoanApi.Services
 {
     public interface ILoanService
     {
@@ -7,5 +9,6 @@
         public Task<LoanApplicationsDto?> GetLoanApplicationById(Guid id);
         public Task<IEnumerable<LoanApplicationsDto>> GetLoanApplicationsForCustomerAsync(Guid customerId);
         public Task<IEnumerable<LoanApplicationsDto>> GetPendingLoanApplicationsAsync();
+        public Task<IEnumerable<LoanDocuments>> GetLoanDocumentsAsync(Guid loanId);
     }
 }

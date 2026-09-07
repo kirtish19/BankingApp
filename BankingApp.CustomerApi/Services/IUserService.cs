@@ -1,4 +1,6 @@
-﻿namespace BankingApp.CustomerApi.Services
+﻿using BankingApp.Data.DocumentDb.Containers;
+
+namespace BankingApp.CustomerApi.Services
 {
     public interface IUserService
     {
@@ -6,5 +8,6 @@
         public Task<LoginResponseDto> LoginUserAsync(PostLoginRequest request);
         public Task<string> GetTokenAsync(User user);
         public Task<CustomerDto?> GetCustomerDetailsAsync(Guid customerId);
+        public Task<IEnumerable<KycDocument>> GetKycDocumentsAsync(Guid customerId);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace BankingApp.CustomerLoanProcessorFunction.Services
+﻿using BankingApp.Data;
+
+namespace BankingApp.CustomerLoanProcessorFunction.Services
 {
     public class LoanAssessmentService(IUnitOfWork unitOfWork, ILoanDocumentRepository loanDocumentRepository, IServiceBusHandler serviceBusHandler, IConfiguration configuration, ILogger<LoanAssessmentService> logger) : ILoanAssessmentService
     {
@@ -232,7 +234,8 @@
                     Id = document.DocumentId,
                     CustomerId = message.CustomerId,
                     DocumentName = document.DocumentName,
-                    BlobUrl = document.BlobUrl
+                    BlobUrl = document.BlobUrl,
+                    LoanApplicationId = message.LoanApplicationId,
                 };
                 loanDocuments.Add(loanDocument);
             }

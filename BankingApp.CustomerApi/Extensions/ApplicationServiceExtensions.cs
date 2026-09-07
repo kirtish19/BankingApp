@@ -1,4 +1,8 @@
-﻿namespace BankingApp.CustomerApi.Extensions
+﻿using BankingApp.Data;
+using BankingApp.Data.DocumentDb.Repository;
+using Microsoft.Azure.Cosmos;
+
+namespace BankingApp.CustomerApi.Extensions
 {
     public static class ApplicationServiceExtensions
     {
@@ -15,6 +19,11 @@
                 services.AddScoped<IStorageHandler, StorageHandler>();
                 services.AddScoped<IServiceBusHandler, ServiceBusHandler>();
                 services.AddScoped<IUnitOfWork, UnitOfWork>();
+                services.AddScoped<IKycDocumentsRepository, KycDocumentsRepository>();
+                services.AddSingleton(s =>
+                {
+                    return new CosmosClient(configuration.GetValue<string>("CosmosDbConnectionString")!);
+                });
                 return services;
             }
         }

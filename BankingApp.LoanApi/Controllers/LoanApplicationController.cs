@@ -46,5 +46,13 @@
             var loanApplications = await _loanService.GetPendingLoanApplicationsAsync();
             return Ok(loanApplications);
         }
+
+        [HttpGet("GetLoanDocuments/{loanId}")]
+        [Consumes("application/json")]
+        public async Task<IActionResult> GetLoanDocumentsAsync(Guid loanId)
+        {
+            var loanDocuments = await _loanService.GetLoanDocumentsAsync(loanId);
+            return Ok(loanDocuments);
+        }
     }
 }

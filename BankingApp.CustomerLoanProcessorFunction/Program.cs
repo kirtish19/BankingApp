@@ -1,3 +1,5 @@
+using BankingApp.Data;
+
 var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();

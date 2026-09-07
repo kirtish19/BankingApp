@@ -42,5 +42,14 @@
             if (customerDetails is null) return NotFound("Customer not found");
             return Ok(customerDetails);
         }
+
+        [Consumes("application/json")]
+        [HttpGet("GetKycDocuments/{customerId}")]
+        public async Task<IActionResult> GetKycDocumentsAsync(Guid customerId)
+        {
+            var kycDocuments = await _userService.GetKycDocumentsAsync(customerId);
+            if (kycDocuments is null) return NotFound("KYC documents not found");
+            return Ok(kycDocuments);
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BankingApp.Data.DocumentDb.Containers;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -48,6 +49,56 @@ namespace BankingApp.Data.DocumentDb.Repository
                 throw;
             }
 
+        }
+
+        //public async Task<IEnumerable<KycDocument>> GetKycDocumentsByCustomerId(Guid customerId)
+        //{
+        //    try
+        //    {
+        //        var query = new QueryDefinition("SELECT * FROM c WHERE c.CustomerId = @customerId")
+        //            .WithParameter("@customerId", customerId);
+
+        //        var iterator = _container.GetItemQueryIterator<KycDocument>(query, requestOptions: new QueryRequestOptions { PartitionKey = new PartitionKey(customerId.ToString()) });
+
+        //        var kycDocuments = new List<KycDocument>();
+        //        while (iterator.HasMoreResults)
+        //        {
+        //            var feed = await iterator.ReadNextAsync();
+        //            kycDocuments.AddRange(feed.Resource);
+        //        }
+
+        //        return kycDocuments;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error fetching KYC documents for customer {CustomerId}", customerId);
+        //        throw;
+        //    }
+        //}
+
+        public async Task<IEnumerable<KycDocument>> GetKycDocumentsByCustomerId(Guid customerId)
+        {
+            try
+            {
+                var iterator = _container
+                    .GetItemLinqQueryable<KycDocument>(true)
+                    .Where(k => k.CustomerId == customerId)
+                    .ToFeedIterator();
+
+                var kycDocuments = new List<KycDocument>();
+                while (iterator.HasMoreResults)
+                {
+                    var page = await iterator.ReadNextAsync();
+                    kycDocuments.AddRange(page.Resource);
+                }
+
+                return kycDocuments;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching KYC documents for customer {CustomerId}", customerId);
+                throw;
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BankingApp.Data.DocumentDb.Containers;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -32,6 +33,31 @@ namespace BankingApp.Data.DocumentDb.Repository
                 throw;
             }
 
+        }
+
+        public async Task<IEnumerable<LoanDocuments>> GetLoanDocumentsByLoanId(Guid loanApplicationId)
+        {
+            try
+            {
+                var iterator = _container
+                    .GetItemLinqQueryable<LoanDocuments>(true)
+                    .Where(k => k.LoanApplicationId == loanApplicationId)
+                    .ToFeedIterator();
+
+                var loanDocuments = new List<LoanDocuments>();
+                while (iterator.HasMoreResults)
+                {
+                    var page = await iterator.ReadNextAsync();
+                    loanDocuments.AddRange(page.Resource);
+                }
+
+                return loanDocuments;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching loan documents for loan application {LoanApplicationId}", loanApplicationId);
+                throw;
+            }
         }
     }
 }

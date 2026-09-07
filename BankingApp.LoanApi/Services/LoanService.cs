@@ -1,4 +1,7 @@
-﻿namespace BankingApp.LoanApi.Services
+﻿using BankingApp.Data;
+using BankingApp.Data.DocumentDb.Containers;
+
+namespace BankingApp.LoanApi.Services
 {
     public class LoanService(IUnitOfWork unitOfWork, IStorageHandler storageHandler, IConfiguration configuration, IServiceBusHandler serviceBusHandler) : ILoanService
     {
@@ -109,6 +112,12 @@
         {
             var loanApplications = await _unitOfWork.LoanApplicationRepository.GetLoanApplicationsByStatusAsync(LoanStatus.ManualReview);
             return loanApplications.ToLoanApplicationDtoList();
+        }
+
+        public async Task<IEnumerable<LoanDocuments>> GetLoanDocumentsAsync(Guid loanId)
+        {
+            var loanDocuments = await _unitOfWork.LoanDocumentRepository.GetLoanDocumentsByLoanId(loanId);
+            return loanDocuments;
         }
     }
 }
