@@ -14,14 +14,15 @@ spec:
     metadata:
       labels:
         app: bankingapp-customerapi
+        azure.workload.identity/use: "true"
 
     spec:
+      serviceAccountName: customerapi-sa
+
       containers:
-
       - name: bankingapp-customerapi
-
         image: team1bankingappacr.azurecr.io/bankingapp-customerapi:v1
         imagePullPolicy: Always
 
         ports:
-          - containerPort: 8080
+        - containerPort: 8080
