@@ -18,7 +18,7 @@ public class ManualApprovalLoanProcessingFunction
     }
 
     [Function("ManualApprovalLoanProcessingFunction")]
-    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequest req)
+    public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "patch")] HttpRequest req)
     {
         var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         var requestData = JsonSerializer.Deserialize<UpdateLoanStatusRequest>(requestBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
