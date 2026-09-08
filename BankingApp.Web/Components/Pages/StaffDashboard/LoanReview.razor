@@ -98,7 +98,9 @@
                         </label>
 
                         <div class="fw-semibold">
-                            @Loan.LoanAmount.ToString("C2", new CultureInfo("en-IN"))
+                            @Loan.LoanAmount.ToString(
+                                "C2",
+                                new CultureInfo("en-IN"))
                         </div>
                     </div>
 
@@ -123,7 +125,9 @@
 
                         <div class="fw-semibold">
                             @(Loan.MonthlyEMI.HasValue
-                                ? $"{Loan.MonthlyEMI.Value.ToString("C2", new CultureInfo("en-IN"))}"
+                                ? $"{Loan.MonthlyEMI.Value.ToString(
+                                    "C2",
+                                    new CultureInfo("en-IN"))}"
                                 : "-")
                         </div>
                     </div>
@@ -157,14 +161,14 @@
                     </div>
 
 
-                    <!-- Customer ID -->
+                    <!-- Customer -->
                     <div class="col-md-6">
                         <label class="text-muted small d-block mb-1">
-                            Customer ID
+                            Customer
                         </label>
 
-                        <div class="fw-semibold text-break">
-                            @Loan.CustomerId
+                        <div class="fw-semibold">
+                            @CustomerName
                         </div>
                     </div>
 

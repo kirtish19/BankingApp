@@ -25,6 +25,8 @@ public partial class LoanReview
 
     private LoanApplicationsDto? Loan;
 
+    private string CustomerName = "-";
+
     private string ReviewComments = string.Empty;
 
     private bool IsLoading = true;
@@ -124,6 +126,32 @@ public partial class LoanReview
 
             Console.WriteLine(
                 $"[LoanReview] Customer ID: {Loan.CustomerId}");
+
+
+            // =========================================
+            // GET CUSTOMER DETAILS
+            // =========================================
+
+            var customer =
+                await StaffLoanService.GetCustomerDetailsAsync(
+                    Loan.CustomerId);
+
+            if (customer is not null)
+            {
+                CustomerName =
+                    $"{customer.FirstName} {customer.LastName}".Trim();
+
+                Console.WriteLine(
+                    $"[LoanReview] Customer Name: {CustomerName}");
+            }
+            else
+            {
+                Console.WriteLine(
+                    "[LoanReview] Customer details not found.");
+
+                CustomerName = "-";
+            }
+
 
             ReviewComments =
                 Loan.ReviewComments ?? string.Empty;
@@ -291,18 +319,6 @@ public partial class LoanReview
 
             // -----------------------------------------
             // 5. Call Staff Loan Service
-            //
-            // StaffLoanService will:
-            //
-            // CustomerId
-            //      ↓
-            // GetCustomerDetails API
-            //      ↓
-            // FirstName + LastName + Email
-            //      ↓
-            // FullName + Email
-            //      ↓
-            // UpdateLoanStatus API
             // -----------------------------------------
 
             Console.WriteLine();

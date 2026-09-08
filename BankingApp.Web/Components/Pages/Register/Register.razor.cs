@@ -40,35 +40,38 @@ public partial class Register
 
     private void SelectCustomer(ChangeEventArgs args)
     {
-        registrationRequest.UserType =
-            UserType.Customer;
+        registrationRequest =
+            new RegistrationRequest
+            {
+                UserType = UserType.Customer
+            };
+
+        editContext =
+            new EditContext(registrationRequest);
 
         ClearMessages();
-
-        editContext.NotifyFieldChanged(
-            new FieldIdentifier(
-                registrationRequest,
-                nameof(registrationRequest.UserType)));
     }
 
 
     private void SelectStaff(ChangeEventArgs args)
     {
-        registrationRequest.UserType =
-            UserType.Staff;
+        registrationRequest =
+            new RegistrationRequest
+            {
+                UserType = UserType.Staff
+            };
+
+        editContext =
+            new EditContext(registrationRequest);
 
         ClearMessages();
-
-        editContext.NotifyFieldChanged(
-            new FieldIdentifier(
-                registrationRequest,
-                nameof(registrationRequest.UserType)));
     }
 
 
     // =========================================
     // Registration
     // =========================================
+
 
     private async Task HandleSubmit()
     {
@@ -84,15 +87,34 @@ public partial class Register
                 await CustomerService.RegisterAsync(
                     registrationRequest);
 
+
             if (result)
             {
                 registrationSuccessful = true;
+
+                var registeredUserType =
+                    registrationRequest.UserType;
+
+                // =========================================
+                // Reset Registration Form
+                // Keep Selected Account Type
+                // =========================================
+
+                registrationRequest =
+                    new RegistrationRequest
+                    {
+                        UserType = registeredUserType
+                    };
+
+                editContext =
+                    new EditContext(registrationRequest);
+
+                selectedKycFile = null;
+
+                kycErrorMessage = null;
             }
-            else
-            {
-                errorMessage =
-                    "Registration failed. Please try again.";
-            }
+
+
         }
         catch (HttpRequestException)
         {
@@ -112,6 +134,8 @@ public partial class Register
             isSubmitting = false;
         }
     }
+
+
 
 
     // =========================================

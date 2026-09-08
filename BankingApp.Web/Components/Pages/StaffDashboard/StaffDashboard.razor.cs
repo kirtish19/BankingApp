@@ -1,5 +1,6 @@
 ﻿using BankingApp.Web.Constants;
 using BankingApp.Web.Models.Loan;
+using BankingApp.Web.Models.Staff;
 using BankingApp.Web.Services.Authentication;
 using BankingApp.Web.Services.Staff;
 using Microsoft.AspNetCore.Components;
@@ -8,10 +9,7 @@ namespace BankingApp.Web.Components.Pages.StaffDashboard;
 
 public partial class StaffDashboard
 {
-    // =========================================
     // SERVICES
-    // =========================================
-
     [Inject]
     private IAuthenticationService AuthenticationService
     { get; set; } = null!;
@@ -29,42 +27,41 @@ public partial class StaffDashboard
     { get; set; } = null!;
 
 
-    // =========================================
     // DATA
-    // =========================================
-
     private List<LoanApplicationsDto> AllLoans = [];
-
     private List<LoanApplicationsDto> PendingLoans = [];
 
+    private Dictionary<Guid, CustomerDetailsDto> CustomerDetails = [];
 
-    // =========================================
+
     // UI STATE
-    // =========================================
-
     private bool IsLoading = true;
-
     private string? ErrorMessage;
-
     private bool _initialized;
 
 
-    // =========================================
-    // SUMMARY
-    // =========================================
+    // STATUS FILTER
+    private LoanStatus? SelectedStatus { get; set; }
 
+
+    // FILTERED ALL LOANS
+    private List<LoanApplicationsDto> FilteredAllLoans =>
+        SelectedStatus is null
+            ? AllLoans
+            : AllLoans
+                .Where(loan => loan.Status == SelectedStatus.Value)
+                .ToList();
+
+
+    // SUMMARY
     private int ApprovedLoanCount =>
         AllLoans.Count(
             loan =>
                 loan.Status == LoanStatus.Approved);
 
 
-    // =========================================
     // PAGE INITIALIZATION
-    // =========================================
-
-    protected override async Task OnAfterRenderAsync(
-        bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender || _initialized)
         {
@@ -79,39 +76,30 @@ public partial class StaffDashboard
     }
 
 
-    // =========================================
     // LOAD DASHBOARD
-    // =========================================
-
     private async Task LoadDashboardAsync()
     {
         try
         {
             IsLoading = true;
-
             ErrorMessage = null;
 
-
-            // Check frontend session.
             var isSessionValid =
                 await AuthStorageService.IsSessionValidAsync();
 
             if (!isSessionValid)
             {
                 Navigation.NavigateTo("/login");
-
                 return;
             }
 
-
-            // Load all loan applications.
             AllLoans =
                 await StaffLoanService.GetAllLoansAsync();
 
-
-            // Load pending loan applications.
             PendingLoans =
                 await StaffLoanService.GetPendingLoansAsync();
+
+            await LoadCustomerDetailsAsync();
         }
         catch (Exception ex)
         {
@@ -128,39 +116,81 @@ public partial class StaffDashboard
     }
 
 
-    // =========================================
-    // LOAN TYPE DISPLAY
-    // =========================================
+    // LOAD CUSTOMER DETAILS
+    private async Task LoadCustomerDetailsAsync()
+    {
+        var customerIds =
+            AllLoans
+                .Concat(PendingLoans)
+                .Select(loan => loan.CustomerId)
+                .Distinct()
+                .ToList();
 
-    private string GetLoanTypeName(
-        LoanType loanType)
+        foreach (var customerId in customerIds)
+        {
+            if (CustomerDetails.ContainsKey(customerId))
+            {
+                continue;
+            }
+
+            var customer =
+                await StaffLoanService
+                    .GetCustomerDetailsAsync(customerId);
+
+            if (customer is not null)
+            {
+                CustomerDetails[customerId] = customer;
+            }
+        }
+    }
+
+
+    // CUSTOMER NAME
+    private string GetCustomerName(Guid customerId)
+    {
+        if (!CustomerDetails.TryGetValue(
+                customerId,
+                out var customer))
+        {
+            return "-";
+        }
+
+        return
+            $"{customer.FirstName} {customer.LastName}"
+                .Trim();
+    }
+
+
+    // CUSTOMER EMAIL
+    private string GetCustomerEmail(Guid customerId)
+    {
+        if (!CustomerDetails.TryGetValue(
+                customerId,
+                out var customer))
+        {
+            return "-";
+        }
+
+        return customer.Email ?? "-";
+    }
+
+
+    // LOAN TYPE DISPLAY
+    private string GetLoanTypeName(LoanType loanType)
     {
         return loanType switch
         {
-            LoanType.Personal =>
-                "Personal Loan",
-
-            LoanType.Home =>
-                "Home Loan",
-
-            LoanType.Education =>
-                "Education Loan",
-
-            LoanType.Vehicle =>
-                "Vehicle Loan",
-
-            _ =>
-                "Loan"
+            LoanType.Personal => "Personal Loan",
+            LoanType.Home => "Home Loan",
+            LoanType.Education => "Education Loan",
+            LoanType.Vehicle => "Vehicle Loan",
+            _ => "Loan"
         };
     }
 
 
-    // =========================================
     // STATUS DISPLAY
-    // =========================================
-
-    private string GetStatusClass(
-        LoanStatus status)
+    private string GetStatusClass(LoanStatus status)
     {
         return status switch
         {
@@ -182,10 +212,7 @@ public partial class StaffDashboard
     }
 
 
-    // =========================================
     // RISK DISPLAY
-    // =========================================
-
     private string GetRiskClass(
         RiskAssesment? risk)
     {
@@ -216,10 +243,7 @@ public partial class StaffDashboard
     }
 
 
-    // =========================================
     // REVIEW LOAN
-    // =========================================
-
     private void ReviewLoan(Guid loanId)
     {
         Navigation.NavigateTo(
@@ -227,15 +251,11 @@ public partial class StaffDashboard
     }
 
 
-    // =========================================
     // LOGOUT
-    // =========================================
-
     private async Task Logout()
     {
         await AuthenticationService.LogoutAsync();
 
-        Navigation.NavigateTo(
-            "/login");
+        Navigation.NavigateTo("/login");
     }
 }

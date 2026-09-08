@@ -8,8 +8,6 @@
 
 @rendermode InteractiveServer
 
-
-
 <PageTitle>Staff Dashboard | BankingApp</PageTitle>
 
 <div class="container py-4">
@@ -128,18 +126,57 @@
 
             <div class="card-body p-4">
 
-                <div class="mb-3">
-                    <h5 class="fw-bold mb-1">
-                        All Loan Applications
-                    </h5>
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
 
-                    <small class="text-muted">
-                        View all customer loan applications.
-                    </small>
+                    <div>
+                        <h5 class="fw-bold mb-1">
+                            All Loan Applications
+                        </h5>
+
+                        <small class="text-muted">
+                            View all customer loan applications.
+                        </small>
+                    </div>
+
+                    <!-- STATUS FILTER -->
+                    <div class="d-flex align-items-center gap-2 mt-3 mt-md-0">
+
+                        <label class="fw-semibold mb-0">
+                            Filter:
+                        </label>
+
+                        <select class="form-select"
+                                style="width: 180px;"
+                                @bind="SelectedStatus">
+
+                            <option value="">
+                                All Statuses
+                            </option>
+
+                            <option value="@LoanStatus.Submitted">
+                                Submitted
+                            </option>
+
+                            <option value="@LoanStatus.Approved">
+                                Approved
+                            </option>
+
+                            <option value="@LoanStatus.Rejected">
+                                Rejected
+                            </option>
+
+                            <option value="@LoanStatus.ManualReview">
+                                Manual Review
+                            </option>
+
+                        </select>
+
+                    </div>
+
                 </div>
 
 
-                @if (AllLoans.Count == 0)
+                @if (FilteredAllLoans.Count == 0)
                 {
                     <div class="text-center py-5 text-muted">
 
@@ -148,7 +185,7 @@
                         </div>
 
                         <p class="mb-0">
-                            No loan applications found.
+                            No loan applications found for the selected status.
                         </p>
 
                     </div>
@@ -161,6 +198,9 @@
 
                             <thead>
                                 <tr>
+                                    <th>No.</th>
+                                    <th>Customer</th>
+                                    <th>Email</th>
                                     <th>Loan Type</th>
                                     <th>Amount</th>
                                     <th>Tenure</th>
@@ -173,27 +213,39 @@
 
                             <tbody>
 
-                                @foreach (var loan in AllLoans)
+                                @foreach (var (loan, index) in FilteredAllLoans.Select((loan, index) => (loan, index)))
                                 {
                                     <tr>
+
+                                        <!-- Row Number -->
+                                        <td>
+                                            @(index + 1)
+                                        </td>
+
+                                        <!-- Customer Name -->
+                                        <td class="fw-semibold">
+                                            @GetCustomerName(loan.CustomerId)
+                                        </td>
+
+                                        <!-- Customer Email -->
+                                        <td>
+                                            @GetCustomerEmail(loan.CustomerId)
+                                        </td>
 
                                         <!-- Loan Type -->
                                         <td class="fw-semibold">
                                             @GetLoanTypeName(loan.LoanType)
                                         </td>
 
-
                                         <!-- Amount -->
                                         <td>
                                             @loan.LoanAmount.ToString("C2", new CultureInfo("en-IN"))
                                         </td>
 
-
                                         <!-- Tenure -->
                                         <td>
                                             @loan.TenureMonths months
                                         </td>
-
 
                                         <!-- Risk -->
                                         <td>
@@ -202,7 +254,6 @@
                                             </span>
                                         </td>
 
-
                                         <!-- Status -->
                                         <td>
                                             <span class="@GetStatusClass(loan.Status)">
@@ -210,12 +261,10 @@
                                             </span>
                                         </td>
 
-
                                         <!-- Created Date -->
                                         <td>
                                             @loan.CreatedDate.ToString("dd MMM yyyy")
                                         </td>
-
 
                                         <!-- Action -->
                                         <td>
@@ -281,6 +330,9 @@
 
                             <thead>
                                 <tr>
+                                    <th>No.</th>
+                                    <th>Customer</th>
+                                    <th>Email</th>
                                     <th>Loan Type</th>
                                     <th>Amount</th>
                                     <th>Tenure</th>
@@ -293,27 +345,39 @@
 
                             <tbody>
 
-                                @foreach (var loan in PendingLoans)
+                                @foreach (var (loan, index) in PendingLoans.Select((loan, index) => (loan, index)))
                                 {
                                     <tr>
+
+                                        <!-- Row Number -->
+                                        <td>
+                                            @(index + 1)
+                                        </td>
+
+                                        <!-- Customer Name -->
+                                        <td class="fw-semibold">
+                                            @GetCustomerName(loan.CustomerId)
+                                        </td>
+
+                                        <!-- Customer Email -->
+                                        <td>
+                                            @GetCustomerEmail(loan.CustomerId)
+                                        </td>
 
                                         <!-- Loan Type -->
                                         <td class="fw-semibold">
                                             @GetLoanTypeName(loan.LoanType)
                                         </td>
 
-
                                         <!-- Amount -->
                                         <td>
                                             @loan.LoanAmount.ToString("C2", new CultureInfo("en-IN"))
                                         </td>
 
-
                                         <!-- Tenure -->
                                         <td>
                                             @loan.TenureMonths months
                                         </td>
-
 
                                         <!-- Risk -->
                                         <td>
@@ -322,7 +386,6 @@
                                             </span>
                                         </td>
 
-
                                         <!-- Status -->
                                         <td>
                                             <span class="@GetStatusClass(loan.Status)">
@@ -330,12 +393,10 @@
                                             </span>
                                         </td>
 
-
                                         <!-- Created Date -->
                                         <td>
                                             @loan.CreatedDate.ToString("dd MMM yyyy")
                                         </td>
-
 
                                         <!-- Action -->
                                         <td>

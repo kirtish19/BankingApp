@@ -223,16 +223,75 @@
 
 
     <!-- ========================================= -->
-    <!-- RECENT APPLICATIONS -->
+    <!-- LOAN APPLICATIONS -->
     <!-- ========================================= -->
 
     <div class="card border-0 shadow-sm">
 
         <div class="card-body p-4">
 
-            <h5 class="fw-bold mb-3">
-                Recent Applications
-            </h5>
+            <!-- HEADER + FILTER -->
+
+            <div class="d-flex
+                flex-wrap
+                justify-content-between
+                align-items-center
+                mb-3">
+
+                <div>
+
+                    <h5 class="fw-bold mb-1">
+                        Loan Applications
+                    </h5>
+
+                    <small class="text-muted">
+                        View and track all your loan applications.
+                    </small>
+
+                </div>
+
+
+                <!-- STATUS FILTER -->
+
+                <div class="d-flex
+                    align-items-center
+                    gap-2
+                    mt-3
+                    mt-md-0">
+
+                    <label class="fw-semibold mb-0">
+                        Filter:
+                    </label>
+
+                    <select class="form-select"
+                            style="width: 180px;"
+                            @bind="SelectedStatus">
+
+                        <option value="">
+                            All Statuses
+                        </option>
+
+                        <option value="@LoanStatus.Submitted">
+                            Submitted
+                        </option>
+
+                        <option value="@LoanStatus.Approved">
+                            Approved
+                        </option>
+
+                        <option value="@LoanStatus.Rejected">
+                            Rejected
+                        </option>
+
+                        <option value="@LoanStatus.ManualReview">
+                            Manual Review
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
 
 
             @if (IsLoading)
@@ -254,7 +313,7 @@
                     @ErrorMessage
                 </div>
             }
-            else if (LoanApplications.Count == 0)
+            else if (FilteredApplications.Count == 0)
             {
                 <div class="text-center py-5 text-muted">
 
@@ -263,7 +322,7 @@
                     </div>
 
                     <p class="mb-0">
-                        No loan applications yet.
+                        No loan applications found for the selected status.
                     </p>
 
                 </div>
@@ -277,6 +336,10 @@
                         <thead>
 
                             <tr>
+
+                                <th>
+                                    No.
+                                </th>
 
                                 <th>
                                     Loan Type
@@ -316,25 +379,53 @@
 
                         <tbody>
 
-                            @foreach (var application in RecentApplications)
+                            @foreach (var (application, index)
+                                in FilteredApplications.Select(
+                                    (application, index) =>
+                                    (application, index)))
                             {
                                 <tr>
 
+                                    <!-- ROW NUMBER -->
+
+                                    <td>
+                                        @(index + 1)
+                                    </td>
+
+
+                                    <!-- LOAN TYPE -->
+
                                     <td class="fw-semibold">
+
                                         @GetLoanTypeName(
                                             application.LoanType)
+
                                     </td>
 
+
+                                    <!-- AMOUNT -->
+
                                     <td>
+
                                         @FormatCurrency(
                                             application.LoanAmount)
+
                                     </td>
 
+
+                                    <!-- TENURE -->
+
                                     <td>
+
                                         @application.TenureMonths months
+
                                     </td>
 
+
+                                    <!-- EMI -->
+
                                     <td>
+
                                         @if (application.MonthlyEMI.HasValue)
                                         {
                                             <strong>
@@ -352,9 +443,14 @@
                                                 -
                                             </span>
                                         }
+
                                     </td>
 
+
+                                    <!-- INTEREST RATE -->
+
                                     <td>
+
                                         @if (application.InterestRate.HasValue)
                                         {
                                             @FormatInterestRate(
@@ -366,36 +462,58 @@
                                                 -
                                             </span>
                                         }
+
                                     </td>
 
+
+                                    <!-- STATUS -->
+
                                     <td>
+
                                         <span class="@GetStatusClass(
                                                                                         application.Status)">
+
                                             @application.Status
+
                                         </span>
+
                                     </td>
 
+
+                                    <!-- RISK -->
+
                                     <td>
+
                                         <span class="@GetRiskClass(
                                                                                         application.RiskAssesmentScore)">
+
                                             @GetRiskText(
                                                 application.RiskAssesmentScore)
+
                                         </span>
+
                                     </td>
 
+
+                                    <!-- APPLIED ON -->
+
                                     <td>
+
                                         @application.CreatedDate.ToString(
                                             "dd MMM yyyy")
+
                                     </td>
 
                                 </tr>
 
+
+                                <!-- REVIEW COMMENTS -->
                                 @if (!string.IsNullOrWhiteSpace(
-                                    application.ReviewComments))
+                                                                    application.ReviewComments))
                                 {
                                     <tr>
 
-                                        <td colspan="8">
+                                        <td colspan="9">
 
                                             <div class="text-muted small">
 
@@ -411,6 +529,7 @@
 
                                     </tr>
                                 }
+
                             }
 
                         </tbody>
@@ -465,6 +584,34 @@
 
 
     // =========================================
+    // STATUS FILTER
+    // =========================================
+
+    private LoanStatus? SelectedStatus { get; set; }
+
+
+    // =========================================
+    // FILTERED APPLICATIONS
+    // =========================================
+
+    private List<LoanApplicationsDto> FilteredApplications =>
+        SelectedStatus is null
+            ? LoanApplications
+                .OrderByDescending(
+                    application => application.CreatedDate)
+                .ToList()
+
+            : LoanApplications
+                .Where(
+                    application =>
+                        application.Status ==
+                        SelectedStatus.Value)
+                .OrderByDescending(
+                    application => application.CreatedDate)
+                .ToList();
+
+
+    // =========================================
     // ACTIVE LOANS
     // =========================================
 
@@ -472,17 +619,6 @@
         LoanApplications.Count(
             application =>
                 application.Status == LoanStatus.Approved);
-
-
-    // =========================================
-    // RECENT APPLICATIONS
-    // =========================================
-
-    private IEnumerable<LoanApplicationsDto> RecentApplications =>
-        LoanApplications
-            .OrderByDescending(
-                application => application.CreatedDate)
-            .Take(5);
 
 
     // =========================================
@@ -683,3 +819,4 @@
             "/login");
     }
 }
+

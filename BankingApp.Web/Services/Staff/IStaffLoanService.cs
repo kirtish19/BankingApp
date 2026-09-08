@@ -1,5 +1,5 @@
 ﻿using BankingApp.Web.Models.Loan;
-
+using BankingApp.Web.Models.Staff;
 namespace BankingApp.Web.Services.Staff;
 
 public interface IStaffLoanService
@@ -17,4 +17,6 @@ public interface IStaffLoanService
         string status,
         string statusDescription,
         string reviewComments);
+    Task<CustomerDetailsDto?> GetCustomerDetailsAsync(Guid customerId);
+
 }

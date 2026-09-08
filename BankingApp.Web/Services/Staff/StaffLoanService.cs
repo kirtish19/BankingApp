@@ -189,7 +189,7 @@ public class StaffLoanService(
     // GET CUSTOMER DETAILS
     // =========================================
 
-    private async Task<CustomerDetailsDto?>
+    public async Task<CustomerDetailsDto?>
         GetCustomerDetailsAsync(Guid customerId)
     {
         var isSessionValid =
@@ -456,5 +456,7 @@ public class StaffLoanService(
             return false;
         }
     }
+
+
 }
 
