@@ -1,5 +1,6 @@
 ﻿using BankingApp.Web.Constants;
 using BankingApp.Web.Models.Loan;
+using BankingApp.Web.Models.Staff;
 using BankingApp.Web.Services.Authentication;
 using BankingApp.Web.Services.Staff;
 using Microsoft.AspNetCore.Components;
@@ -35,6 +36,23 @@ public partial class LoanReview
     private string? ErrorMessage;
 
     private bool _initialized;
+
+    // =========================================
+    // LOAN DOCUMENTS
+    // =========================================
+
+    private List<LoanDocumentsDto> LoanDocuments = [];
+
+    private bool IsLoadingDocuments;
+
+
+    // =========================================
+    // KYC DOCUMENTS
+    // =========================================
+
+    private List<KycDocumentDto> KycDocuments = [];
+
+    private bool IsLoadingKycDocuments;
 
 
     // =========================================
@@ -101,6 +119,11 @@ public partial class LoanReview
                 return;
             }
 
+
+            // =========================================
+            // GET LOAN APPLICATION
+            // =========================================
+
             Console.WriteLine(
                 "[LoanReview] Calling StaffLoanService.GetLoanByIdAsync...");
 
@@ -153,8 +176,75 @@ public partial class LoanReview
             }
 
 
+            // =========================================
+            // REVIEW COMMENTS
+            // =========================================
+
             ReviewComments =
                 Loan.ReviewComments ?? string.Empty;
+
+
+            // =========================================
+            // GET LOAN DOCUMENTS
+            // =========================================
+
+            Console.WriteLine(
+                "[LoanReview] Getting loan documents...");
+
+            IsLoadingDocuments = true;
+
+            LoanDocuments =
+                await StaffLoanService.GetLoanDocumentsAsync(
+                    LoanId);
+
+            Console.WriteLine(
+                $"[LoanReview] Loan documents received: " +
+                $"{LoanDocuments.Count}");
+
+            foreach (var document in LoanDocuments)
+            {
+                Console.WriteLine(
+                    $"[LoanReview] Loan Document: " +
+                    $"{document.DocumentName}");
+
+                Console.WriteLine(
+                    $"[LoanReview] Loan Document Blob URL: " +
+                    $"{document.BlobUrl}");
+            }
+
+            IsLoadingDocuments = false;
+
+
+            // =========================================
+            // GET KYC DOCUMENTS
+            // =========================================
+
+            Console.WriteLine(
+                "[LoanReview] Getting KYC documents...");
+
+            IsLoadingKycDocuments = true;
+
+            KycDocuments =
+                await StaffLoanService.GetKycDocumentsAsync(
+                    Loan.CustomerId);
+
+            Console.WriteLine(
+                $"[LoanReview] KYC documents received: " +
+                $"{KycDocuments.Count}");
+
+            foreach (var document in KycDocuments)
+            {
+                Console.WriteLine(
+                    $"[LoanReview] KYC Document: " +
+                    $"{document.DocumentName}");
+
+                Console.WriteLine(
+                    $"[LoanReview] KYC Document Blob URL: " +
+                    $"{document.BlobUrl}");
+            }
+
+            IsLoadingKycDocuments = false;
+
 
             Console.WriteLine(
                 "[LoanReview] Loan loaded successfully.");
@@ -187,6 +277,10 @@ public partial class LoanReview
         }
         finally
         {
+            IsLoadingDocuments = false;
+
+            IsLoadingKycDocuments = false;
+
             Console.WriteLine(
                 "[LoanReview] Setting IsLoading = false.");
 

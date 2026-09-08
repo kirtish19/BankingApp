@@ -176,8 +176,38 @@ namespace BankingApp.CustomerApi.Services
 
         public async Task<IEnumerable<KycDocument>> GetKycDocumentsAsync(Guid customerId)
         {
-            var kycDocuments = await _unitOfWork.KycDocumentsRepository.GetKycDocumentsByCustomerId(customerId);
+            var kycDocuments =
+                await _unitOfWork.KycDocumentsRepository
+                    .GetKycDocumentsByCustomerId(customerId);
+
+            var storageConnectionString =
+                _configuration.GetValue<string>("StorageAccountConnectionString")!;
+
+            var containerName =
+                _configuration.GetValue<string>("StorageContainerName")!;
+
+            foreach (var document in kycDocuments)
+            {
+                var blobUri = new Uri(document.BlobUrl);
+
+
+                var blobName = string.Join(
+                    "/",
+                    blobUri.AbsolutePath
+                        .TrimStart('/')
+                        .Split('/')
+                        .Skip(1));
+
+                document.BlobUrl =
+                    _storageHandler.GenerateBlobSasUrl(
+                        storageConnectionString,
+                        containerName,
+                        blobName);
+            }
+
             return kycDocuments;
         }
+
+
     }
 }

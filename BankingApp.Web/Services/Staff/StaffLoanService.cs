@@ -457,6 +457,162 @@ public class StaffLoanService(
         }
     }
 
+    // =========================================
+    // GET LOAN DOCUMENTS
+    // =========================================
+
+    public async Task<List<LoanDocumentsDto>> GetLoanDocumentsAsync(
+        Guid loanId)
+    {
+        var isSessionValid =
+            await _authStorageService.IsSessionValidAsync();
+
+        Console.WriteLine(
+            $"[Staff API] Loan documents session valid: {isSessionValid}");
+
+        if (!isSessionValid)
+        {
+            Console.WriteLine(
+                "[Staff API] Loan documents session is invalid.");
+
+            return [];
+        }
+
+        var token =
+            await _authStorageService.GetTokenAsync();
+
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            Console.WriteLine(
+                "[Staff API] Loan documents token is missing.");
+
+            return [];
+        }
+
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue(
+                "Bearer",
+                token);
+
+        var url =
+            $"loan/api/LoanApplication/GetLoanDocuments/{loanId}";
+
+        Console.WriteLine(
+            $"[Staff API] Calling loan documents API: {url}");
+
+        var response =
+            await _httpClient.GetAsync(url);
+
+        Console.WriteLine(
+            $"[Staff API] Loan documents status: " +
+            $"{(int)response.StatusCode} {response.StatusCode}");
+
+        var responseContent =
+            await response.Content.ReadAsStringAsync();
+
+        Console.WriteLine(
+            $"[Staff API] Loan documents response: " +
+            $"{responseContent}");
+
+        if (!response.IsSuccessStatusCode)
+        {
+            Console.WriteLine(
+                "[Staff API] Failed to get loan documents.");
+
+            return [];
+        }
+
+        var documents =
+            JsonSerializer.Deserialize<List<LoanDocumentsDto>>(
+                responseContent,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+        return documents ?? [];
+    }
+
+    // =========================================
+    // GET KYC DOCUMENTS
+    // =========================================
+
+    public async Task<List<KycDocumentDto>> GetKycDocumentsAsync(
+        Guid customerId)
+    {
+        try
+        {
+            Console.WriteLine(
+                $"[Staff API] Getting KYC documents for customer: {customerId}");
+
+            // KYC API uses a different token.
+            var token =
+                await _accessTokenService.GetAccessTokenAsync();
+
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                Console.WriteLine(
+                    "[Staff API] KYC access token is missing.");
+
+                return [];
+            }
+
+            // Set Authorization header
+            _httpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue(
+                    "Bearer",
+                    token);
+
+            var url =
+                $"user/api/User/GetKycDocuments/{customerId}";
+
+            Console.WriteLine(
+                $"[Staff API] Calling KYC documents API: {url}");
+
+            var response =
+                await _httpClient.GetAsync(url);
+
+            Console.WriteLine(
+                $"[Staff API] KYC documents status: " +
+                $"{(int)response.StatusCode} {response.StatusCode}");
+
+            var responseContent =
+                await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine(
+                $"[Staff API] KYC documents response: " +
+                $"{responseContent}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine(
+                    "[Staff API] Failed to get KYC documents.");
+
+                return [];
+            }
+
+            var documents =
+                JsonSerializer.Deserialize<List<KycDocumentDto>>(
+                    responseContent,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+            Console.WriteLine(
+                $"[Staff API] KYC documents received: " +
+                $"{documents?.Count ?? 0}");
+
+            return documents ?? [];
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"[Staff API] Error getting KYC documents: {ex}");
+
+            return [];
+        }
+    }
 
 }
 

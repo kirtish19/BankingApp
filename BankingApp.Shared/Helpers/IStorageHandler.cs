@@ -7,5 +7,9 @@
         public Task DownloadBlobAsync(string connectionString, string containerName, string blobName, string downloadPath);
 
         public Task<AsyncPageable<BlobItem>?> ListBlobsAsync(string connectionString, string containerName);
+
+        string GenerateBlobSasUrl(string connectionString, string containerName, string blobName);
+
+
     }
 }

@@ -13,21 +13,26 @@
     @if (IsLoading)
     {
         <div class="text-center py-5">
+
             <div class="spinner-border text-primary"
                  role="status">
+
                 <span class="visually-hidden">
                     Loading...
                 </span>
+
             </div>
 
             <p class="text-muted mt-3 mb-0">
                 Loading loan application...
             </p>
+
         </div>
     }
     else if (!string.IsNullOrWhiteSpace(ErrorMessage))
     {
         <div class="alert alert-danger shadow-sm">
+
             <div class="fw-semibold mb-1">
                 Unable to load application
             </div>
@@ -35,20 +40,25 @@
             <div>
                 @ErrorMessage
             </div>
+
         </div>
 
         <button class="btn btn-outline-secondary"
                 @onclick="GoBack">
+
             ← Back to Dashboard
+
         </button>
     }
     else if (Loan is not null)
     {
         <!-- PAGE HEADER -->
+
         <div class="d-flex justify-content-between
             align-items-center mb-4">
 
             <div>
+
                 <h2 class="fw-bold mb-1">
                     Loan Application Review
                 </h2>
@@ -57,30 +67,39 @@
                     Review the application details and update
                     the loan status.
                 </p>
+
             </div>
 
             <button class="btn btn-outline-secondary"
                     @onclick="GoBack">
+
                 ← Back to Dashboard
+
             </button>
+
         </div>
 
 
         <!-- APPLICATION DETAILS -->
+
         <div class="card shadow-sm border-0 mb-4">
 
             <div class="card-header bg-white py-3">
+
                 <h5 class="fw-bold mb-0">
                     Loan Application Details
                 </h5>
+
             </div>
 
             <div class="card-body">
 
                 <div class="row g-4">
 
-                    <!-- Loan Type -->
+                    <!-- LOAN TYPE -->
+
                     <div class="col-md-4">
+
                         <label class="text-muted small d-block mb-1">
                             Loan Type
                         </label>
@@ -88,25 +107,33 @@
                         <div class="fw-semibold">
                             @GetLoanTypeName(Loan.LoanType)
                         </div>
+
                     </div>
 
 
-                    <!-- Loan Amount -->
+                    <!-- LOAN AMOUNT -->
+
                     <div class="col-md-4">
+
                         <label class="text-muted small d-block mb-1">
                             Loan Amount
                         </label>
 
                         <div class="fw-semibold">
+
                             @Loan.LoanAmount.ToString(
                                 "C2",
                                 new CultureInfo("en-IN"))
+
                         </div>
+
                     </div>
 
 
-                    <!-- Tenure -->
+                    <!-- TENURE -->
+
                     <div class="col-md-4">
+
                         <label class="text-muted small d-block mb-1">
                             Tenure
                         </label>
@@ -114,55 +141,73 @@
                         <div class="fw-semibold">
                             @Loan.TenureMonths months
                         </div>
+
                     </div>
 
 
-                    <!-- Monthly EMI -->
+                    <!-- MONTHLY EMI -->
+
                     <div class="col-md-4">
+
                         <label class="text-muted small d-block mb-1">
                             Monthly EMI
                         </label>
 
                         <div class="fw-semibold">
+
                             @(Loan.MonthlyEMI.HasValue
-                                ? $"{Loan.MonthlyEMI.Value.ToString(
+                                ? Loan.MonthlyEMI.Value.ToString(
                                     "C2",
-                                    new CultureInfo("en-IN"))}"
+                                    new CultureInfo("en-IN"))
                                 : "-")
+
                         </div>
+
                     </div>
 
 
-                    <!-- Interest Rate -->
+                    <!-- INTEREST RATE -->
+
                     <div class="col-md-4">
+
                         <label class="text-muted small d-block mb-1">
                             Interest Rate
                         </label>
 
                         <div class="fw-semibold">
+
                             @(Loan.InterestRate.HasValue
                                 ? $"{Loan.InterestRate.Value * 100:N2}%"
                                 : "-")
+
                         </div>
+
                     </div>
 
 
-                    <!-- Risk -->
+                    <!-- RISK ASSESSMENT -->
+
                     <div class="col-md-4">
+
                         <label class="text-muted small d-block mb-1">
                             Risk Assessment
                         </label>
 
                         <span class="@GetRiskClass(
                                                         Loan.RiskAssesmentScore)">
+
                             @GetRiskText(
                                 Loan.RiskAssesmentScore)
+
                         </span>
+
                     </div>
 
 
-                    <!-- Customer -->
+                    <!-- CUSTOMER -->
+
                     <div class="col-md-6">
+
                         <label class="text-muted small d-block mb-1">
                             Customer
                         </label>
@@ -170,11 +215,14 @@
                         <div class="fw-semibold">
                             @CustomerName
                         </div>
+
                     </div>
 
 
-                    <!-- Status -->
+                    <!-- CURRENT STATUS -->
+
                     <div class="col-md-6">
+
                         <label class="text-muted small d-block mb-1">
                             Current Status
                         </label>
@@ -182,58 +230,74 @@
                         <span class="@GetStatusClass(Loan.Status)">
                             @Loan.Status
                         </span>
+
                     </div>
 
 
-                    <!-- Applied On -->
+                    <!-- APPLIED ON -->
+
                     <div class="col-md-6">
+
                         <label class="text-muted small d-block mb-1">
                             Applied On
                         </label>
 
                         <div class="fw-semibold">
+
                             @Loan.CreatedDate.ToString(
                                 "dd MMM yyyy, hh:mm tt")
+
                         </div>
+
                     </div>
 
 
-                    <!-- Last Updated -->
+                    <!-- LAST UPDATED -->
+
                     <div class="col-md-6">
+
                         <label class="text-muted small d-block mb-1">
                             Last Updated
                         </label>
 
                         <div class="fw-semibold">
+
                             @Loan.UpdatedDate.ToString(
                                 "dd MMM yyyy, hh:mm tt")
+
                         </div>
+
                     </div>
 
                 </div>
 
             </div>
+
         </div>
 
 
         <!-- EXISTING REVIEW COMMENTS -->
+
         <div class="card shadow-sm border-0 mb-4">
 
             <div class="card-header bg-white py-3">
+
                 <h5 class="fw-bold mb-0">
                     Existing Review Comments
                 </h5>
+
             </div>
 
             <div class="card-body">
 
-                @if (!string.IsNullOrWhiteSpace(
-                    Loan.ReviewComments))
+                @if (!string.IsNullOrWhiteSpace(Loan.ReviewComments))
                 {
                     <div class="bg-light rounded p-3">
+
                         <p class="mb-0">
                             @Loan.ReviewComments
                         </p>
+
                     </div>
                 }
                 else
@@ -248,16 +312,228 @@
         </div>
 
 
+        <!-- ========================================= -->
+        <!-- LOAN DOCUMENTS -->
+        <!-- ========================================= -->
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-white py-3">
+
+                <h5 class="fw-bold mb-0">
+                    Loan Documents
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                @if (IsLoadingDocuments)
+                {
+                    <div class="text-center py-4">
+
+                        <div class="spinner-border text-primary"
+                             role="status">
+
+                            <span class="visually-hidden">
+                                Loading documents...
+                            </span>
+
+                        </div>
+
+                        <p class="text-muted mt-3 mb-0">
+                            Loading loan documents...
+                        </p>
+
+                    </div>
+                }
+                else if (LoanDocuments.Count == 0)
+                {
+                    <div class="py-3">
+
+                        <p class="text-muted mb-0">
+                            No loan documents available.
+                        </p>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="list-group">
+
+                        @foreach (var document in LoanDocuments)
+                        {
+                            <div class="list-group-item
+                                d-flex
+                                justify-content-between
+                                align-items-center">
+
+                                <!-- DOCUMENT INFORMATION -->
+
+                                <div class="d-flex align-items-center">
+
+                                    <i class="bi bi-file-earmark-text
+                                        fs-4
+                                        me-3
+                                        text-primary">
+                                    </i>
+
+                                    <div>
+
+                                        <div class="fw-semibold">
+                                            @document.DocumentName
+                                        </div>
+
+                                        <small class="text-muted">
+                                            Loan Document
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- DOWNLOAD BUTTON -->
+
+                                <a href="@document.BlobUrl"
+                                   download="@document.DocumentName"
+                                   class="btn btn-sm btn-outline-primary">
+
+                                    <i class="bi bi-download me-1"></i>
+
+                                    Download
+
+                                </a>
+
+                            </div>
+                        }
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- KYC DOCUMENTS -->
+        <!-- ========================================= -->
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-white py-3">
+
+                <h5 class="fw-bold mb-0">
+                    KYC Documents
+                </h5>
+
+            </div>
+
+            <div class="card-body">
+
+                @if (IsLoadingKycDocuments)
+                {
+                    <div class="text-center py-4">
+
+                        <div class="spinner-border text-primary"
+                             role="status">
+
+                            <span class="visually-hidden">
+                                Loading KYC documents...
+                            </span>
+
+                        </div>
+
+                        <p class="text-muted mt-3 mb-0">
+                            Loading KYC documents...
+                        </p>
+
+                    </div>
+                }
+                else if (KycDocuments.Count == 0)
+                {
+                    <div class="py-3">
+
+                        <p class="text-muted mb-0">
+                            No KYC documents available.
+                        </p>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="list-group">
+
+                        @foreach (var document in KycDocuments)
+                        {
+                            <div class="list-group-item
+                                d-flex
+                                justify-content-between
+                                align-items-center">
+
+                                <!-- DOCUMENT INFORMATION -->
+
+                                <div class="d-flex align-items-center">
+
+                                    <i class="bi bi-person-vcard
+                                        fs-4
+                                        me-3
+                                        text-primary">
+                                    </i>
+
+                                    <div>
+
+                                        <div class="fw-semibold">
+                                            @document.DocumentName
+                                        </div>
+
+                                        <small class="text-muted">
+                                            KYC Document
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- DOWNLOAD BUTTON -->
+
+                                <a href="@document.BlobUrl"
+                                   download="@document.DocumentName"
+                                   class="btn btn-sm btn-outline-primary">
+
+                                    <i class="bi bi-download me-1"></i>
+
+                                    Download
+
+                                </a>
+
+                            </div>
+                        }
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================= -->
         <!-- REVIEW SECTION -->
+        <!-- ========================================= -->
         @if (Loan.Status == LoanStatus.Submitted ||
-             Loan.Status == LoanStatus.ManualReview)
+                     Loan.Status == LoanStatus.ManualReview)
         {
             <div class="card shadow-sm border-0">
 
                 <div class="card-header bg-white py-3">
+
                     <h5 class="fw-bold mb-0">
                         Review Application
                     </h5>
+
                 </div>
 
                 <div class="card-body">
@@ -283,6 +559,7 @@
 
 
                     <!-- ACTION BUTTONS -->
+
                     <div class="d-flex gap-2 flex-wrap">
 
                         <button class="btn btn-success px-4"
@@ -292,6 +569,7 @@
                             @(IsUpdating
                                 ? "Processing..."
                                 : "✓ Approve")
+
                         </button>
 
 
@@ -300,6 +578,7 @@
                                 disabled="@IsUpdating">
 
                             ✕ Reject
+
                         </button>
 
 
@@ -308,6 +587,7 @@
                                 disabled="@IsUpdating">
 
                             ↻ Manual Review
+
                         </button>
 
                     </div>
@@ -319,6 +599,7 @@
         else
         {
             <!-- PROCESSED MESSAGE -->
+
             <div class="alert alert-info shadow-sm">
 
                 <div class="fw-semibold mb-1">
@@ -335,3 +616,4 @@
     }
 
 </div>
+

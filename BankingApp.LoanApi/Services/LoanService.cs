@@ -116,7 +116,35 @@ namespace BankingApp.LoanApi.Services
 
         public async Task<IEnumerable<LoanDocuments>> GetLoanDocumentsAsync(Guid loanId)
         {
-            var loanDocuments = await _unitOfWork.LoanDocumentRepository.GetLoanDocumentsByLoanId(loanId);
+            var loanDocuments =
+                await _unitOfWork.LoanDocumentRepository
+                    .GetLoanDocumentsByLoanId(loanId);
+
+            var storageConnectionString =
+                _configuration.GetValue<string>(
+                    "StorageAccountConnectionString")!;
+
+            var containerName =
+                _configuration.GetValue<string>(
+                    "StorageContainerNameLoan")!;
+            foreach (var document in loanDocuments)
+            {
+                var blobUri = new Uri(document.BlobUrl);
+
+                var blobName = string.Join(
+                    "/",
+                    blobUri.AbsolutePath
+                        .TrimStart('/')
+                        .Split('/')
+                        .Skip(1));
+
+                document.BlobUrl =
+                    _storageHandler.GenerateBlobSasUrl(
+                        storageConnectionString,
+                        containerName,
+                        blobName);
+            }
+
             return loanDocuments;
         }
     }

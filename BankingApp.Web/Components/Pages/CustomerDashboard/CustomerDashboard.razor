@@ -1,10 +1,13 @@
-﻿@page "/customer-dashboard"
+﻿
+@page "/customer-dashboard"
 
+@using System.Globalization
 @using BankingApp.Web.Constants
 @using BankingApp.Web.Models.Loan
+@using BankingApp.Web.Models.Staff
 @using BankingApp.Web.Services.Authentication
 @using BankingApp.Web.Services.Loan
-@using System.Globalization
+@using BankingApp.Web.Services.Staff
 
 @rendermode InteractiveServer
 
@@ -14,18 +17,13 @@
 
 <div class="container py-4">
 
-    <!-- ========================================= -->
+    <!-- ============================= -->
     <!-- HEADER -->
-    <!-- ========================================= -->
+    <!-- ============================= -->
 
-    <div class="d-flex
-        flex-wrap
-        justify-content-between
-        align-items-center
-        mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
 
         <div>
-
             <h2 class="fw-bold mb-1">
                 Welcome back!
             </h2>
@@ -33,26 +31,23 @@
             <p class="text-muted mb-0">
                 Manage your banking services and applications.
             </p>
-
         </div>
 
         <button class="btn btn-outline-danger"
                 @onclick="Logout">
-
             Logout
-
         </button>
 
     </div>
 
 
-    <!-- ========================================= -->
+    <!-- ============================= -->
     <!-- ACCOUNT STATUS -->
-    <!-- ========================================= -->
+    <!-- ============================= -->
 
     <div class="row g-4 mb-4">
 
-        <!-- KYC -->
+        <!-- KYC STATUS -->
 
         <div class="col-md-4">
 
@@ -112,8 +107,8 @@
                         else
                         {
                             <span>
-                                You have @ActiveLoanCount active
-                                @(ActiveLoanCount == 1 ? "loan." : "loans.")
+                                You have @ActiveLoanCount
+                                @(ActiveLoanCount == 1 ? "active loan." : "active loans.")
                             </span>
                         }
 
@@ -126,7 +121,7 @@
         </div>
 
 
-        <!-- LOAN APPLICATIONS -->
+        <!-- LOAN APPLICATIONS COUNT -->
 
         <div class="col-md-4">
 
@@ -160,9 +155,7 @@
                         {
                             <span>
                                 You have @LoanApplications.Count
-                                @(LoanApplications.Count == 1
-                                    ? "application."
-                                    : "applications.")
+                                @(LoanApplications.Count == 1 ? "application." : "applications.")
                             </span>
                         }
 
@@ -177,9 +170,9 @@
     </div>
 
 
-    <!-- ========================================= -->
+    <!-- ============================= -->
     <!-- APPLY FOR LOAN -->
-    <!-- ========================================= -->
+    <!-- ============================= -->
 
     <div class="card border-0 shadow-sm mb-4">
 
@@ -198,8 +191,7 @@
                     </h4>
 
                     <p class="text-muted mb-0">
-                        Choose a loan product and submit
-                        your application online.
+                        Choose a loan product and submit your application online.
                     </p>
 
                 </div>
@@ -222,21 +214,123 @@
     </div>
 
 
-    <!-- ========================================= -->
+    <!-- ============================= -->
+    <!-- KYC DOCUMENTS -->
+    <!-- ============================= -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="mb-3">
+
+                <h5 class="fw-bold mb-1">
+                    KYC Documents
+                </h5>
+
+                <small class="text-muted">
+                    Download the KYC documents associated with your account.
+                </small>
+
+            </div>
+
+
+            @if (IsLoadingKycDocuments)
+            {
+                <div class="text-center py-4 text-muted">
+
+                    <div class="spinner-border mb-3"
+                         role="status">
+
+                        <span class="visually-hidden">
+                            Loading KYC documents...
+                        </span>
+
+                    </div>
+
+                    <p class="mb-0">
+                        Loading KYC documents...
+                    </p>
+
+                </div>
+            }
+            else if (!string.IsNullOrWhiteSpace(KycErrorMessage))
+            {
+                <div class="alert alert-danger mb-0">
+                    @KycErrorMessage
+                </div>
+            }
+            else if (KycDocuments.Count == 0)
+            {
+                <div class="text-center py-4 text-muted">
+
+                    <div class="fs-1 mb-2">
+                        📄
+                    </div>
+
+                    <p class="mb-0">
+                        No KYC documents available.
+                    </p>
+
+                </div>
+            }
+            else
+            {
+                <div class="list-group">
+
+                    @foreach (var document in KycDocuments)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+
+                            <div class="d-flex align-items-center">
+
+                                <i class="bi bi-person-vcard fs-4 me-3 text-primary"></i>
+
+                                <div>
+
+                                    <div class="fw-semibold">
+                                        @document.DocumentName
+                                    </div>
+
+                                    <small class="text-muted">
+                                        KYC Document
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <a href="@document.BlobUrl"
+                               download="@document.DocumentName"
+                               class="btn btn-sm btn-outline-primary">
+
+                                <i class="bi bi-download me-1"></i>
+
+                                Download
+
+                            </a>
+
+                        </div>
+                    }
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================= -->
     <!-- LOAN APPLICATIONS -->
-    <!-- ========================================= -->
+    <!-- ============================= -->
 
     <div class="card border-0 shadow-sm">
 
         <div class="card-body p-4">
 
-            <!-- HEADER + FILTER -->
-
-            <div class="d-flex
-                flex-wrap
-                justify-content-between
-                align-items-center
-                mb-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
 
                 <div>
 
@@ -253,11 +347,7 @@
 
                 <!-- STATUS FILTER -->
 
-                <div class="d-flex
-                    align-items-center
-                    gap-2
-                    mt-3
-                    mt-md-0">
+                <div class="d-flex align-items-center gap-2 mt-3 mt-md-0">
 
                     <label class="fw-semibold mb-0">
                         Filter:
@@ -298,7 +388,13 @@
             {
                 <div class="text-center py-5 text-muted">
 
-                    <div class="spinner-border mb-3">
+                    <div class="spinner-border mb-3"
+                         role="status">
+
+                        <span class="visually-hidden">
+                            Loading applications...
+                        </span>
+
                     </div>
 
                     <p class="mb-0">
@@ -377,60 +473,35 @@
 
                         </thead>
 
+
                         <tbody>
 
-                            @foreach (var (application, index)
-                                in FilteredApplications.Select(
-                                    (application, index) =>
-                                    (application, index)))
+                            @foreach (var application in FilteredApplications)
                             {
                                 <tr>
 
-                                    <!-- ROW NUMBER -->
-
                                     <td>
-                                        @(index + 1)
+                                        @(FilteredApplications.IndexOf(application) + 1)
                                     </td>
-
-
-                                    <!-- LOAN TYPE -->
 
                                     <td class="fw-semibold">
-
-                                        @GetLoanTypeName(
-                                            application.LoanType)
-
+                                        @GetLoanTypeName(application.LoanType)
                                     </td>
 
-
-                                    <!-- AMOUNT -->
-
                                     <td>
-
-                                        @FormatCurrency(
-                                            application.LoanAmount)
-
+                                        @FormatCurrency(application.LoanAmount)
                                     </td>
 
-
-                                    <!-- TENURE -->
-
                                     <td>
-
                                         @application.TenureMonths months
-
                                     </td>
-
-
-                                    <!-- EMI -->
 
                                     <td>
 
                                         @if (application.MonthlyEMI.HasValue)
                                         {
                                             <strong>
-                                                @FormatCurrency(
-                                                    application.MonthlyEMI.Value)
+                                                @FormatCurrency(application.MonthlyEMI.Value)
                                             </strong>
 
                                             <small class="text-muted d-block">
@@ -446,15 +517,11 @@
 
                                     </td>
 
-
-                                    <!-- INTEREST RATE -->
-
                                     <td>
 
                                         @if (application.InterestRate.HasValue)
                                         {
-                                            @FormatInterestRate(
-                                                application.InterestRate.Value)
+                                            @FormatInterestRate(application.InterestRate.Value)
                                         }
                                         else
                                         {
@@ -465,51 +532,30 @@
 
                                     </td>
 
-
-                                    <!-- STATUS -->
-
                                     <td>
 
-                                        <span class="@GetStatusClass(
-                                                                                        application.Status)">
-
+                                        <span class="@GetStatusClass(application.Status)">
                                             @application.Status
-
                                         </span>
 
                                     </td>
 
-
-                                    <!-- RISK -->
-
                                     <td>
 
-                                        <span class="@GetRiskClass(
-                                                                                        application.RiskAssesmentScore)">
-
-                                            @GetRiskText(
-                                                application.RiskAssesmentScore)
-
+                                        <span class="@GetRiskClass(application.RiskAssesmentScore)">
+                                            @GetRiskText(application.RiskAssesmentScore)
                                         </span>
 
                                     </td>
 
-
-                                    <!-- APPLIED ON -->
-
                                     <td>
-
-                                        @application.CreatedDate.ToString(
-                                            "dd MMM yyyy")
-
+                                        @application.CreatedDate.ToString("dd MMM yyyy")
                                     </td>
 
                                 </tr>
 
 
-                                <!-- REVIEW COMMENTS -->
-                                @if (!string.IsNullOrWhiteSpace(
-                                                                    application.ReviewComments))
+                                @if (!string.IsNullOrWhiteSpace(application.ReviewComments))
                                 {
                                     <tr>
 
@@ -546,8 +592,11 @@
 </div>
 
 
-@code {
-
+<!-- ============================= -->
+<!-- CODE BEHIND -->
+<!-- ============================= -->
+@code
+{
     // =========================================
     // SERVICES
     // =========================================
@@ -564,6 +613,10 @@
     private ILoanService LoanService
     { get; set; } = null!;
 
+    [Inject]
+    private IStaffLoanService StaffLoanService
+    { get; set; } = null!;
+
 
     // =========================================
     // DATA
@@ -571,14 +624,20 @@
 
     private List<LoanApplicationsDto> LoanApplications = [];
 
+    private List<KycDocumentDto> KycDocuments = [];
+
 
     // =========================================
-    // UI STATE
+    // LOADING / ERROR STATE
     // =========================================
 
     private bool IsLoading = true;
 
+    private bool IsLoadingKycDocuments = true;
+
     private string? ErrorMessage;
+
+    private string? KycErrorMessage;
 
     private bool _initialized;
 
@@ -600,12 +659,10 @@
                 .OrderByDescending(
                     application => application.CreatedDate)
                 .ToList()
-
             : LoanApplications
                 .Where(
                     application =>
-                        application.Status ==
-                        SelectedStatus.Value)
+                        application.Status == SelectedStatus.Value)
                 .OrderByDescending(
                     application => application.CreatedDate)
                 .ToList();
@@ -622,7 +679,7 @@
 
 
     // =========================================
-    // PAGE INITIALIZATION
+    // INITIALIZE
     // =========================================
 
     protected override async Task OnAfterRenderAsync(
@@ -636,6 +693,8 @@
         _initialized = true;
 
         await LoadLoanApplicationsAsync();
+
+        await LoadKycDocumentsAsync();
 
         StateHasChanged();
     }
@@ -653,11 +712,8 @@
 
             ErrorMessage = null;
 
-
-            // Get CustomerId from sessionStorage.
             var customerId =
                 await AuthStorageService.GetCustomerIdAsync();
-
 
             if (customerId is null)
             {
@@ -667,8 +723,6 @@
                 return;
             }
 
-
-            // Call Loan API.
             LoanApplications =
                 await LoanService.GetLoansForCustomerAsync(
                     customerId.Value);
@@ -689,7 +743,49 @@
 
 
     // =========================================
-    // LOAN TYPE DISPLAY
+    // LOAD KYC DOCUMENTS
+    // =========================================
+
+    private async Task LoadKycDocumentsAsync()
+    {
+        try
+        {
+            IsLoadingKycDocuments = true;
+
+            KycErrorMessage = null;
+
+            var customerId =
+                await AuthStorageService.GetCustomerIdAsync();
+
+            if (customerId is null)
+            {
+                KycErrorMessage =
+                    "Unable to identify the logged-in customer.";
+
+                return;
+            }
+
+            KycDocuments =
+                await StaffLoanService.GetKycDocumentsAsync(
+                    customerId.Value);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(
+                $"Customer Dashboard KYC: {ex}");
+
+            KycErrorMessage =
+                "Unable to load your KYC documents.";
+        }
+        finally
+        {
+            IsLoadingKycDocuments = false;
+        }
+    }
+
+
+    // =========================================
+    // LOAN TYPE
     // =========================================
 
     private string GetLoanTypeName(
@@ -716,7 +812,7 @@
 
 
     // =========================================
-    // STATUS DISPLAY
+    // STATUS CLASS
     // =========================================
 
     private string GetStatusClass(
@@ -743,7 +839,7 @@
 
 
     // =========================================
-    // RISK DISPLAY
+    // RISK CLASS
     // =========================================
 
     private string GetRiskClass(
@@ -769,6 +865,10 @@
     }
 
 
+    // =========================================
+    // RISK TEXT
+    // =========================================
+
     private string GetRiskText(
         RiskAssesment? risk)
     {
@@ -777,7 +877,7 @@
 
 
     // =========================================
-    // CURRENCY / INTEREST RATE
+    // FORMAT CURRENCY
     // =========================================
 
     private string FormatCurrency(
@@ -789,6 +889,10 @@
     }
 
 
+    // =========================================
+    // FORMAT INTEREST RATE
+    // =========================================
+
     private string FormatInterestRate(
         decimal rate)
     {
@@ -797,13 +901,12 @@
 
 
     // =========================================
-    // NAVIGATION
+    // GO TO LOANS
     // =========================================
 
     private void GoToLoans()
     {
-        Navigation.NavigateTo(
-            "/apply-loan");
+        Navigation.NavigateTo("/apply-loan");
     }
 
 
@@ -815,8 +918,7 @@
     {
         await AuthenticationService.LogoutAsync();
 
-        Navigation.NavigateTo(
-            "/login");
+        Navigation.NavigateTo("/login");
     }
 }
 

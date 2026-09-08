@@ -19,4 +19,9 @@ public interface IStaffLoanService
         string reviewComments);
     Task<CustomerDetailsDto?> GetCustomerDetailsAsync(Guid customerId);
 
+    Task<List<LoanDocumentsDto>> GetLoanDocumentsAsync(
+    Guid loanId);
+
+    Task<List<KycDocumentDto>> GetKycDocumentsAsync(
+    Guid customerId);
 }

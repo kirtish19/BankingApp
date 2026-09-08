@@ -46,11 +46,16 @@ public partial class StaffDashboard
 
     // FILTERED ALL LOANS
     private List<LoanApplicationsDto> FilteredAllLoans =>
-        SelectedStatus is null
-            ? AllLoans
-            : AllLoans
-                .Where(loan => loan.Status == SelectedStatus.Value)
-                .ToList();
+      SelectedStatus is null
+        ? AllLoans
+            .OrderByDescending(loan => loan.CreatedDate)
+            .ThenByDescending(loan => GetCustomerName(loan.CustomerId))
+            .ToList()
+        : AllLoans
+            .Where(loan => loan.Status == SelectedStatus.Value)
+            .OrderByDescending(loan => loan.CreatedDate)
+            .ThenByDescending(loan => GetCustomerName(loan.CustomerId))
+            .ToList();
 
 
     // SUMMARY
@@ -97,7 +102,9 @@ public partial class StaffDashboard
                 await StaffLoanService.GetAllLoansAsync();
 
             PendingLoans =
-                await StaffLoanService.GetPendingLoansAsync();
+                    (await StaffLoanService.GetPendingLoansAsync())
+                    .OrderByDescending(loan => loan.CreatedDate)
+                    .ToList();
 
             await LoadCustomerDetailsAsync();
         }
