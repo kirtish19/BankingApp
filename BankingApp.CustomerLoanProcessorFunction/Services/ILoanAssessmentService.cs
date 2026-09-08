@@ -3,5 +3,6 @@
     public interface ILoanAssessmentService
     {
         public Task ProcessLoanApplication(LoanApplicationMessage message);
+        public Task ManualLoanProcess(UpdateLoanStatusRequest request);
     }
 }

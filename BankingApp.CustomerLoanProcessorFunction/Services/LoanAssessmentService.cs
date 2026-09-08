@@ -20,14 +20,13 @@ namespace BankingApp.CustomerLoanProcessorFunction.Services
                     ?? throw new InvalidDataException("Loan application not found.");
 
                 var (isValid, remarks) = ValidateDocuments(message.Documents);
+                await CreateLoanDocumentRecords(message);
+                var riskAssesmentScore = CreditRiskAssesmentHelper.CalculateCustomerRisk(customer.CreditScore);
+                loanApplication.RiskAssesmentScore = riskAssesmentScore;
 
                 if (isValid)
-                {
-                    await CreateLoanDocumentRecords(message);
-                    var riskAssesmentScore = CreditRiskAssesmentHelper.CalculateCustomerRisk(customer.CreditScore);
-                    loanApplication.RiskAssesmentScore = riskAssesmentScore;
+                {                    
                     loanApplication.Status = CalculateLoanEligibility(loanApplication, riskAssesmentScore, customer, ref remarks);
-
                     if (loanApplication.Status == LoanStatus.Approved)
                     {
                         var interestRate = CalculateInterestRate(loanApplication.LoanType);
@@ -240,6 +239,23 @@ namespace BankingApp.CustomerLoanProcessorFunction.Services
                 loanDocuments.Add(loanDocument);
             }
             await _loanDocumentRepository.AddLoanDocumentRecords(loanDocuments);
+        }
+
+        public async Task ManualLoanProcess(UpdateLoanStatusRequest request)
+        {
+            var loanApplication = await _unitOfWork.LoanApplicationRepository.GetByIdAsync(request.LoanId) 
+                ?? throw new InvalidDataException("Loan application not found.");
+            loanApplication.Status = request.Status;
+            loanApplication.ReviewComments = request.ReviewComments;
+            loanApplication.UpdatedDate = DateTime.Now;
+            if (loanApplication.Status == LoanStatus.Approved)
+            {
+                var interestRate = CalculateInterestRate(loanApplication.LoanType);
+                var monthlyEMI = CalculateMonthlyEMI(loanApplication.LoanAmount, loanApplication.TenureMonths, interestRate);
+                loanApplication.InterestRate = interestRate;
+                loanApplication.MonthlyEMI = monthlyEMI;
+            }
+            await _unitOfWork.TransactionManager.SaveChangesAsync();
         }
     }
 }
