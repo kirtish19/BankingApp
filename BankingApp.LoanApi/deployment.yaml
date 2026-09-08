@@ -14,8 +14,11 @@ spec:
     metadata:
       labels:
         app: bankingapp-loanapi
+        azure.workload.identity/use: "true"
 
     spec:
+      serviceAccountName: loanapi-sa
+
       containers:
 
       - name: bankingapp-loanapi
