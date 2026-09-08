@@ -3,6 +3,7 @@
 @rendermode InteractiveServer
 
 @using System.Globalization
+
 @using BankingApp.Web.Constants
 @using BankingApp.Web.Models.Loan
 
@@ -52,7 +53,9 @@
     }
     else if (Loan is not null)
     {
+        <!-- ========================================= -->
         <!-- PAGE HEADER -->
+        <!-- ========================================= -->
 
         <div class="d-flex justify-content-between
             align-items-center mb-4">
@@ -80,7 +83,9 @@
         </div>
 
 
+        <!-- ========================================= -->
         <!-- APPLICATION DETAILS -->
+        <!-- ========================================= -->
 
         <div class="card shadow-sm border-0 mb-4">
 
@@ -270,42 +275,6 @@
                     </div>
 
                 </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- EXISTING REVIEW COMMENTS -->
-
-        <div class="card shadow-sm border-0 mb-4">
-
-            <div class="card-header bg-white py-3">
-
-                <h5 class="fw-bold mb-0">
-                    Existing Review Comments
-                </h5>
-
-            </div>
-
-            <div class="card-body">
-
-                @if (!string.IsNullOrWhiteSpace(Loan.ReviewComments))
-                {
-                    <div class="bg-light rounded p-3">
-
-                        <p class="mb-0">
-                            @Loan.ReviewComments
-                        </p>
-
-                    </div>
-                }
-                else
-                {
-                    <p class="text-muted mb-0">
-                        No review comments available.
-                    </p>
-                }
 
             </div>
 
@@ -538,6 +507,8 @@
 
                 <div class="card-body">
 
+                    <!-- REVIEW COMMENTS -->
+
                     <div class="mb-4">
 
                         <label class="form-label fw-semibold">
@@ -551,7 +522,7 @@
                         </textarea>
 
                         <div class="form-text">
-                            Add comments explaining the decision
+                            You can modify the existing review comments
                             before updating the application status.
                         </div>
 
@@ -562,8 +533,10 @@
 
                     <div class="d-flex gap-2 flex-wrap">
 
+                        <!-- APPROVE -->
+
                         <button class="btn btn-success px-4"
-                                @onclick='() => UpdateStatus("Approved")'
+                                @onclick="() => UpdateStatus(LoanStatus.Approved)"
                                 disabled="@IsUpdating">
 
                             @(IsUpdating
@@ -573,8 +546,10 @@
                         </button>
 
 
+                        <!-- REJECT -->
+
                         <button class="btn btn-danger px-4"
-                                @onclick='() => UpdateStatus("Rejected")'
+                                @onclick="() => UpdateStatus(LoanStatus.Rejected)"
                                 disabled="@IsUpdating">
 
                             ✕ Reject
@@ -582,8 +557,10 @@
                         </button>
 
 
+                        <!-- MANUAL REVIEW -->
+
                         <button class="btn btn-warning px-4"
-                                @onclick='() => UpdateStatus("ManualReview")'
+                                @onclick="() => UpdateStatus(LoanStatus.ManualReview)"
                                 disabled="@IsUpdating">
 
                             ↻ Manual Review
@@ -598,7 +575,9 @@
         }
         else
         {
+            <!-- ========================================= -->
             <!-- PROCESSED MESSAGE -->
+            <!-- ========================================= -->
 
             <div class="alert alert-info shadow-sm">
 
@@ -616,4 +595,3 @@
     }
 
 </div>
-

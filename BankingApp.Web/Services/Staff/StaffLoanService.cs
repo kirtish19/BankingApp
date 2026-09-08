@@ -1,4 +1,5 @@
-﻿using BankingApp.Web.Models.Loan;
+﻿using BankingApp.Web.Constants;
+using BankingApp.Web.Models.Loan;
 using BankingApp.Web.Models.Staff;
 using BankingApp.Web.Services.Authentication;
 using System.Net;
@@ -263,11 +264,11 @@ public class StaffLoanService(
     // =========================================
 
     public async Task<bool> UpdateLoanStatusAsync(
-        Guid loanId,
-        Guid customerId,
-        string status,
-        string statusDescription,
-        string reviewComments)
+      Guid loanId,
+      Guid customerId,
+      LoanStatus status,
+      string statusDescription,
+      string reviewComments)
     {
         try
         {
@@ -282,9 +283,9 @@ public class StaffLoanService(
                 "==================================================");
 
 
-            // -----------------------------------------
-            // 1. Get customer details
-            // -----------------------------------------
+            // =========================================
+            // 1. GET CUSTOMER DETAILS
+            // =========================================
 
             Console.WriteLine(
                 $"[Staff API] Customer ID: {customerId}");
@@ -304,12 +305,13 @@ public class StaffLoanService(
             }
 
 
-            // -----------------------------------------
-            // 2. Get FullName and Email
-            // -----------------------------------------
+            // =========================================
+            // 2. GET FULL NAME AND EMAIL
+            // =========================================
 
             var fullName =
-               $"{customerDetails.FirstName} {customerDetails.LastName}".Trim();
+                $"{customerDetails.FirstName} {customerDetails.LastName}"
+                    .Trim();
 
             var email =
                 customerDetails.Email;
@@ -321,33 +323,38 @@ public class StaffLoanService(
                 $"[Staff API] Customer Email: {email}");
 
 
-            // -----------------------------------------
-            // 3. Create request
-            // -----------------------------------------
+            // =========================================
+            // 3. CREATE APIM REQUEST BODY
+            // =========================================
+            //
+            // IMPORTANT:
+            // LoanStatus remains an enum in C#.
+            // Only the JSON value sent to APIM is int.
+            //
 
-            var requestBody =
-                new UpdateLoanStatusRequest
-                {
-                    LoanId = loanId,
+            var requestBody = new
+            {
+                loanId = loanId,
 
-                    Status = status,
+                status = (int)status,
 
-                    StatusDescription = statusDescription,
+                statusDescription = statusDescription,
 
-                    Email = email,
+                email = email,
 
-                    FullName = fullName,
+                fullName = fullName,
 
-                    ReviewComments = reviewComments
-                };
+                reviewComments = reviewComments
+            };
 
 
-            // -----------------------------------------
-            // 4. Create APIM URL
-            // -----------------------------------------
+            // =========================================
+            // 4. CREATE APIM URL
+            // =========================================
 
             var apimBaseUrl =
-                _httpClient.BaseAddress?.ToString() ?? string.Empty;
+                _httpClient.BaseAddress?.ToString()
+                ?? string.Empty;
 
             var url =
                 $"{apimBaseUrl}UpdateLoanStatus/paths/invoke";
@@ -356,33 +363,24 @@ public class StaffLoanService(
                 $"[Staff API] PATCH URL: {url}");
 
 
-            // -----------------------------------------
-            // 5. Serialize request
-            // -----------------------------------------
+            // =========================================
+            // 5. SERIALIZE REQUEST
+            // =========================================
 
-            //var json =
-            //    JsonSerializer.Serialize(
-            //        requestBody);
-
-            var json = JsonSerializer.Serialize(
-                requestBody,
-                new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
+            var json =
+                JsonSerializer.Serialize(requestBody);
 
             Console.WriteLine(
                 $"[Staff API] PATCH Request: {json}");
 
 
-            // -----------------------------------------
-            // 6. Create PATCH request
-            // -----------------------------------------
+            // =========================================
+            // 6. CREATE PATCH REQUEST
+            // =========================================
 
             using var client =
-                new HttpClient();
-
-            var request =
+               new HttpClient();
+            using var request =
                 new HttpRequestMessage(
                     HttpMethod.Patch,
                     url);
@@ -394,9 +392,9 @@ public class StaffLoanService(
                     "application/json");
 
 
-            // -----------------------------------------
-            // 7. Send PATCH request
-            // -----------------------------------------
+            // =========================================
+            // 7. SEND PATCH REQUEST
+            // =========================================
 
             Console.WriteLine(
                 "[Staff API] Sending PATCH request...");
@@ -405,9 +403,9 @@ public class StaffLoanService(
                 await client.SendAsync(request);
 
 
-            // -----------------------------------------
-            // 8. Read response
-            // -----------------------------------------
+            // =========================================
+            // 8. READ RESPONSE
+            // =========================================
 
             var responseContent =
                 await response.Content.ReadAsStringAsync();
@@ -423,9 +421,9 @@ public class StaffLoanService(
                 responseContent);
 
 
-            // -----------------------------------------
-            // 9. Check response
-            // -----------------------------------------
+            // =========================================
+            // 9. CHECK RESPONSE
+            // =========================================
 
             if (!response.IsSuccessStatusCode)
             {

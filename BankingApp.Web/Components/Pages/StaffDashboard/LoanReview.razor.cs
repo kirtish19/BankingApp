@@ -24,6 +24,7 @@ public partial class LoanReview
     private NavigationManager Navigation
     { get; set; } = null!;
 
+
     private LoanApplicationsDto? Loan;
 
     private string CustomerName = "-";
@@ -31,11 +32,13 @@ public partial class LoanReview
     private string ReviewComments = string.Empty;
 
     private bool IsLoading = true;
+
     private bool IsUpdating;
 
     private string? ErrorMessage;
 
     private bool _initialized;
+
 
     // =========================================
     // LOAN DOCUMENTS
@@ -59,10 +62,12 @@ public partial class LoanReview
     // LOAD LOAN
     // =========================================
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(
+        bool firstRender)
     {
         Console.WriteLine(
-            $"[LoanReview] OnAfterRenderAsync called. FirstRender: {firstRender}");
+            $"[LoanReview] OnAfterRenderAsync called. " +
+            $"FirstRender: {firstRender}");
 
         if (!firstRender || _initialized)
         {
@@ -92,7 +97,9 @@ public partial class LoanReview
         try
         {
             IsLoading = true;
+
             ErrorMessage = null;
+
 
             Console.WriteLine(
                 "========================================");
@@ -103,6 +110,11 @@ public partial class LoanReview
             Console.WriteLine(
                 "[LoanReview] Checking session...");
 
+
+            // =========================================
+            // SESSION
+            // =========================================
+
             var isSessionValid =
                 await AuthStorageService.IsSessionValidAsync();
 
@@ -112,7 +124,8 @@ public partial class LoanReview
             if (!isSessionValid)
             {
                 Console.WriteLine(
-                    "[LoanReview] Session expired. Redirecting to login.");
+                    "[LoanReview] Session expired. " +
+                    "Redirecting to login.");
 
                 Navigation.NavigateTo("/login");
 
@@ -125,13 +138,16 @@ public partial class LoanReview
             // =========================================
 
             Console.WriteLine(
-                "[LoanReview] Calling StaffLoanService.GetLoanByIdAsync...");
+                "[LoanReview] Calling " +
+                "StaffLoanService.GetLoanByIdAsync...");
 
             Loan =
-                await StaffLoanService.GetLoanByIdAsync(LoanId);
+                await StaffLoanService.GetLoanByIdAsync(
+                    LoanId);
 
             Console.WriteLine(
                 "[LoanReview] GetLoanByIdAsync completed.");
+
 
             if (Loan is null)
             {
@@ -143,6 +159,7 @@ public partial class LoanReview
 
                 return;
             }
+
 
             Console.WriteLine(
                 $"[LoanReview] Loan received: {Loan.Id}");
@@ -162,7 +179,8 @@ public partial class LoanReview
             if (customer is not null)
             {
                 CustomerName =
-                    $"{customer.FirstName} {customer.LastName}".Trim();
+                    $"{customer.FirstName} {customer.LastName}"
+                        .Trim();
 
                 Console.WriteLine(
                     $"[LoanReview] Customer Name: {CustomerName}");
@@ -177,11 +195,19 @@ public partial class LoanReview
 
 
             // =========================================
-            // REVIEW COMMENTS
+            // LOAD EXISTING REVIEW COMMENTS
             // =========================================
+            //
+            // Existing comment is loaded into the editable
+            // ReviewComments property.
+            //
 
             ReviewComments =
                 Loan.ReviewComments ?? string.Empty;
+
+            Console.WriteLine(
+                $"[LoanReview] Existing Review Comments: " +
+                $"{ReviewComments}");
 
 
             // =========================================
@@ -266,14 +292,16 @@ public partial class LoanReview
             if (ex.InnerException is not null)
             {
                 Console.WriteLine(
-                    $"Inner Exception: {ex.InnerException.Message}");
+                    $"Inner Exception: " +
+                    $"{ex.InnerException.Message}");
             }
 
             Console.WriteLine(
                 "========================================");
 
             ErrorMessage =
-                $"Unable to load the loan application. {ex.Message}";
+                $"Unable to load the loan application. " +
+                $"{ex.Message}";
         }
         finally
         {
@@ -281,10 +309,10 @@ public partial class LoanReview
 
             IsLoadingKycDocuments = false;
 
+            IsLoading = false;
+
             Console.WriteLine(
                 "[LoanReview] Setting IsLoading = false.");
-
-            IsLoading = false;
         }
     }
 
@@ -293,7 +321,8 @@ public partial class LoanReview
     // UPDATE LOAN STATUS
     // =========================================
 
-    private async Task UpdateStatus(string status)
+    private async Task UpdateStatus(
+        LoanStatus status)
     {
         if (Loan is null || IsUpdating)
         {
@@ -306,9 +335,12 @@ public partial class LoanReview
         try
         {
             IsUpdating = true;
+
             ErrorMessage = null;
 
+
             Console.WriteLine();
+
             Console.WriteLine(
                 "==================================================");
 
@@ -319,9 +351,9 @@ public partial class LoanReview
                 "==================================================");
 
 
-            // -----------------------------------------
-            // 1. Loan information
-            // -----------------------------------------
+            // =========================================
+            // LOAN INFORMATION
+            // =========================================
 
             Console.WriteLine(
                 $"[Loan Review] Loan ID        : {Loan.Id}");
@@ -336,12 +368,15 @@ public partial class LoanReview
                 $"[Loan Review] Selected Status: {status}");
 
             Console.WriteLine(
+                $"[Loan Review] Status Value   : {(int)status}");
+
+            Console.WriteLine(
                 $"[Loan Review] Review Comments: {ReviewComments}");
 
 
-            // -----------------------------------------
-            // 2. Validate session
-            // -----------------------------------------
+            // =========================================
+            // VALIDATE SESSION
+            // =========================================
 
             var isSessionValid =
                 await AuthStorageService.IsSessionValidAsync();
@@ -352,7 +387,8 @@ public partial class LoanReview
             if (!isSessionValid)
             {
                 Console.WriteLine(
-                    "[Loan Review] Session invalid. Redirecting to login.");
+                    "[Loan Review] Session invalid. " +
+                    "Redirecting to login.");
 
                 Navigation.NavigateTo("/login");
 
@@ -360,79 +396,57 @@ public partial class LoanReview
             }
 
 
-            // -----------------------------------------
-            // 3. Convert UI status to API status
-            // -----------------------------------------
-
-            var statusValue =
-                status switch
-                {
-                    "Approved" => "1",
-
-                    "Rejected" => "2",
-
-                    "ManualReview" => "3",
-
-                    _ => string.Empty
-                };
-
-            if (string.IsNullOrWhiteSpace(statusValue))
-            {
-                Console.WriteLine(
-                    "[Loan Review] Invalid status.");
-
-                ErrorMessage =
-                    "Invalid loan status.";
-
-                return;
-            }
-
-            Console.WriteLine(
-                $"[Loan Review] API Status Value: {statusValue}");
-
-
-            // -----------------------------------------
-            // 4. Create status description
-            // -----------------------------------------
+            // =========================================
+            // STATUS DESCRIPTION
+            // =========================================
 
             var statusDescription =
                 status switch
                 {
-                    "Approved" => "Approved",
+                    LoanStatus.Approved =>
+                        "Approved",
 
-                    "Rejected" => "Rejected",
+                    LoanStatus.Rejected =>
+                        "Rejected",
 
-                    "ManualReview" => "ManualReview",
+                    LoanStatus.ManualReview =>
+                        "ManualReview",
 
-                    _ => string.Empty
+                    _ =>
+                        string.Empty
                 };
 
             Console.WriteLine(
-                $"[Loan Review] Status Description: {statusDescription}");
+                $"[Loan Review] Status Description: " +
+                $"{statusDescription}");
 
 
-            // -----------------------------------------
-            // 5. Call Staff Loan Service
-            // -----------------------------------------
+            // =========================================
+            // UPDATE LOAN STATUS
+            // =========================================
 
             Console.WriteLine();
+
             Console.WriteLine(
-                "[Loan Review] Calling UpdateLoanStatusAsync...");
+                "[Loan Review] Calling " +
+                "UpdateLoanStatusAsync...");
+
 
             var success =
                 await StaffLoanService.UpdateLoanStatusAsync(
                     Loan.Id,
                     Loan.CustomerId,
-                    statusValue,
+                    status,
                     statusDescription,
                     ReviewComments);
 
 
-            // -----------------------------------------
-            // 6. Check result
-            // -----------------------------------------
+            // =========================================
+            // CHECK RESULT
+            // =========================================
 
             Console.WriteLine();
+
             Console.WriteLine(
                 $"[Loan Review] Update Result: {success}");
 
@@ -442,16 +456,19 @@ public partial class LoanReview
                     "[Loan Review] STATUS UPDATE FAILED.");
 
                 ErrorMessage =
-                    "Unable to update the loan application status.";
+                    "Unable to update the loan application " +
+                    "status.";
 
                 return;
             }
+
 
             Console.WriteLine(
                 "[Loan Review] STATUS UPDATE SUCCESSFUL.");
 
             Console.WriteLine(
                 "[Loan Review] Redirecting to Staff Dashboard...");
+
 
             Console.WriteLine(
                 "==================================================");
@@ -462,12 +479,6 @@ public partial class LoanReview
             Console.WriteLine(
                 "==================================================");
 
-            Console.WriteLine();
-
-
-            // -----------------------------------------
-            // 7. Redirect
-            // -----------------------------------------
 
             Navigation.NavigateTo(
                 "/staff-dashboard");
@@ -475,6 +486,7 @@ public partial class LoanReview
         catch (Exception ex)
         {
             Console.WriteLine();
+
             Console.WriteLine(
                 "==================================================");
 
@@ -485,10 +497,12 @@ public partial class LoanReview
                 "==================================================");
 
             Console.WriteLine(
-                $"[Loan Review] Exception Type : {ex.GetType().Name}");
+                $"[Loan Review] Exception Type : " +
+                $"{ex.GetType().Name}");
 
             Console.WriteLine(
-                $"[Loan Review] Message        : {ex.Message}");
+                $"[Loan Review] Message        : " +
+                $"{ex.Message}");
 
             Console.WriteLine(
                 $"[Loan Review] Details        : {ex}");
@@ -499,7 +513,8 @@ public partial class LoanReview
             Console.WriteLine();
 
             ErrorMessage =
-                $"Unable to update the loan application. {ex.Message}";
+                $"Unable to update the loan application. " +
+                $"{ex.Message}";
         }
         finally
         {
@@ -610,4 +625,3 @@ public partial class LoanReview
         return risk?.ToString() ?? "-";
     }
 }
-

@@ -1,4 +1,5 @@
-﻿using BankingApp.Web.Models.Loan;
+﻿using BankingApp.Web.Constants;
+using BankingApp.Web.Models.Loan;
 using BankingApp.Web.Models.Staff;
 namespace BankingApp.Web.Services.Staff;
 
@@ -14,7 +15,7 @@ public interface IStaffLoanService
     Task<bool> UpdateLoanStatusAsync(
         Guid loanId,
         Guid customerId,
-        string status,
+        LoanStatus status,
         string statusDescription,
         string reviewComments);
     Task<CustomerDetailsDto?> GetCustomerDetailsAsync(Guid customerId);
